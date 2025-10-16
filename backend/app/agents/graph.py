@@ -3,7 +3,10 @@
 import asyncio
 from typing import Any
 from langgraph.graph import StateGraph, END
-from langgraph.checkpoint.postgres import PostgresSaver
+try:
+    from langgraph.checkpoint.postgres import PostgresSaver
+except ImportError:
+    from langgraph_checkpoint.postgres import PostgresSaver
 
 from app.agents.state import GraphState
 from app.agents.nodes.extractor import extractor_node

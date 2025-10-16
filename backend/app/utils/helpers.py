@@ -2,7 +2,7 @@
 
 import hashlib
 from pathlib import Path
-from typing import Any
+from typing import Any, Union
 from datetime import datetime
 import json
 
@@ -12,7 +12,7 @@ def generate_file_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def ensure_dir_exists(path: str | Path) -> Path:
+def ensure_dir_exists(path: Union[str, Path]) -> Path:
     """Ensure directory exists, create if not."""
     path_obj = Path(path)
     path_obj.mkdir(parents=True, exist_ok=True)

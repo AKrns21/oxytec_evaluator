@@ -23,24 +23,34 @@ pip install uv && uv pip install -r pyproject.toml
 cp .env.example .env
 # Edit .env with ANTHROPIC_API_KEY and OPENAI_API_KEY
 
-# Start database
+# Start database (PostgreSQL with pgvector on port 5433)
 docker-compose up -d postgres
 
 # Load product data (required before first use)
-python scripts/ingest_products.py --source scripts/example_products.json
+python backend/scripts/ingest_products.py --source backend/scripts/example_products.json
+
+# Frontend setup
+cd frontend
+npm install
+# Frontend will connect to backend at http://localhost:8000
 ```
 
 ### Running the Application
 
 ```bash
-# Development server (auto-reload)
+# Backend development server (auto-reload)
 cd backend
 uvicorn app.main:app --reload --port 8000
 
-# With Docker
-docker-compose up backend
+# Frontend development server
+cd frontend
+npm run dev
 
-# API documentation available at: http://localhost:8000/docs
+# Run everything with Docker
+docker-compose up
+
+# API documentation: http://localhost:8000/docs
+# Frontend application: http://localhost:3000
 ```
 
 ### Testing
@@ -82,9 +92,10 @@ docker-compose down -v && docker-compose up -d postgres
 
 ```bash
 # Ingest products from JSON
+cd backend
 python scripts/ingest_products.py --source path/to/products.json
 
-# Example products provided in scripts/example_products.json
+# Example products provided in backend/scripts/example_products.json
 ```
 
 ## Architecture Overview
@@ -110,6 +121,15 @@ The workflow state (`app/agents/state.py`) uses TypedDict with annotated reducer
 - `subagent_results`: Uses `add` reducer to accumulate results from parallel agents
 - `errors` and `warnings`: Also use `add` reducer for aggregation
 - All state mutations are immutable - nodes return dicts that update state
+
+**Note**: The graph uses PostgreSQL checkpointing for state persistence. The import path for `PostgresSaver` may vary:
+```python
+try:
+    from langgraph.checkpoint.postgres import PostgresSaver
+except ImportError:
+    from langgraph_checkpoint.postgres import PostgresSaver
+```
+If checkpointing fails, the graph will compile without it and log a warning.
 
 ### Parallel Execution Pattern
 
@@ -219,8 +239,10 @@ Critical settings:
 - `ANTHROPIC_API_KEY`: Required for all agent operations
 - `OPENAI_API_KEY`: Required for embeddings/RAG
 - `DATABASE_URL`: Use `postgresql+asyncpg://` scheme for async
-- `ANTHROPIC_MODEL`: Main model (default: claude-3-5-sonnet-20241022)
-- `ANTHROPIC_MODEL_HAIKU`: Fast model for simple tasks
+  - Local development: `postgresql+asyncpg://oxytec:oxytec_password@localhost:5433/oxytec_db`
+  - Docker internal: `postgresql+asyncpg://oxytec:oxytec_dev_password@postgres:5432/oxytec_db`
+- `ANTHROPIC_MODEL`: Main model (default: claude-sonnet-4-5)
+- `ANTHROPIC_MODEL_HAIKU`: Fast model for simple tasks (default: claude-4-5-haiku-20250110)
 
 ## Logging and Debugging
 
@@ -275,13 +297,61 @@ result = await llm_service.execute_with_tools(
 )
 ```
 
+## Frontend Architecture
+
+The application includes a fully functional Next.js 14 frontend with TypeScript.
+
+### Technology Stack
+
+- **Framework**: Next.js 14 with App Router
+- **Language**: TypeScript
+- **Styling**: TailwindCSS + shadcn/ui components
+- **State Management**: React hooks (useState, useEffect)
+- **API Integration**: Fetch API with SSE (Server-Sent Events) for real-time updates
+
+### Key Components
+
+Located in `frontend/components/`:
+
+- **FileUpload.tsx**: Drag-and-drop file upload with multi-file support
+- **ResultsViewer.tsx**: Display final feasibility reports with formatted sections
+- **AgentVisualization.tsx**: Visual representation of agent execution flow
+- **UI Components**: Button, Card, Input, Label, Progress, Tabs (shadcn/ui)
+
+### Custom Hooks
+
+- **useSSE.ts** (`frontend/hooks/`): Server-Sent Events hook for streaming session updates
+  - Connects to `/api/sessions/{id}/stream`
+  - Handles real-time agent progress updates
+  - Auto-reconnection on connection loss
+
+### Pages
+
+- **/** (`app/page.tsx`): Main upload page with file selection and session creation
+- **/session/[id]** (`app/session/[id]/page.tsx`): Session status and results viewer with live updates
+
+### Running Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev  # Starts on http://localhost:3000
+
+# Or with Docker
+docker-compose up frontend
+```
+
+### Frontend Environment Variables
+
+- `NEXT_PUBLIC_API_URL`: Backend API URL (default: http://localhost:8000)
+
 ## Known Issues and Limitations
 
 - Web search tool is placeholder - needs external API integration
-- Frontend not implemented (structure exists but no code)
 - No authentication/authorization system
 - Single-tenant design (no user management)
 - SSE implementation uses polling (consider Redis pub/sub for production scale)
+- LangGraph checkpoint import may vary between versions (see import fallback in `app/agents/graph.py`)
 
 ## Performance Considerations
 

@@ -28,8 +28,8 @@ class Settings(BaseSettings):
 
     # Anthropic API
     anthropic_api_key: str
-    anthropic_model: str = "claude-3-5-sonnet-20241022"
-    anthropic_model_haiku: str = "claude-3-5-haiku-20241022"
+    anthropic_model: str = "claude-sonnet-4-5"
+    anthropic_model_haiku: str = "claude-4-5-haiku-20250110"
 
     # OpenAI (for embeddings)
     openai_api_key: str

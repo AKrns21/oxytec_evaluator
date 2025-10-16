@@ -1,6 +1,7 @@
 """Database session management."""
 
 from typing import AsyncGenerator
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     create_async_engine,
@@ -36,7 +37,7 @@ async def init_db() -> None:
     try:
         async with engine.begin() as conn:
             # Create pgvector extension
-            await conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
+            await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
             # Create all tables
             await conn.run_sync(Base.metadata.create_all)
         logger.info("database_initialized")
