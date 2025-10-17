@@ -1,5 +1,6 @@
 """PLANNER agent node - dynamically creates subagent execution plan."""
 
+import json
 from typing import Any
 from app.agents.state import GraphState
 from app.services.llm_service import LLMService
@@ -35,6 +36,9 @@ async def planner_node(state: GraphState) -> dict[str, Any]:
     try:
         llm_service = LLMService()
 
+        # Serialize extracted_facts to JSON string
+        extracted_facts_json = json.dumps(extracted_facts, indent=2, ensure_ascii=False)
+
         # Create planning prompt - ONLY sees output of previous agent (EXTRACTOR)
         planning_prompt = f"""You are the Coordinator for feasibility studies conducted by oxytec AG. Oxytec specialized in non-thermal plasma (NTP), UV/ozone and air scrubbing technologies for industrial exhaust-air purification. The purpose of each study is to decide whether oxytec should proceed with deeper engagement with a prospective customer (e.g., pilot, PoC, proposal) and whether NTP, UV/ozone, exhaust air scrubbers, or a combination of these technologies can augment the customer's current abatement setup or fully replace it.
 
@@ -42,54 +46,124 @@ async def planner_node(state: GraphState) -> dict[str, Any]:
 
 **Extracted Facts:**
 ```json
-{extracted_facts}
+{extracted_facts_json}
 ```
 
-**Your job:** Decompose the overall study into well-scoped subtasks and dispatch domain-specific subagents to perform the analysis. For each subagent, provide:
-- a clear objective and narrowly scoped questions,
-- exact inputs (JSON paths/fields and any referenced attachments),
-- method hints/quality criteria as needed,
-- deliverables (concise outputs the Writer can integrate),
-- dependencies and sequencing, while maximizing parallelism and minimizing overlap.
+**Your job:** Decompose the overall study into well-scoped subtasks and dispatch domain-specific subagents to perform the analysis. For each subagent, you must create a comprehensive task description and provide the exact JSON subset they need.
 
-**Important rule:** When delegating tasks, you must not forward the entire JSON file. Instead, extract only the section(s) directly relevant to the subagent's assignment and pass them on unchanged. Do not alter field names, values, or structure in any way. Each subagent should only see the JSON subset that corresponds to its task.
+**CRITICAL: For each subagent, you must provide TWO fields:**
 
-**You do not perform analyses and do not produce the final report.** Your sole responsibility is to produce an efficient, well-reasoned plan and launch the minimum sufficient set of subagents with unambiguous instructions optimized for accuracy, critical assessment, and realistic risk evaluation.
+1. **task** (string): A comprehensive multi-paragraph task description that includes ALL of the following:
+   - Subagent name/role (e.g., "Subagent: VOC Analysis Expert")
+   - **Objective (narrow)**: Clear, focused objective emphasizing critical risk assessment
+   - **Questions to answer (explicit)**: List specific, detailed questions the subagent must answer. Be prescriptive and thorough.
+   - **Method hints / quality criteria**: Provide specific guidance on HOW to perform the analysis (e.g., "Use authoritative property databases like PubChem", "Provide conservative assessments", "Compare against industry benchmarks")
+   - **Deliverables (concise outputs, machine-usable)**: Specify exact format of outputs (e.g., "Table of compounds with properties", "Ranked shortlist with justification")
+   - **Dependencies / sequencing**: Note what can run in parallel vs what needs other results
+   - **Tools needed** (if any): Specify which tools this subagent should use: "product_database" for searching Oxytec catalog, "web_search" for external research, or "none"
 
-Common subagent types you might create (3-8 total depending on complexity):
-1. **VOC Analysis Agent**: Analyze VOC composition, concentrations, challenging compounds, destruction efficiency requirements
-2. **Product Selection Agent**: Identify suitable Oxytec products (NTP reactors, UV systems, ozone generators, air scrubbers)
-3. **Process Design Agent**: Design treatment process flow, sizing, integration with existing systems
-4. **Energy Analysis Agent**: Calculate energy consumption, operating costs
-5. **Competitive Analysis Agent**: Compare NTP/UV/scrubbers vs. alternative technologies (thermal oxidizers, adsorption, etc.)
-6. **Regulatory Compliance Agent**: Check compliance with emissions regulations, ATEX requirements, permits
-7. **Economic Analysis Agent**: ROI calculation, payback period, lifecycle costs vs. current solution
-8. **Technical Risk Agent**: Identify technical challenges, material compatibility, fouling risks
+2. **relevant_content** (JSON string): Extract ONLY the specific JSON fields this subagent needs from the extracted_facts above. Pass them as a JSON string (not a list of field names). Do not alter values or structure.
 
-For each subagent, define:
-- **name**: Unique identifier (e.g., "voc_analysis", "product_selection")
-- **objective**: Clear description focused on critical risk assessment
-- **questions**: List of specific questions emphasizing risks and limitations
-- **input_fields**: Which fields from extracted_facts this agent needs (provide JSON subset only)
-- **tools**: Which tools the agent can use ["product_database", "web_search", "none"]
-- **priority**: "high", "medium", or "low"
+**Examples of good task descriptions (showing variety):**
 
-Return a JSON object with this structure:
+**Example 1: Chemical Analysis Agent (uses web_search tool)**
+```
+Subagent: VOC Composition & Reactivity Analyst
+
+Objective (narrow): Analyze the VOC composition to identify challenging compounds, expected reactivity with NTP/UV/ozone systems, potential by-products, and measurement gaps that could impact technology selection and sizing.
+
+Questions to answer (explicit):
+- What are the representative compounds/groups from the TVOC list with relevant physico-chemical properties (boiling point, vapor pressure, water solubility, Henry's law constant, molecular weight)?
+- Which compounds will react rapidly with ozone vs requiring OH radicals (from NTP)? Provide rate constants or relative reactivity rankings.
+- What hazardous by-products are likely (formaldehyde, organic acids, secondary aerosols) and at what estimated concentrations?
+- Are there show-stopper species that prevent use of specific technologies (NTP/UV/ozone/scrubbers)?
+- What critical measurements are missing (water vapor content, detailed speciation, particulate load) and how much uncertainty do they introduce?
+
+Method hints / quality criteria:
+- Use authoritative databases (PubChem, NIST, ChemSpider) and cite sources per compound
+- Group similar compounds and justify representative molecule selection with chemical reasoning
+- Provide conservative by-product yield estimates (qualitative or semi-quantitative)
+- Rank confidence level (HIGH/MEDIUM/LOW) for each conclusion with explicit justification
+- Compare against literature on similar VOC mixtures (surfactant production, alcohol oxidation, etc.)
+- Quantify uncertainties: "±20% due to unknown moisture" rather than "uncertain"
+
+Deliverables (concise outputs, machine-usable):
+- Structured table of representative compounds/groups with: CAS#, MW, BP, vapor pressure, water solubility, functional group, ozone rate constant, NTP reactivity (fast/medium/slow), expected by-products
+- Short list of show-stopper species (if any) for NTP, UV/ozone, and wet scrubbers with technical justification
+- Prioritized list of measurement gaps ranked by impact on design uncertainty (HIGH/MEDIUM/LOW)
+
+Dependencies / sequencing: Independent — can run immediately in parallel. No dependencies on other subagents. Results will inform technology selection and safety analysis.
+
+Tools needed: web_search (for technical literature, property databases, and similar case studies)
+```
+
+**Example 2: Quantitative Engineering Agent (uses product_database tool)**
+```
+Subagent: Flow & Mass Balance Specialist
+
+Objective (narrow): Convert provided mass flow (kg/h) envelope into standard volumetric flow (Nm3/h) with uncertainty bounds, calculate VOC removal loads (g/h and kg/h) for inlet scenarios and compliance target, and estimate gas hourly space velocity (GHSV) for reactor sizing.
+
+Questions to answer (explicit):
+- What are the Nm3/h flow rates for minimum, optimal, and maximum mass flows (kg/h)? Provide at least two calculation approaches (dry air density vs molar mass) and state which standard conditions you use (0°C or 20°C, 1.013 bar).
+- For TVOC concentrations 2.9-1800 mg/Nm3, what are the mass removal loads in g/h and kg/h for each flow scenario?
+- What is the required abatement capacity (g/h and kg/h) to achieve <20 mg/Nm3 target from maximum inlet concentration?
+- What are the sensitivity bounds on these calculations (±X%) given missing data (moisture content, exact composition)?
+- For a placeholder reactor volume of 1-2 m3, what are the estimated GHSV values (h^-1) and are they within typical ranges for NTP/UV reactors (cite literature values)?
+
+Method hints / quality criteria:
+- Use standard conditions explicitly (state which: 0°C/1.013 bar or 20°C/1.013 bar) and show calculations step-by-step
+- For air density, use 1.204 kg/Nm3 at 20°C or 1.293 kg/Nm3 at 0°C; for molar mass use 28.97 g/mol
+- Provide uncertainty bounds for each value (e.g., "±10-30% depending on moisture and exact composition")
+- Compare calculated GHSV against literature values for similar applications (cite sources)
+- Explicitly state what missing measurements (water vapor fraction, detailed speciation) would most affect accuracy and by how much
+
+Deliverables (concise outputs, machine-usable):
+- Table of Nm3/h estimates for min/opt/max mass flows with: assumptions stated, calculation method, uncertainty bounds
+- Table of VOC removal loads (g/h and kg/h) for: min TVOC, typical TVOC, max TVOC at each flow rate, plus required removal to reach 20 mg/Nm3 target
+- GHSV estimates with placeholder reactor volumes, comparison to literature benchmarks
+- Short list of missing site data ranked by impact on calculation accuracy
+
+Dependencies / sequencing: Independent — can run in parallel with chemical analysis and technology screening. Results feed into technology sizing and economic analysis tasks.
+
+Tools needed: product_database (to check typical Oxytec reactor volumes for GHSV estimation)
+```
+
+**Key differences to note:**
+- Example 1: Chemical/analytical focus, uses web_search for literature
+- Example 2: Quantitative/engineering focus, uses product_database for equipment data
+- Both: Highly specific questions, quantitative method hints, structured deliverables, explicit confidence/uncertainty
+- Both: Clear dependencies and tools needed statement
+
+**Important rules:**
+- Create 3-8 subagents depending on case complexity
+- Maximize parallelism - mark tasks as independent when possible
+- Extract ONLY relevant JSON sections for each subagent (don't pass entire extracted_facts)
+- Be extremely prescriptive in task descriptions - subagents need detailed guidance
+- Focus on critical risk evaluation and project-killing factors
+- Include specific quality criteria and deliverable formats
+
+Common subagent types (adapt as needed):
+1. VOC Analysis: Composition, concentrations, challenging compounds, destruction efficiency
+2. Product Selection: Identify suitable Oxytec equipment (NTP, UV, ozone, scrubbers)
+3. Flow/Mass Balance: Convert mass flows to volumetric flows, calculate removal loads
+4. Technology Screening: Compare NTP/UV/ozone/scrubbers/thermal, flag incompatibilities
+5. Safety/ATEX: Flammability risk, corrosion, materials of construction, safety controls
+6. Process Integration: Sizing, utilities, footprint, site requirements
+7. Economic Analysis: CAPEX/OPEX estimates, ROI, payback vs alternatives
+8. Regulatory Compliance: Emissions limits, permits, ATEX zones
+
+Return a JSON object with this EXACT structure:
 {{
   "subagents": [
     {{
-      "name": "agent_name",
-      "objective": "What this agent should critically assess",
-      "questions": ["Risk-focused question 1", "Question 2"],
-      "input_fields": ["specific_field_from_extracted_facts"],
-      "tools": ["product_database"],
-      "priority": "high"
+      "task": "Subagent: [Name]\\n\\nObjective (narrow): ...\\n\\nQuestions to answer:\\n- ...\\n\\nMethod hints:\\n- ...\\n\\nDeliverables:\\n- ...\\n\\nDependencies: ...\\n\\nTools needed: [tool name or 'none']",
+      "relevant_content": "{{\\"field1\\": \\"value\\", \\"field2\\": ...}}"
     }}
   ],
-  "reasoning": "Brief explanation of planning strategy with emphasis on risk identification"
+  "reasoning": "Brief explanation of planning strategy emphasizing risk identification and parallel execution"
 }}
 
-Remember: Focus subagent instructions on realistic risk evaluation rather than optimistic possibilities. Each subagent should prioritize identifying project-killing factors.
+Remember: The quality of subagent outputs depends entirely on the quality and detail of your task descriptions. Be thorough and prescriptive.
 """
 
         # Execute planning with configured OpenAI model (gpt-mini by default)

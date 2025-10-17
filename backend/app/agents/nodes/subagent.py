@@ -1,6 +1,8 @@
 """SUBAGENT execution - dynamic parallel agent execution."""
 
 import asyncio
+import traceback
+import json
 from typing import Any
 from app.agents.state import GraphState
 from app.services.llm_service import LLMService
@@ -44,10 +46,14 @@ async def execute_subagents_parallel(state: GraphState) -> dict[str, Any]:
     # Create tasks for parallel execution
     tasks = []
     for idx, subagent_def in enumerate(subagent_definitions):
+        # Extract name from task description for instance naming
+        task_desc = subagent_def.get("task", "")
+        agent_name = extract_agent_name(task_desc) or f"agent_{idx}"
+
         task = execute_single_subagent(
             subagent_def=subagent_def,
             state=state,
-            instance_name=f"subagent_{idx}_{subagent_def['name']}"
+            instance_name=f"subagent_{idx}_{agent_name}"
         )
         tasks.append(task)
 
@@ -60,12 +66,16 @@ async def execute_subagents_parallel(state: GraphState) -> dict[str, Any]:
 
     for idx, result in enumerate(results):
         if isinstance(result, Exception):
-            error_msg = f"Subagent {subagent_definitions[idx]['name']} failed: {str(result)}"
+            # Extract agent name from subagent definition
+            task_desc = subagent_definitions[idx].get("task", "")
+            agent_name = extract_agent_name(task_desc) or f"agent_{idx}"
+
+            error_msg = f"Subagent {agent_name} failed: {str(result)}"
             errors.append(error_msg)
             logger.error(
                 "subagent_failed",
                 session_id=session_id,
-                agent_name=subagent_definitions[idx]['name'],
+                agent_name=agent_name,
                 error=str(result)
             )
         else:
@@ -73,7 +83,7 @@ async def execute_subagents_parallel(state: GraphState) -> dict[str, Any]:
             logger.info(
                 "subagent_completed",
                 session_id=session_id,
-                agent_name=result["agent_name"]
+                agent_name=result.get("agent_name", "unknown")
             )
 
     logger.info(
@@ -97,8 +107,12 @@ async def execute_single_subagent(
     """
     Execute a single subagent with its specific instructions.
 
+    New Flowise-style structure:
+    - subagent_def has "task" (comprehensive description) and "relevant_content" (JSON string)
+    - Task description includes objective, questions, method hints, deliverables, dependencies, and tools
+
     Args:
-        subagent_def: Subagent definition from planner
+        subagent_def: Subagent definition from planner (task + relevant_content)
         state: Current graph state
         instance_name: Unique instance identifier
 
@@ -106,46 +120,88 @@ async def execute_single_subagent(
         Subagent result dictionary
     """
 
-    agent_name = subagent_def["name"]
+    # Extract task description and relevant content
+    task_description = subagent_def.get("task", "")
+    relevant_content = subagent_def.get("relevant_content", "{}")
+
+    # Extract agent name from task description (first line typically has "Subagent: Name")
+    agent_name = extract_agent_name(task_description) or instance_name
+
     logger.info("subagent_started", agent_name=agent_name, instance=instance_name)
 
     try:
+        logger.debug("step_1_init_llm_service", agent_name=agent_name)
         llm_service = LLMService()
 
-        # Extract relevant data for this subagent
-        relevant_data = extract_relevant_data(
-            state["extracted_facts"],
-            subagent_def.get("input_fields", [])
+        # Extract tool names from task description
+        logger.debug("step_2_extract_tools", agent_name=agent_name)
+        tool_names = extract_tools_from_task(task_description)
+
+        # Build subagent prompt (now much simpler - task description has everything)
+        logger.debug("step_3_build_prompt", agent_name=agent_name)
+        prompt = build_subagent_prompt_v2(
+            task_description=task_description,
+            relevant_content=relevant_content
         )
 
-        # Build subagent prompt
-        prompt = build_subagent_prompt(
-            objective=subagent_def["objective"],
-            questions=subagent_def.get("questions", []),
-            data=relevant_data,
-            tools=subagent_def.get("tools", [])
-        )
+        # Get tool definitions for this subagent
+        logger.debug("step_4_get_tools", agent_name=agent_name, tool_names=tool_names)
+        tools = get_tools_for_subagent(tool_names)
+        logger.debug("step_4_tools_retrieved", agent_name=agent_name, num_tools=len(tools) if tools else 0)
 
-        # Get tools for this subagent
-        tools = get_tools_for_subagent(subagent_def.get("tools", []))
+        # Define enhanced system prompt for subagents with critical risk focus
+        system_prompt = """You are a specialist subagent contributing to a critical feasibility study for Oxytec AG (non-thermal plasma, UV/ozone, and air scrubbing technologies for industrial exhaust-air purification).
 
-        # Define system prompt for subagents with critical risk focus
-        system_prompt = "You are a critical risk evaluation specialist for Oxytec feasibility studies. Your primary responsibility is to identify and quantify project-killing risks. Prioritize realistic risk assessment (70% of analysis) over optimistic possibilities (30% of analysis). Provide specific probabilities, cost impacts, and failure scenarios based on evidence and industry benchmarks. Remember: oxytec's reputation depends on realistic project assessment to avoid costly failures."
+Your mission: Execute the specific analytical task assigned by the Coordinator with ruthless precision and realistic risk assessment.
 
-        # Execute with configured model (gpt-nano by default)
+ANALYTICAL STANDARDS:
+• Quantitative over qualitative: Provide specific numbers, ranges, and probabilities wherever possible
+• Evidence-based: Cite authoritative sources (technical databases, peer-reviewed literature, industry standards)
+• Conservative assumptions: When uncertain, favor worst-case scenarios over optimistic projections
+• Explicit confidence levels: Tag conclusions as HIGH/MEDIUM/LOW confidence and explain why
+• Structured deliverables: Follow the exact output format specified in your task description
+
+RISK-FOCUSED MANDATE (70/30 rule):
+• 70% of analysis: Identify and quantify risks, limitations, show-stoppers, project-killing factors
+• 30% of analysis: Document realistic positive factors with supporting evidence
+• Flag any factor combinations that could cause cascade failures
+• Provide specific probabilities (%) for failure scenarios when sufficient data exists
+
+TECHNICAL RIGOR:
+• Compare parameters against industry benchmarks and typical successful projects
+• Identify measurement gaps and specify their impact on design/cost uncertainty
+• For chemical/physical properties: Use authoritative databases (PubChem, NIST, ChemSpider, etc.)
+• For technology performance: Reference vendor data, case studies, published literature
+• State assumptions explicitly and test sensitivity to key variables
+
+OUTPUT REQUIREMENTS:
+• Address EVERY question in your task description
+• Provide deliverables in the exact format requested
+• Use clear, actionable language suitable for integration into final report
+• Prioritize machine-readable formats (tables, structured lists) over prose when appropriate
+• **CRITICAL: Do NOT use markdown headers (# ## ###). Use plain text with clear section labels, paragraph breaks, and bullet/numbered lists only.**
+• Write in a professional, technical report style without decorative formatting
+
+Remember: Oxytec's reputation depends on realistic project assessment. A conservative, evidence-based analysis that identifies deal-breakers early is vastly more valuable than an optimistic assessment that leads to costly failures."""
+
+        # Execute with configured model
+        # Note: Tools use Claude format, so use Claude for subagents with tools
+        # OpenAI for subagents without tools (text-only analysis)
         from app.config import settings
 
         if tools:
+            # Use Claude for tool calling (tools are in Claude format)
+            logger.debug("step_5_execute_with_tools", agent_name=agent_name)
             result = await llm_service.execute_with_tools(
                 prompt=prompt,
                 tools=tools,
                 max_iterations=5,
                 system_prompt=system_prompt,
-                temperature=settings.subagent_temperature,
-                use_openai=True,
-                openai_model=settings.subagent_model
+                temperature=settings.subagent_temperature
             )
         else:
+            # Use OpenAI for text-only analysis
+            logger.debug("step_5_execute_openai", agent_name=agent_name, model=settings.subagent_model)
             result = await llm_service.execute_structured(
                 prompt=prompt,
                 response_format="text",
@@ -158,19 +214,134 @@ async def execute_single_subagent(
         return {
             "agent_name": agent_name,
             "instance": instance_name,
-            "objective": subagent_def["objective"],
-            "result": result,
-            "priority": subagent_def.get("priority", "medium")
+            "task": task_description[:200] + "..." if len(task_description) > 200 else task_description,  # Truncated for logging
+            "result": result
         }
 
     except Exception as e:
         logger.error(
             "subagent_execution_error",
             agent_name=agent_name,
-            error=str(e)
+            error=str(e),
+            traceback=traceback.format_exc()
         )
         raise
 
+
+def extract_agent_name(task_description: str) -> str:
+    """
+    Extract agent name from task description.
+    Expected format: "Subagent: Agent Name" on first line.
+
+    Args:
+        task_description: Full task description
+
+    Returns:
+        Agent name or empty string
+    """
+    lines = task_description.split('\n')
+    if lines and lines[0].startswith("Subagent:"):
+        # Extract name after "Subagent: "
+        name = lines[0].replace("Subagent:", "").strip()
+        # Convert to snake_case identifier
+        return name.lower().replace(" ", "_").replace("&", "and")
+    return ""
+
+
+def extract_tools_from_task(task_description: str) -> list[str]:
+    """
+    Extract tool names from task description.
+    Looks for "Tools needed: tool_name" line.
+
+    Args:
+        task_description: Full task description
+
+    Returns:
+        List of tool names (e.g., ["product_database", "web_search"] or ["none"])
+    """
+    lines = task_description.split('\n')
+    for line in lines:
+        if line.strip().lower().startswith("tools needed:"):
+            # Extract tool name after "Tools needed:"
+            tool_text = line.split(":", 1)[1].strip().lower()
+
+            # Check for specific tool names
+            if "product_database" in tool_text:
+                return ["product_database"]
+            elif "web_search" in tool_text:
+                return ["web_search"]
+            elif "none" in tool_text or not tool_text:
+                return []
+
+    return []  # No tools by default
+
+
+def build_subagent_prompt_v2(
+    task_description: str,
+    relevant_content: str
+) -> str:
+    """
+    Build a prompt for a subagent using Flowise-style structure.
+
+    Task description already contains:
+    - Objective
+    - Questions to answer
+    - Method hints / quality criteria
+    - Deliverables
+    - Dependencies
+    - Tools needed
+
+    Args:
+        task_description: Comprehensive task description from planner
+        relevant_content: JSON string with relevant subset of extracted facts
+
+    Returns:
+        Formatted prompt string
+    """
+
+    prompt = f"""You have been assigned a specialized analytical task by the Coordinator as part of an Oxytec AG feasibility study. Read your task description carefully and execute it with precision.
+
+═══════════════════════════════════════════════════════════════════════════════
+YOUR TASK ASSIGNMENT
+═══════════════════════════════════════════════════════════════════════════════
+
+{task_description}
+
+═══════════════════════════════════════════════════════════════════════════════
+TECHNICAL DATA (JSON subset relevant to your task)
+═══════════════════════════════════════════════════════════════════════════════
+
+```json
+{relevant_content}
+```
+
+═══════════════════════════════════════════════════════════════════════════════
+EXECUTION REQUIREMENTS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. **Answer ALL questions** specified in your task description above
+2. **Provide deliverables** in the exact format requested
+3. **Apply method hints** and quality criteria specified in your task
+4. **Follow the 70/30 rule**: 70% critical risk analysis, 30% realistic positive factors
+5. **Quantify when possible**: Provide percentages, ranges, specific values, not vague statements
+6. **Cite sources**: Reference databases, literature, standards, or industry benchmarks
+7. **State confidence levels**: HIGH/MEDIUM/LOW for each major conclusion with justification
+8. **Flag show-stoppers**: Clearly identify any factors that would prevent project success
+9. **Identify measurement gaps**: List missing data that impacts your analysis accuracy
+10. **Consider dependencies**: Note what inputs from other subagents would refine your analysis
+
+**FORMATTING RULE:**
+Do NOT use markdown headers (# ## ###). Instead, use plain text with clear section labels (e.g., "SECTION 1: VOC Analysis"), paragraph breaks, bullet points, and numbered lists. This ensures your analysis can be cleanly parsed by downstream agents.
+
+Your analysis will be integrated into the final feasibility report and used by the Risk Assessor to determine project viability. Precision and realism are critical.
+
+Provide your complete analysis now:
+"""
+
+    return prompt
+
+
+# Legacy functions kept for backward compatibility (not used in new flow)
 
 def extract_relevant_data(
     extracted_facts: dict[str, Any],
@@ -178,6 +349,7 @@ def extract_relevant_data(
 ) -> dict[str, Any]:
     """
     Extract only the relevant fields needed by a subagent.
+    NOTE: This is legacy - new flow uses relevant_content string directly.
 
     Args:
         extracted_facts: All extracted facts
@@ -261,7 +433,7 @@ Your report will be returned to the lead agent to integrate into a final respons
 
 **Relevant Technical Data (JSON subset only):**
 ```json
-{data}
+{json.dumps(data, indent=2, ensure_ascii=False)}
 ```
 {tools_text}
 

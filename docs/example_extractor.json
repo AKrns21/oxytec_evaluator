@@ -1,0 +1,79 @@
+{
+  "id": "llmAgentflow_2",
+  "name": "llmAgentflow",
+  "input": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an agent responsible for extracting all explicit facts from the user’s documents regarding industrial exhaust air purification — including the measures currently implemented and the technologies employed (e.g., questionnaires, measurement reports, tables, time-series charts, safety documents). Your goal is to convert these facts into a structured JSON string for further processing.\n\nConstraints:\n\n\\- Output only ONE JSON object following the schema.\n\n\\- Do not add commentary, bullet points, or prose.\n\n\\- If a field is unknown use null or \"\".\n\n\\- Always preserve original wording, units, decimal separators, and column/row structure.\n\n\\- For tables: include all rows/columns exactly as seen.\n\n\\- For charts: capture axis labels, ranges, tick marks, and qualitative patterns (never estimate missing numbers).\n\n\\- for questionnaires: treat answers as factual entries, including explicit references to the source."
+      },
+      {
+        "role": "user",
+        "content": "<doc name='PCC_input.txt'>Summary of the client data sent:\n\nInstallation for the removal of Total Volatile Organic Compounds (TVOC) at our ETS-1 production plant requested. \n\nPCC is a producer of surfactants, and our production process generates hight VOC concentrations depending on the used raw material.\n\nThe TVOC level in our case is up to 1800mg/Nm3. The proposed offer assumes the exhaust gas treatment from TVOC (In accordance with the definition in COMMISSION IMPLEMENTING DECISION (EU) 2022/2427 of 6 December 2022), to a concentration below 20mg/Nm3 at the ETS-1 installation.\n\nThe gas stream that requires treatment is:\n\nSO2 0,1-1850 mg/Nm3;\nSO3 (SO3 calculated as H2SO4) 0,1-200 mg/Nm3; \nTVOC 2,9 – 1800 mg/Nm3\n(including: 2-ethylhexanol (CAS 104-76-7); octan-1-ol; decan-1-ol (CAS 112-30-1); lauryl alcohol C12-C14 (CAS 104-76-7); ethoxylated lauryl alcohol C12-C14 (from 1 to 7 EO); linear alkylbenzene (CAS 67774-74-7); sulfuric acids of: 2-ethylhexanol; octan-1-ol; decan-1-ol; lauryl alcohol C12-C14; ethoxylated lauryl alcohols C12-C14 (from 1 to 7 EO); alkylbenzenesulfonic acid (CAS 85536-14-7); 2-methylheptane (CAS 592-27–8); 3-Methylheptane (CAS 589-81-1); (E)-4-octene (CAS 14850-23-8); trans-2-octene (CAS 13389-42-9); cis-2-octene (CAS 7642-04-8); tridecane (CAS 629-50-5); tetradecane (CAS 629-59-4); 5-methyl-1-hexanol (CAS 627-98-5); 2-ethyl-1-octene (CAS 51655-64-2); 1-hexanol (CAS 111-27-3); octanol (CAS 124-13-0)).\nThe gas flow is: minimum 1800kg/h; optimal 2800kg/h−3600kg/h (standard); maximum 4000kg/h.\nThe gas temperature is within the range of 10−40°C.</doc>\n\n\n\nHallo"
+      }
+    ],
+    "llmModel": "chatOpenAI",
+    "llmEnableMemory": true,
+    "llmMemoryType": "allMessages",
+    "llmReturnResponseAs": "userMessage",
+    "llmStructuredOutput": [
+      {
+        "key": "content",
+        "type": "string",
+        "enumValues": "",
+        "jsonSchema": "",
+        "description": "description of documents"
+      }
+    ],
+    "llmUpdateState": [
+      {
+        "key": "content",
+        "value": "{{ output.content }}"
+      }
+    ],
+    "llmModelConfig": {
+      "credential": "",
+      "modelName": "gpt-5",
+      "temperature": "0.2",
+      "streaming": true,
+      "maxTokens": "",
+      "topP": "",
+      "frequencyPenalty": "",
+      "presencePenalty": "",
+      "timeout": "",
+      "strictToolCalling": "",
+      "stopSequence": "",
+      "basepath": "",
+      "proxyUrl": "",
+      "baseOptions": "",
+      "allowImageUploads": "",
+      "reasoning": "",
+      "llmModel": "chatOpenAI"
+    }
+  },
+  "output": {
+    "content": "{\"document_name\":\"PCC_input.txt\",\"company\":\"PCC\",\"industry\":\"producer of surfactants\",\"plant\":\"ETS-1 production plant\",\"status\":\"Installation for the removal of Total Volatile Organic Compounds (TVOC) at our ETS-1 production plant requested.\",\"process_note\":\"PCC is a producer of surfactants, and our production process generates hight VOC concentrations depending on the used raw material.\",\"tvoc_level_overview\":\"The TVOC level in our case is up to 1800mg/Nm3.\",\"treatment_assumption_and_target\":\"The proposed offer assumes the exhaust gas treatment from TVOC (In accordance with the definition in COMMISSION IMPLEMENTING DECISION (EU) 2022/2427 of 6 December 2022), to a concentration below 20mg/Nm3 at the ETS-1 installation.\",\"gas_stream_that_requires_treatment\":{\"SO2\":\"0,1-1850 mg/Nm3\",\"SO3 (SO3 calculated as H2SO4)\":\"0,1-200 mg/Nm3\",\"TVOC\":\"2,9 – 1800 mg/Nm3\",\"TVOC_including\":\"2-ethylhexanol (CAS 104-76-7); octan-1-ol; decan-1-ol (CAS 112-30-1); lauryl alcohol C12-C14 (CAS 104-76-7); ethoxylated lauryl alcohol C12-C14 (from 1 to 7 EO); linear alkylbenzene (CAS 67774-74-7); sulfuric acids of: 2-ethylhexanol; octan-1-ol; decan-1-ol; lauryl alcohol C12-C14; ethoxylated lauryl alcohols C12-C14 (from 1 to 7 EO); alkylbenzenesulfonic acid (CAS 85536-14-7); 2-methylheptane (CAS 592-27–8); 3-Methylheptane (CAS 589-81-1); (E)-4-octene (CAS 14850-23-8); trans-2-octene (CAS 13389-42-9); cis-2-octene (CAS 7642-04-8); tridecane (CAS 629-50-5); tetradecane (CAS 629-59-4); 5-methyl-1-hexanol (CAS 627-98-5); 2-ethyl-1-octene (CAS 51655-64-2); 1-hexanol (CAS 111-27-3); octanol (CAS 124-13-0)\"},\"gas_flow\":{\"minimum\":\"1800kg/h\",\"optimal\":\"2800kg/h−3600kg/h (standard)\",\"maximum\":\"4000kg/h\"},\"gas_temperature\":\"10−40°C\",\"current_measures_implemented\":null,\"current_technologies_employed\":null}",
+    "timeMetadata": {
+      "start": 1760695316701,
+      "end": 1760695359971,
+      "delta": 43270
+    }
+  },
+  "state": {
+    "subagents": "",
+    "findings": "",
+    "risk_assesment": "",
+    "content": "{{ output.content }}"
+  },
+  "chatHistory": [
+    {
+      "role": "user",
+      "content": "<doc name='PCC_input.txt'>Summary of the client data sent:\n\nInstallation for the removal of Total Volatile Organic Compounds (TVOC) at our ETS-1 production plant requested. \n\nPCC is a producer of surfactants, and our production process generates hight VOC concentrations depending on the used raw material.\n\nThe TVOC level in our case is up to 1800mg/Nm3. The proposed offer assumes the exhaust gas treatment from TVOC (In accordance with the definition in COMMISSION IMPLEMENTING DECISION (EU) 2022/2427 of 6 December 2022), to a concentration below 20mg/Nm3 at the ETS-1 installation.\n\nThe gas stream that requires treatment is:\n\nSO2 0,1-1850 mg/Nm3;\nSO3 (SO3 calculated as H2SO4) 0,1-200 mg/Nm3; \nTVOC 2,9 – 1800 mg/Nm3\n(including: 2-ethylhexanol (CAS 104-76-7); octan-1-ol; decan-1-ol (CAS 112-30-1); lauryl alcohol C12-C14 (CAS 104-76-7); ethoxylated lauryl alcohol C12-C14 (from 1 to 7 EO); linear alkylbenzene (CAS 67774-74-7); sulfuric acids of: 2-ethylhexanol; octan-1-ol; decan-1-ol; lauryl alcohol C12-C14; ethoxylated lauryl alcohols C12-C14 (from 1 to 7 EO); alkylbenzenesulfonic acid (CAS 85536-14-7); 2-methylheptane (CAS 592-27–8); 3-Methylheptane (CAS 589-81-1); (E)-4-octene (CAS 14850-23-8); trans-2-octene (CAS 13389-42-9); cis-2-octene (CAS 7642-04-8); tridecane (CAS 629-50-5); tetradecane (CAS 629-59-4); 5-methyl-1-hexanol (CAS 627-98-5); 2-ethyl-1-octene (CAS 51655-64-2); 1-hexanol (CAS 111-27-3); octanol (CAS 124-13-0)).\nThe gas flow is: minimum 1800kg/h; optimal 2800kg/h−3600kg/h (standard); maximum 4000kg/h.\nThe gas temperature is within the range of 10−40°C.</doc>\n\n\n\nHallo"
+    },
+    {
+      "role": "user",
+      "content": "{\"document_name\":\"PCC_input.txt\",\"company\":\"PCC\",\"industry\":\"producer of surfactants\",\"plant\":\"ETS-1 production plant\",\"status\":\"Installation for the removal of Total Volatile Organic Compounds (TVOC) at our ETS-1 production plant requested.\",\"process_note\":\"PCC is a producer of surfactants, and our production process generates hight VOC concentrations depending on the used raw material.\",\"tvoc_level_overview\":\"The TVOC level in our case is up to 1800mg/Nm3.\",\"treatment_assumption_and_target\":\"The proposed offer assumes the exhaust gas treatment from TVOC (In accordance with the definition in COMMISSION IMPLEMENTING DECISION (EU) 2022/2427 of 6 December 2022), to a concentration below 20mg/Nm3 at the ETS-1 installation.\",\"gas_stream_that_requires_treatment\":{\"SO2\":\"0,1-1850 mg/Nm3\",\"SO3 (SO3 calculated as H2SO4)\":\"0,1-200 mg/Nm3\",\"TVOC\":\"2,9 – 1800 mg/Nm3\",\"TVOC_including\":\"2-ethylhexanol (CAS 104-76-7); octan-1-ol; decan-1-ol (CAS 112-30-1); lauryl alcohol C12-C14 (CAS 104-76-7); ethoxylated lauryl alcohol C12-C14 (from 1 to 7 EO); linear alkylbenzene (CAS 67774-74-7); sulfuric acids of: 2-ethylhexanol; octan-1-ol; decan-1-ol; lauryl alcohol C12-C14; ethoxylated lauryl alcohols C12-C14 (from 1 to 7 EO); alkylbenzenesulfonic acid (CAS 85536-14-7); 2-methylheptane (CAS 592-27–8); 3-Methylheptane (CAS 589-81-1); (E)-4-octene (CAS 14850-23-8); trans-2-octene (CAS 13389-42-9); cis-2-octene (CAS 7642-04-8); tridecane (CAS 629-50-5); tetradecane (CAS 629-59-4); 5-methyl-1-hexanol (CAS 627-98-5); 2-ethyl-1-octene (CAS 51655-64-2); 1-hexanol (CAS 111-27-3); octanol (CAS 124-13-0)\"},\"gas_flow\":{\"minimum\":\"1800kg/h\",\"optimal\":\"2800kg/h−3600kg/h (standard)\",\"maximum\":\"4000kg/h\"},\"gas_temperature\":\"10−40°C\",\"current_measures_implemented\":null,\"current_technologies_employed\":null}",
+      "name": "extractor"
+    }
+  ]
+}

@@ -19,7 +19,6 @@ class LLMService:
         self.openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
         self.model = settings.anthropic_model
         self.model_haiku = settings.anthropic_model_haiku
-        self.openai_extraction_model = settings.openai_extraction_model
 
     async def execute_structured(
         self,
@@ -272,16 +271,31 @@ class LLMService:
             if system_prompt:
                 messages.insert(0, {"role": "system", "content": system_prompt})
 
-            # Use specified model or fallback to default
-            model = openai_model or self.openai_extraction_model
+            # Use specified model or fallback to gpt-4o
+            model = openai_model or "gpt-4o"
 
-            # Use configured OpenAI model (gpt-5, gpt-mini, gpt-nano, etc.) with JSON mode for reliable structured outputs
-            response = await self.openai_client.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=temperature,
-                response_format={"type": "json_object"} if response_format == "json" else {"type": "text"}
-            )
+            # Use configured OpenAI model (gpt-5, gpt-5-mini, gpt-5-nano, etc.) with JSON mode
+            # GPT-5 models don't support temperature, they use reasoning_effort instead
+            create_params = {
+                "model": model,
+                "messages": messages,
+                "response_format": {"type": "json_object"} if response_format == "json" else {"type": "text"}
+            }
+
+            # Only add temperature for non-GPT-5 models
+            if not model.startswith("gpt-5"):
+                create_params["temperature"] = temperature
+            else:
+                # Map temperature to reasoning_effort for GPT-5 models
+                # Low temp (0.0-0.3) -> minimal, Medium (0.4-0.7) -> low, High (0.8-1.0) -> medium
+                if temperature <= 0.3:
+                    create_params["reasoning_effort"] = "minimal"
+                elif temperature <= 0.7:
+                    create_params["reasoning_effort"] = "low"
+                else:
+                    create_params["reasoning_effort"] = "medium"
+
+            response = await self.openai_client.chat.completions.create(**create_params)
 
             content = response.choices[0].message.content
 

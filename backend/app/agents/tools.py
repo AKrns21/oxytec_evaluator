@@ -89,7 +89,7 @@ def get_tools_for_subagent(tool_names: List[str]) -> List[Dict[str, Any]]:
     Get tool definitions for a subagent.
 
     Args:
-        tool_names: List of tool names requested
+        tool_names: List of tool names requested (should be strings, but we handle dicts defensively)
 
     Returns:
         List of tool definition dicts for Claude API
@@ -102,6 +102,17 @@ def get_tools_for_subagent(tool_names: List[str]) -> List[Dict[str, Any]]:
 
     tools = []
     for name in tool_names:
+        # Defensive: If planner returns dicts instead of strings, extract the name
+        if isinstance(name, dict):
+            logger.warning("tool_name_is_dict", tool_def=name)
+            # Try to extract name from dict
+            name = name.get("name") or name.get("tool") or "unknown"
+
+        # Ensure name is a string
+        if not isinstance(name, str):
+            logger.error("tool_name_invalid_type", tool_name=name, type=type(name).__name__)
+            continue
+
         if name in available_tools:
             tools.append(available_tools[name])
         elif name != "none":

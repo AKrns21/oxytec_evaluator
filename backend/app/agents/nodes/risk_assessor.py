@@ -33,23 +33,25 @@ async def risk_assessor_node(state: GraphState) -> dict[str, Any]:
     try:
         llm_service = LLMService()
 
-        # Format subagent results
-        results_summary = "\n\n".join(
-            f"**{result['agent_name']}** (Priority: {result.get('priority', 'N/A')})\n"
-            f"Objective: {result['objective']}\n"
-            f"Findings: {result['result']}"
-            for result in subagent_results
+        # Consolidate all subagent findings into one continuous analysis (Flowise pattern)
+        # Just concatenate the actual findings with section breaks, no agent names/metadata
+        consolidated_findings = "\n\n".join(
+            result['result'] for result in subagent_results
         )
 
         # Create risk assessment prompt - ONLY sees all subagent outputs (exception to chain rule)
+        # Matches Flowise pattern: consolidated findings in <new_findings> tags
         risk_prompt = f"""You are the Risk Assessor, a specialized critical risk evaluation agent for oxytec AG feasibility studies. Oxytec specialized in non-thermal plasma (NTP), UV/ozone and air scrubbing technologies for industrial exhaust-air purification. Your sole purpose is to identify scenarios, factor combinations, and risk patterns that could cause complete project failure, significant cost overruns, or reputational damage.
 
-**CONTEXT:** You are given an analysis from domain-specific subagents that summarizes the current industrial exhaust-air situation (e.g., VOC composition, volume flows, operating schedule, existing abatement measures/technologies, constraints, safety/ATEX context) and may reference attached materials. Use this material as the basis for your evaluation.
+CONTEXT: You are given an analysis from domain-specific subagents that summarizes the current industrial exhaust-air situation (e.g., VOC composition, volume flows, operating schedule, existing abatement measures/technologies, constraints, safety/ATEX context) and may reference attached materials. Use this material as the basis for your evaluation.
 
-**MISSION:** Determine if the implementation as proposed by the subagents has high-probability failure modes that should prevent oxytec from proceeding.
+MISSION: Determine if the implementation as proposed by the subagents has high-probability failure modes that should prevent oxytec from proceeding.
 
-**Analysis Results from Specialist Agents:**
-{results_summary}
+<new_findings>
+
+{consolidated_findings}
+
+</new_findings>
 
 **CRITICAL EVALUATION FRAMEWORK:** You must evaluate and quantify the following failure scenarios:
 
@@ -143,7 +145,7 @@ Remember: oxytec's business success depends on realistic project assessment. It 
         logger.info(
             "risk_assessor_completed",
             session_id=session_id,
-            risk_level=risk_assessment.get("overall_risk_level", "unknown")
+            risk_level=risk_assessment.get("final_recommendation", "unknown")
         )
 
         return {

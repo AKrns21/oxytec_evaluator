@@ -117,10 +117,13 @@ Upload → EXTRACTOR → PLANNER → SUBAGENTS (parallel) → RISK ASSESSOR → 
 
 **Model Selection Strategy:**
 - **OpenAI GPT-5**: Used for EXTRACTOR (precise data extraction) and RISK ASSESSOR (critical analysis) - most capable model for accuracy-critical tasks
-- **OpenAI GPT-mini**: Used for PLANNER with higher temperature (0.9) to encourage creative subagent planning strategies
-- **OpenAI GPT-nano**: Used for SUBAGENTS - cost-efficient model for parallel analysis tasks
+- **OpenAI GPT-5-mini**: Used for PLANNER to encourage creative subagent planning strategies
+- **OpenAI GPT-5-nano**: Used for SUBAGENTS - cost-efficient model for parallel analysis tasks
 - **Claude Sonnet 4.5**: Used for WRITER - superior German language generation and report synthesis
-- **Temperature Settings**: Configurable per agent to balance creativity vs. precision (extraction: 0.2, planning: 0.9, analysis: 0.4, writing: 0.4)
+- **GPT-5 Note**: GPT-5 models don't support temperature parameter. Instead, temperature values are automatically mapped to `reasoning_effort`:
+  - Temperature 0.0-0.3 → reasoning_effort: "minimal"
+  - Temperature 0.4-0.7 → reasoning_effort: "low"
+  - Temperature 0.8-1.0 → reasoning_effort: "medium"
 
 ### LangGraph State Management
 
