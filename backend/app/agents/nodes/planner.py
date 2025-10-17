@@ -70,27 +70,30 @@ async def planner_node(state: GraphState) -> dict[str, Any]:
 ```
 Subagent: VOC Composition & Reactivity Analyst
 
-Objective (narrow): Analyze the VOC composition to identify challenging compounds, expected reactivity with NTP/UV/ozone systems, potential by-products, and measurement gaps that could impact technology selection and sizing.
+Objective (narrow): Analyze the VOC composition to identify challenging compounds, expected reactivity with NTP/UV/ozone systems, potential by-products, and measurement gaps. Classify challenges by severity and propose mitigation strategies for each.
 
 Questions to answer (explicit):
 - What are the representative compounds/groups from the TVOC list with relevant physico-chemical properties (boiling point, vapor pressure, water solubility, Henry's law constant, molecular weight)?
 - Which compounds will react rapidly with ozone vs requiring OH radicals (from NTP)? Provide rate constants or relative reactivity rankings.
 - What hazardous by-products are likely (formaldehyde, organic acids, secondary aerosols) and at what estimated concentrations?
-- Are there show-stopper species that prevent use of specific technologies (NTP/UV/ozone/scrubbers)?
+- Are there CRITICAL challenges (>80% failure probability) that could prevent use of specific technologies (NTP/UV/ozone/scrubbers)? Or are challenges HIGH/MEDIUM/LOW severity?
 - What critical measurements are missing (water vapor content, detailed speciation, particulate load) and how much uncertainty do they introduce?
+- For each identified challenge, what specific mitigation strategies exist? (additional scrubbing, multi-stage treatment, material selection, etc.)
 
 Method hints / quality criteria:
 - Use authoritative databases (PubChem, NIST, ChemSpider) and cite sources per compound
 - Group similar compounds and justify representative molecule selection with chemical reasoning
-- Provide conservative by-product yield estimates (qualitative or semi-quantitative)
-- Rank confidence level (HIGH/MEDIUM/LOW) for each conclusion with explicit justification
+- Provide realistic by-product yield estimates (qualitative or semi-quantitative) based on industry benchmarks
+- Classify each risk as CRITICAL (>80%), HIGH (30-80%), MEDIUM (10-30%), or LOW (<10%) with explicit justification
 - Compare against literature on similar VOC mixtures (surfactant production, alcohol oxidation, etc.)
 - Quantify uncertainties: "±20% due to unknown moisture" rather than "uncertain"
+- For each challenge, propose specific mitigation approach with estimated feasibility
 
 Deliverables (concise outputs, machine-usable):
 - Structured table of representative compounds/groups with: CAS#, MW, BP, vapor pressure, water solubility, functional group, ozone rate constant, NTP reactivity (fast/medium/slow), expected by-products
-- Short list of show-stopper species (if any) for NTP, UV/ozone, and wet scrubbers with technical justification
-- Prioritized list of measurement gaps ranked by impact on design uncertainty (HIGH/MEDIUM/LOW)
+- Risk classification table: Challenge description, Severity (CRITICAL/HIGH/MEDIUM/LOW), Probability (%), Mitigation strategy, Feasibility (Easy/Moderate/Difficult/Impossible)
+- Prioritized list of measurement gaps ranked by impact on design uncertainty (CRITICAL/HIGH/MEDIUM/LOW)
+- Recommended immediate actions: specific tests/measurements to reduce uncertainty
 
 Dependencies / sequencing: Independent — can run immediately in parallel. No dependencies on other subagents. Results will inform technology selection and safety analysis.
 
@@ -133,13 +136,17 @@ Tools needed: product_database (to check typical Oxytec reactor volumes for GHSV
 - Example 2: Quantitative/engineering focus, uses product_database for equipment data
 - Both: Highly specific questions, quantitative method hints, structured deliverables, explicit confidence/uncertainty
 - Both: Clear dependencies and tools needed statement
+- Both: **Require risk severity classification (CRITICAL/HIGH/MEDIUM/LOW) and mitigation strategies for each challenge**
+- Both: **Balance technical rigor - assess both challenges AND opportunities, not just risks**
 
 **Important rules:**
 - Create 3-8 subagents depending on case complexity
 - Maximize parallelism - mark tasks as independent when possible
 - Extract ONLY relevant JSON sections for each subagent (don't pass entire extracted_facts)
 - Be extremely prescriptive in task descriptions - subagents need detailed guidance
-- Focus on critical risk evaluation and project-killing factors
+- Focus on **balanced technical evaluation**: identify both challenges AND opportunities with equal rigor
+- **Require mitigation strategies**: Instruct subagents to propose specific solutions for each identified challenge
+- **Require risk severity classification**: Subagents must classify risks as CRITICAL/HIGH/MEDIUM/LOW (not assume all risks are project-killing)
 - Include specific quality criteria and deliverable formats
 
 Common subagent types (adapt as needed):

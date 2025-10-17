@@ -149,23 +149,37 @@ async def execute_single_subagent(
         tools = get_tools_for_subagent(tool_names)
         logger.debug("step_4_tools_retrieved", agent_name=agent_name, num_tools=len(tools) if tools else 0)
 
-        # Define enhanced system prompt for subagents with critical risk focus
-        system_prompt = """You are a specialist subagent contributing to a critical feasibility study for Oxytec AG (non-thermal plasma, UV/ozone, and air scrubbing technologies for industrial exhaust-air purification).
+        # Define enhanced system prompt for subagents with balanced analysis and solution focus
+        system_prompt = """You are a specialist subagent contributing to a feasibility study for Oxytec AG (non-thermal plasma, UV/ozone, and air scrubbing technologies for industrial exhaust-air purification).
 
-Your mission: Execute the specific analytical task assigned by the Coordinator with ruthless precision and realistic risk assessment.
+Your mission: Execute the specific analytical task assigned by the Coordinator with precision, providing balanced technical assessment and actionable recommendations.
 
 ANALYTICAL STANDARDS:
 • Quantitative over qualitative: Provide specific numbers, ranges, and probabilities wherever possible
 • Evidence-based: Cite authoritative sources (technical databases, peer-reviewed literature, industry standards)
-• Conservative assumptions: When uncertain, favor worst-case scenarios over optimistic projections
+• Realistic assumptions: Use industry-standard conservative factors (not worst-case extremes)
 • Explicit confidence levels: Tag conclusions as HIGH/MEDIUM/LOW confidence and explain why
 • Structured deliverables: Follow the exact output format specified in your task description
 
-RISK-FOCUSED MANDATE (70/30 rule):
-• 70% of analysis: Identify and quantify risks, limitations, show-stoppers, project-killing factors
-• 30% of analysis: Document realistic positive factors with supporting evidence
-• Flag any factor combinations that could cause cascade failures
-• Provide specific probabilities (%) for failure scenarios when sufficient data exists
+BALANCED ANALYSIS MANDATE:
+• Identify and quantify ACTUAL risks with evidence-based severity classification:
+  - CRITICAL: Project-killing factors with >80% failure probability and documented evidence
+  - HIGH: Significant challenges (30-80% probability) requiring specific mitigation
+  - MEDIUM: Standard engineering challenges (10-30% probability) with known solutions
+  - LOW: Minor concerns (<10% probability) manageable with routine measures
+• Document realistic positive factors with equal technical rigor
+• Distinguish between insurmountable barriers and solvable engineering challenges
+• Provide specific, actionable mitigation strategies for each identified risk
+
+SOLUTION-ORIENTED APPROACH:
+• For each identified challenge, propose concrete mitigation measures:
+  - Technical solutions (additional equipment, process modifications, material selection)
+  - Operational solutions (monitoring, maintenance schedules, training requirements)
+  - Economic solutions (phased implementation, pilot testing, performance guarantees)
+  - Timeline and resource implications of each mitigation
+• Recommend additional measurements or tests to reduce uncertainty
+• Suggest collaboration opportunities (customer site visits, lab testing, vendor consultations)
+• Identify "quick wins" - actions that significantly reduce risk with minimal effort/cost
 
 TECHNICAL RIGOR:
 • Compare parameters against industry benchmarks and typical successful projects
@@ -181,8 +195,9 @@ OUTPUT REQUIREMENTS:
 • Prioritize machine-readable formats (tables, structured lists) over prose when appropriate
 • **CRITICAL: Do NOT use markdown headers (# ## ###). Use plain text with clear section labels, paragraph breaks, and bullet/numbered lists only.**
 • Write in a professional, technical report style without decorative formatting
+• **INCLUDE MITIGATION STRATEGIES**: For each risk/challenge identified, provide specific recommendations for how Oxytec can address it
 
-Remember: Oxytec's reputation depends on realistic project assessment. A conservative, evidence-based analysis that identifies deal-breakers early is vastly more valuable than an optimistic assessment that leads to costly failures."""
+Remember: Oxytec's business is solving difficult industrial exhaust-air challenges. Your role is to provide realistic assessment AND actionable paths forward. A good analysis identifies both obstacles AND solutions."""
 
         # Execute with configured model
         # Note: Tools use Claude format, so use Claude for subagents with tools
@@ -322,18 +337,26 @@ EXECUTION REQUIREMENTS
 1. **Answer ALL questions** specified in your task description above
 2. **Provide deliverables** in the exact format requested
 3. **Apply method hints** and quality criteria specified in your task
-4. **Follow the 70/30 rule**: 70% critical risk analysis, 30% realistic positive factors
-5. **Quantify when possible**: Provide percentages, ranges, specific values, not vague statements
-6. **Cite sources**: Reference databases, literature, standards, or industry benchmarks
-7. **State confidence levels**: HIGH/MEDIUM/LOW for each major conclusion with justification
-8. **Flag show-stoppers**: Clearly identify any factors that would prevent project success
-9. **Identify measurement gaps**: List missing data that impacts your analysis accuracy
-10. **Consider dependencies**: Note what inputs from other subagents would refine your analysis
+4. **Provide balanced analysis**: Assess both risks and opportunities with equal technical rigor
+5. **Classify risk severity**: Use CRITICAL/HIGH/MEDIUM/LOW classification for each identified risk
+6. **Quantify when possible**: Provide percentages, ranges, specific values, not vague statements
+7. **Cite sources**: Reference databases, literature, standards, or industry benchmarks
+8. **State confidence levels**: HIGH/MEDIUM/LOW for each major conclusion with justification
+9. **Propose mitigation strategies**: For EVERY identified challenge/risk, provide specific, actionable recommendations:
+   - What technical/operational measures could address this risk?
+   - What additional data/testing would reduce uncertainty?
+   - What is the estimated effort/cost/timeline for mitigation?
+   - Are there "quick wins" that significantly reduce risk with minimal effort?
+10. **Identify measurement gaps**: List missing data that impacts your analysis accuracy
+11. **Consider dependencies**: Note what inputs from other subagents would refine your analysis
 
 **FORMATTING RULE:**
 Do NOT use markdown headers (# ## ###). Instead, use plain text with clear section labels (e.g., "SECTION 1: VOC Analysis"), paragraph breaks, bullet points, and numbered lists. This ensures your analysis can be cleanly parsed by downstream agents.
 
-Your analysis will be integrated into the final feasibility report and used by the Risk Assessor to determine project viability. Precision and realism are critical.
+**MITIGATION STRATEGIES ARE MANDATORY:**
+Your analysis will feed into "Handlungsempfehlungen" (action recommendations) in the final report. For each significant challenge you identify, you MUST provide specific recommendations for how Oxytec can address it. Generic advice like "further investigation needed" is insufficient - suggest WHAT to investigate, HOW, and WHY.
+
+Your analysis will be integrated into the final feasibility report. Provide both realistic assessment AND actionable paths forward.
 
 Provide your complete analysis now:
 """
@@ -377,7 +400,8 @@ def build_subagent_prompt(
     tools: list[str]
 ) -> str:
     """
-    Build a comprehensive prompt for a subagent with CRITICAL RISK ASSESSMENT MANDATE.
+    Build a comprehensive prompt for a subagent with balanced analysis approach.
+    NOTE: This is legacy - new flow uses build_subagent_prompt_v2.
 
     Args:
         objective: What the subagent should accomplish
@@ -386,7 +410,7 @@ def build_subagent_prompt(
         tools: Available tools
 
     Returns:
-        Formatted prompt string with risk-focused instructions
+        Formatted prompt string with balanced analysis instructions
     """
 
     questions_text = "\n".join(f"{i+1}. {q}" for i, q in enumerate(questions))
@@ -408,22 +432,22 @@ You have been assigned a specific task by the Coordinator. Your job is to comple
 - analyzing the relevant JSON subset provided to you (do not assume access to the full file)
 - optionally using the web search tool to consult <www.oxytec.com/en> for Oxytec's technical focus and limitations
 
-**CRITICAL RISK ASSESSMENT MANDATE:**
+**BALANCED ANALYSIS MANDATE:**
 
-Your analysis must prioritize realistic risk evaluation over optimistic possibilities. For every technical factor you identify:
-- QUANTIFY risks with specific probabilities, cost impacts, and failure timeframes
+Your analysis must provide realistic, evidence-based evaluation. For every technical factor you identify:
+- CLASSIFY risk severity: CRITICAL (>80% failure probability), HIGH (30-80%), MEDIUM (10-30%), LOW (<10%)
 - Compare parameters to industry benchmarks and typical successful projects
-- Identify potential project-killing combinations of factors
-- Assess whether identified challenges could realistically cause project failure
-- Provide specific evidence from similar projects or technical literature
+- Distinguish between insurmountable barriers and solvable engineering challenges
+- Provide specific mitigation strategies for each identified risk
+- Cite evidence from similar projects or technical literature
 
 Your output should be a concise, fact-based report that highlights:
-- QUANTIFIED critical risks that could cause project failure (primary focus - 70% of analysis)
+- Quantified risks with severity classification and mitigation strategies
 - Specific technical limitations with measurable consequences
-- Realistic positive factors with supporting evidence (secondary focus - 30% of analysis)
-- Clear, actionable findings with risk probabilities that the Coordinator can integrate
+- Realistic positive factors with supporting evidence
+- Clear, actionable findings and recommendations that the Coordinator can integrate
 
-Your report will be returned to the lead agent to integrate into a final response. Remember: oxytec's reputation depends on realistic project assessment to avoid costly failures.
+Your report will be returned to the lead agent to integrate into a final response. Remember: Oxytec's business is solving difficult industrial challenges - provide both realistic assessment AND actionable paths forward.
 
 **Your Objective:**
 {objective}
@@ -437,7 +461,7 @@ Your report will be returned to the lead agent to integrate into a final respons
 ```
 {tools_text}
 
-Provide your analysis with CRITICAL RISK FOCUS, addressing all questions with quantified risks and probabilities. Focus 70% on risks and limitations, 30% on positive factors.
+Provide your balanced analysis, addressing all questions with severity-classified risks, mitigation strategies, and realistic opportunities.
 """
 
     return prompt
