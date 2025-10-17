@@ -23,131 +23,74 @@ async def writer_node(state: GraphState) -> dict[str, Any]:
     """
 
     session_id = state["session_id"]
-    extracted_facts = state["extracted_facts"]
-    subagent_results = state["subagent_results"]
     risk_assessment = state["risk_assessment"]
-    user_input = state["user_input"]
 
     logger.info("writer_started", session_id=session_id)
 
     try:
         llm_service = LLMService()
 
-        # Format subagent results by priority
-        high_priority = [r for r in subagent_results if r.get("priority") == "high"]
-        medium_priority = [r for r in subagent_results if r.get("priority") == "medium"]
-        low_priority = [r for r in subagent_results if r.get("priority") == "low"]
+        # Create report writing prompt - ONLY sees output of previous agent (RISK ASSESSOR)
+        writer_prompt = f"""You are the Writer Agent responsible for producing the final feasibility report in German for oxytec AG. Oxytec specialized in non-thermal plasma (NTP), UV/ozone and air scrubbing technologies for industrial exhaust-air purification. The purpose of the feasibility study is to determine whether it is worthwhile for oxytec to proceed with deeper engagement with a prospective customer and whether NTP, UV/ozone, exhaust air scrubbers, or a combination of these technologies can augment or replace the customer's current abatement setup.
 
-        def format_results(results: list) -> str:
-            return "\n\n".join(
-                f"### {result['agent_name'].replace('_', ' ').title()}\n"
-                f"**Objective:** {result['objective']}\n\n"
-                f"{result['result']}"
-                for result in results
-            )
+Your role is to compile and synthesize the risk assessment into a structured, management-ready document. **Do not add your own analysis, do not invent information, and rely strictly on the risk assessment findings.**
 
-        results_text = ""
-        if high_priority:
-            results_text += "## High Priority Analysis\n\n" + format_results(high_priority)
-        if medium_priority:
-            results_text += "\n\n## Additional Analysis\n\n" + format_results(medium_priority)
-        if low_priority:
-            results_text += "\n\n## Supporting Analysis\n\n" + format_results(low_priority)
-
-        # Create report writing prompt
-        writer_prompt = f"""You are an expert technical writer creating a professional feasibility study report for Oxytec.
-
-**Customer Information:**
-```json
-{user_input}
-```
-
-**Technical Analysis:**
-```json
-{extracted_facts}
-```
-
-**Detailed Findings:**
-{results_text}
-
-**Risk Assessment:**
+**Risk Assessment Report:**
 ```json
 {risk_assessment}
 ```
 
-Create a comprehensive feasibility study report with the following structure:
+**RISK ASSESSMENT INTEGRATION:**
+If a Risk Assessment report is available (as shown above), you MUST incorporate its findings into your feasibility report by:
+- Integrating the assessor's quantified risk findings and failure probabilities
+- Adjusting your feasibility classification if the assessor's evidence warrants a more conservative evaluation
+- Adding specific risk quantifications to your "Kritische Herausforderungen" section
+- Modifying your "Zusammenfassung" to reflect critical risk assessments
+- Maintaining the report structure while ensuring the final assessment reflects documented project-killing risks
+- **RESPECTING VETO POWER**: If the Risk Assessor's veto_flag is true, you MUST classify the project as SCHWIERIG regardless of other positive findings
 
-# Executive Summary
-- Brief overview of the project
-- Key findings (2-3 paragraphs)
-- Recommendation (GO / NO-GO / CONDITIONAL)
+**REPORTING STRUCTURE (must be followed exactly):**
 
-# 1. Project Overview
-- Customer requirements
-- Application context
-- Current situation
+## Zusammenfassung
+- Provide a concise 2-3 sentence summary of overall feasibility in German
+- Integrate quantified risk findings from the Risk Assessment
+- End with a final line containing ONLY one of the following evaluations: **GUT GEEIGNET** | **MACHBAR** | **SCHWIERIG**
+  - GUT GEEIGNET: Low risk (<30% failure probability), standard maintenance, economics favorable
+  - MACHBAR: Moderate risk (30-50% failure probability), manageable challenges
+  - SCHWIERIG: High risk (>50% failure probability), project-killing factors identified, or Risk Assessor VETO
 
-# 2. Technical Analysis
-## 2.1 VOC Characterization
-- VOC composition and concentrations
-- Specific challenges
+## VOC-Zusammensetzung und Eignung
+Present a technical evaluation in German of whether NTP, UV/ozone, exhaust air scrubbers, or a combination is suitable. Base this strictly on subagent findings.
 
-## 2.2 Proposed Solution
-- Recommended Oxytec technology/products
-- System configuration
-- Key specifications
+## Positive Faktoren
+- 3-4 bullet points, each max. one sentence in German
+- Only synthesize what subagents identified as favorable
+- Be realistic - do not overstate positives
 
-## 2.3 Performance Expectations
-- Expected removal efficiency
-- Operating parameters
-- Energy consumption
+## Kritische Herausforderungen
+- 3-4 bullet points, each max. one sentence in German
+- Only synthesize what subagents identified as risks or gaps
+- **Include quantified risks from Risk Assessment** (probabilities, timelines, cost impacts)
+- Highlight project-killing factors if identified
 
-# 3. Engineering Considerations
-- Process integration
-- Space requirements
-- Utilities required
-- Installation complexity
+**Important:**
+- Write in German, using formal, technical, and precise language
+- Use short, fact-based sentences
+- Do not invent or assume data - integrate only what subagents explicitly reported
+- Follow the structure exactly - no additional sections
+- Let critical risks drive the final evaluation (SCHWIERIG if high-probability failure scenarios exist)
+- If Risk Assessor recommends "DO NOT PROCEED" or has veto_flag=true, classification must be SCHWIERIG
 
-# 4. Commercial Aspects
-- Cost estimation (CAPEX/OPEX)
-- ROI and payback period
-- Comparison with alternatives
-
-# 5. Risk Assessment
-- Technical risks and mitigation
-- Commercial risks and mitigation
-- Overall risk evaluation
-
-# 6. Implementation Plan
-- Timeline
-- Key milestones
-- Critical success factors
-
-# 7. Conclusion and Recommendation
-- Clear GO / NO-GO / CONDITIONAL recommendation
-- Next steps
-- Required information (if any)
-
-# 8. Appendices
-- Detailed calculations
-- Product specifications
-- References
-
-**Formatting Requirements:**
-- Use professional, technical language
-- Include specific numbers and data
-- Use markdown formatting
-- Be comprehensive but concise
-- Support claims with data from the analysis
-- German or English as appropriate based on customer language
-
-Generate the complete report now.
+Generate the complete German feasibility report now following this exact structure.
 """
 
-        # Execute report generation with longer context model
+        # Execute report generation with configured Claude model (sonnet 4-5 by default)
+        from app.config import settings
         final_report = await llm_service.execute_long_form(
             prompt=writer_prompt,
-            system_prompt="You are an expert technical writer specializing in feasibility studies for industrial air treatment systems."
+            system_prompt="You are a German technical writer for oxytec AG feasibility studies. Synthesize subagent findings into structured German reports. Never invent data. Respect Risk Assessor veto power. Use formal, precise language. Follow the exact report structure provided.",
+            temperature=settings.writer_temperature,
+            model=settings.writer_model
         )
 
         logger.info(

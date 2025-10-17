@@ -129,17 +129,30 @@ async def execute_single_subagent(
         # Get tools for this subagent
         tools = get_tools_for_subagent(subagent_def.get("tools", []))
 
-        # Execute with tools
+        # Define system prompt for subagents with critical risk focus
+        system_prompt = "You are a critical risk evaluation specialist for Oxytec feasibility studies. Your primary responsibility is to identify and quantify project-killing risks. Prioritize realistic risk assessment (70% of analysis) over optimistic possibilities (30% of analysis). Provide specific probabilities, cost impacts, and failure scenarios based on evidence and industry benchmarks. Remember: oxytec's reputation depends on realistic project assessment to avoid costly failures."
+
+        # Execute with configured model (gpt-nano by default)
+        from app.config import settings
+
         if tools:
             result = await llm_service.execute_with_tools(
                 prompt=prompt,
                 tools=tools,
-                max_iterations=5
+                max_iterations=5,
+                system_prompt=system_prompt,
+                temperature=settings.subagent_temperature,
+                use_openai=True,
+                openai_model=settings.subagent_model
             )
         else:
             result = await llm_service.execute_structured(
                 prompt=prompt,
-                response_format="text"
+                response_format="text",
+                system_prompt=system_prompt,
+                temperature=settings.subagent_temperature,
+                use_openai=True,
+                openai_model=settings.subagent_model
             )
 
         return {
@@ -192,16 +205,16 @@ def build_subagent_prompt(
     tools: list[str]
 ) -> str:
     """
-    Build a comprehensive prompt for a subagent.
+    Build a comprehensive prompt for a subagent with CRITICAL RISK ASSESSMENT MANDATE.
 
     Args:
         objective: What the subagent should accomplish
         questions: Specific questions to answer
-        data: Relevant extracted facts
+        data: Relevant extracted facts (JSON subset only)
         tools: Available tools
 
     Returns:
-        Formatted prompt string
+        Formatted prompt string with risk-focused instructions
     """
 
     questions_text = "\n".join(f"{i+1}. {q}" for i, q in enumerate(questions))
@@ -210,14 +223,35 @@ def build_subagent_prompt(
     if tools:
         tool_descriptions = {
             "product_database": "Search the Oxytec product database for relevant equipment and specifications",
-            "web_search": "Search oxytec.com and the web for technical information",
+            "web_search": "Search oxytec.com and the web for technical information. Consult <www.oxytec.com/en> for Oxytec's technical focus and limitations",
         }
-        tools_text = "\n**Available Tools:**\n" + "\n".join(
+        tools_text = "\n\n**Available Tools:**\n" + "\n".join(
             f"- {tool}: {tool_descriptions.get(tool, '')}"
             for tool in tools if tool != "none"
         )
 
-    prompt = f"""You are a specialized technical analyst working on an Oxytec feasibility study.
+    prompt = f"""You are a subagent contributing to a feasibility study for Oxytec AG, a company specialized in non-thermal plasma (NTP), UV/ozone and air scrubbing technologies for industrial exhaust-air purification. The study's purpose is to determine whether it is worthwhile for Oxytec to proceed with deeper engagement with a prospective customer and whether NTP, UV/ozone, exhaust air scrubbers, or a combination of these technologies can augment the customer's current abatement setup or fully replace it.
+
+You have been assigned a specific task by the Coordinator. Your job is to complete this task efficiently by:
+- analyzing the relevant JSON subset provided to you (do not assume access to the full file)
+- optionally using the web search tool to consult <www.oxytec.com/en> for Oxytec's technical focus and limitations
+
+**CRITICAL RISK ASSESSMENT MANDATE:**
+
+Your analysis must prioritize realistic risk evaluation over optimistic possibilities. For every technical factor you identify:
+- QUANTIFY risks with specific probabilities, cost impacts, and failure timeframes
+- Compare parameters to industry benchmarks and typical successful projects
+- Identify potential project-killing combinations of factors
+- Assess whether identified challenges could realistically cause project failure
+- Provide specific evidence from similar projects or technical literature
+
+Your output should be a concise, fact-based report that highlights:
+- QUANTIFIED critical risks that could cause project failure (primary focus - 70% of analysis)
+- Specific technical limitations with measurable consequences
+- Realistic positive factors with supporting evidence (secondary focus - 30% of analysis)
+- Clear, actionable findings with risk probabilities that the Coordinator can integrate
+
+Your report will be returned to the lead agent to integrate into a final response. Remember: oxytec's reputation depends on realistic project assessment to avoid costly failures.
 
 **Your Objective:**
 {objective}
@@ -225,14 +259,13 @@ def build_subagent_prompt(
 **Questions to Answer:**
 {questions_text}
 
-**Relevant Technical Data:**
+**Relevant Technical Data (JSON subset only):**
 ```json
 {data}
 ```
 {tools_text}
 
-Provide a comprehensive analysis addressing all questions. Be specific, technical, and cite sources when using tools.
-Format your response clearly with sections for each question.
+Provide your analysis with CRITICAL RISK FOCUS, addressing all questions with quantified risks and probabilities. Focus 70% on risks and limitations, 30% on positive factors.
 """
 
     return prompt

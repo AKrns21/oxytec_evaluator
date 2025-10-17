@@ -109,11 +109,18 @@ Upload → EXTRACTOR → PLANNER → SUBAGENTS (parallel) → RISK ASSESSOR → 
          (10s)       (5s)       (15-30s)              (5-10s)          (10-15s)
 ```
 
-1. **EXTRACTOR** (`app/agents/nodes/extractor.py`): Extracts structured facts from uploaded documents (PDF, Word, Excel) using Claude
-2. **PLANNER** (`app/agents/nodes/planner.py`): Analyzes extracted facts and dynamically creates 3-8 specialized subagent definitions
-3. **SUBAGENTS** (`app/agents/nodes/subagent.py`): Execute in parallel via `asyncio.gather()`, each investigating specific aspects (VOC analysis, product selection, energy calculations, etc.)
-4. **RISK ASSESSOR** (`app/agents/nodes/risk_assessor.py`): Synthesizes all findings and evaluates technical/commercial risks
-5. **WRITER** (`app/agents/nodes/writer.py`): Generates final comprehensive feasibility report
+1. **EXTRACTOR** (`app/agents/nodes/extractor.py`): Extracts structured facts from uploaded documents (PDF, Word, Excel) using **OpenAI GPT-5** (temperature: 0.2) with JSON mode for reliable structured output
+2. **PLANNER** (`app/agents/nodes/planner.py`): Analyzes extracted facts and dynamically creates 3-8 specialized subagent definitions using **OpenAI GPT-mini** (temperature: 0.9) with JSON mode for creative planning
+3. **SUBAGENTS** (`app/agents/nodes/subagent.py`): Execute in parallel via `asyncio.gather()`, each investigating specific aspects (VOC analysis, product selection, energy calculations, etc.) using **OpenAI GPT-nano** (temperature: 0.4) for efficient text analysis
+4. **RISK ASSESSOR** (`app/agents/nodes/risk_assessor.py`): Synthesizes all findings and evaluates technical/commercial risks using **OpenAI GPT-5** (temperature: 0.4) with JSON mode for structured risk data
+5. **WRITER** (`app/agents/nodes/writer.py`): Generates final comprehensive feasibility report in German using **Claude Sonnet 4.5** (temperature: 0.4) for high-quality long-form writing
+
+**Model Selection Strategy:**
+- **OpenAI GPT-5**: Used for EXTRACTOR (precise data extraction) and RISK ASSESSOR (critical analysis) - most capable model for accuracy-critical tasks
+- **OpenAI GPT-mini**: Used for PLANNER with higher temperature (0.9) to encourage creative subagent planning strategies
+- **OpenAI GPT-nano**: Used for SUBAGENTS - cost-efficient model for parallel analysis tasks
+- **Claude Sonnet 4.5**: Used for WRITER - superior German language generation and report synthesis
+- **Temperature Settings**: Configurable per agent to balance creativity vs. precision (extraction: 0.2, planning: 0.9, analysis: 0.4, writing: 0.4)
 
 ### LangGraph State Management
 
@@ -236,13 +243,23 @@ Agent prompts are inline in node files (not separate template files). To modify 
 Environment variables in `app/config.py` (loaded from `.env`):
 
 Critical settings:
-- `ANTHROPIC_API_KEY`: Required for all agent operations
-- `OPENAI_API_KEY`: Required for embeddings/RAG
+- `ANTHROPIC_API_KEY`: Required for Writer agent (German report generation)
+- `OPENAI_API_KEY`: Required for Extractor, Planner, Subagents, Risk Assessor, and embeddings/RAG
 - `DATABASE_URL`: Use `postgresql+asyncpg://` scheme for async
   - Local development: `postgresql+asyncpg://oxytec:oxytec_password@localhost:5433/oxytec_db`
   - Docker internal: `postgresql+asyncpg://oxytec:oxytec_dev_password@postgres:5432/oxytec_db`
-- `ANTHROPIC_MODEL`: Main model (default: claude-sonnet-4-5)
-- `ANTHROPIC_MODEL_HAIKU`: Fast model for simple tasks (default: claude-4-5-haiku-20250110)
+
+**Agent-specific model configuration:**
+- `EXTRACTOR_MODEL`: Model for data extraction (default: gpt-5)
+- `EXTRACTOR_TEMPERATURE`: Temperature for extraction (default: 0.2)
+- `PLANNER_MODEL`: Model for subagent planning (default: gpt-mini)
+- `PLANNER_TEMPERATURE`: Temperature for planning (default: 0.9 - encourages creative strategies)
+- `SUBAGENT_MODEL`: Model for parallel analysis (default: gpt-nano)
+- `SUBAGENT_TEMPERATURE`: Temperature for subagents (default: 0.4)
+- `RISK_ASSESSOR_MODEL`: Model for risk evaluation (default: gpt-5)
+- `RISK_ASSESSOR_TEMPERATURE`: Temperature for risk assessment (default: 0.4)
+- `WRITER_MODEL`: Model for report writing (default: claude-sonnet-4-5)
+- `WRITER_TEMPERATURE`: Temperature for writing (default: 0.4)
 
 ## Logging and Debugging
 

@@ -119,18 +119,63 @@ export default function SessionPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {result.extracted_facts && (
                     <div>
-                      <h3 className="font-semibold mb-2">Extracted Facts</h3>
+                      <h3 className="font-semibold text-lg mb-2">1. Extracted Facts</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Structured information extracted from uploaded documents
+                      </p>
                       <pre className="bg-muted p-4 rounded-md overflow-x-auto text-xs">
                         {JSON.stringify(result.extracted_facts, null, 2)}
                       </pre>
                     </div>
                   )}
+                  {result.planner_plan && (
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">2. Planner Strategy</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Dynamic execution plan with {result.planner_plan.subagents?.length || 0} specialized subagents
+                      </p>
+                      <pre className="bg-muted p-4 rounded-md overflow-x-auto text-xs">
+                        {JSON.stringify(result.planner_plan, null, 2)}
+                      </pre>
+                    </div>
+                  )}
+                  {result.subagent_results && result.subagent_results.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">3. Subagent Analysis Results</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Detailed findings from {result.subagent_results.length} parallel agent executions
+                      </p>
+                      <div className="space-y-4">
+                        {result.subagent_results.map((subagent: any, index: number) => (
+                          <div key={index} className="border rounded-md p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-medium">{subagent.agent_name || `Subagent ${index + 1}`}</h4>
+                              <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                                {subagent.priority || 'medium'}
+                              </span>
+                            </div>
+                            {subagent.objective && (
+                              <p className="text-sm text-muted-foreground mb-3">{subagent.objective}</p>
+                            )}
+                            <pre className="bg-muted p-3 rounded-md overflow-x-auto text-xs max-h-96">
+                              {typeof subagent.result === 'string'
+                                ? subagent.result
+                                : JSON.stringify(subagent.result, null, 2)}
+                            </pre>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   {result.risk_assessment && (
                     <div>
-                      <h3 className="font-semibold mb-2">Risk Assessment</h3>
+                      <h3 className="font-semibold text-lg mb-2">4. Risk Assessment</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Critical risk evaluation with veto power over technical recommendations
+                      </p>
                       <pre className="bg-muted p-4 rounded-md overflow-x-auto text-xs">
                         {JSON.stringify(result.risk_assessment, null, 2)}
                       </pre>

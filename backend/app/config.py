@@ -1,6 +1,8 @@
 """Application configuration using Pydantic Settings."""
 
+import json
 from typing import Optional
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,6 +15,18 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore"
     )
+
+    @field_validator('cors_origins', mode='before')
+    @classmethod
+    def parse_cors_origins(cls, v):
+        """Parse CORS origins from string or list."""
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                # If not JSON, treat as comma-separated list
+                return [origin.strip() for origin in v.split(',')]
+        return v
 
     # API Configuration
     app_name: str = "Oxytec Feasibility Platform"
@@ -31,10 +45,22 @@ class Settings(BaseSettings):
     anthropic_model: str = "claude-sonnet-4-5"
     anthropic_model_haiku: str = "claude-4-5-haiku-20250110"
 
-    # OpenAI (for embeddings)
+    # OpenAI (for embeddings and extraction)
     openai_api_key: str
     embedding_model: str = "text-embedding-3-small"
     embedding_dimensions: int = 1536
+
+    # Agent-specific model configuration
+    extractor_model: str = "gpt-5"
+    extractor_temperature: float = 0.2
+    planner_model: str = "gpt-mini"
+    planner_temperature: float = 0.9
+    subagent_model: str = "gpt-nano"
+    subagent_temperature: float = 0.4
+    risk_assessor_model: str = "gpt-5"
+    risk_assessor_temperature: float = 0.4
+    writer_model: str = "claude-sonnet-4-5"
+    writer_temperature: float = 0.4
 
     # File Storage
     upload_dir: str = "./uploads"

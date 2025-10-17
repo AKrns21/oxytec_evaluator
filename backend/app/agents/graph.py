@@ -53,19 +53,11 @@ def create_agent_graph():
     workflow.add_edge("risk_assessor", "writer")
     workflow.add_edge("writer", END)
 
-    # Compile with PostgreSQL checkpointing for debugging
-    # This allows us to inspect the state at each step
-    try:
-        checkpointer = PostgresSaver.from_conn_string(settings.database_url)
-        app = workflow.compile(checkpointer=checkpointer)
-        logger.info("agent_graph_compiled", checkpointing=True)
-    except Exception as e:
-        logger.warning(
-            "checkpointing_disabled",
-            reason=str(e),
-            message="Compiling without checkpointing"
-        )
-        app = workflow.compile()
+    # Compile without checkpointing for now
+    # PostgreSQL checkpointing requires async context manager setup
+    # which is complex in this workflow. Disabling for stability.
+    app = workflow.compile()
+    logger.info("agent_graph_compiled", checkpointing=False)
 
     return app
 

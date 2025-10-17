@@ -47,7 +47,13 @@ class ProductRAGService:
             query_embedding = await self.embedding_service.embed(query)
 
             # Build SQL query with vector similarity search
-            sql_query = text("""
+            # Handle category filter dynamically to avoid NULL type issues
+            if category_filter:
+                category_clause = "AND p.category = :category_filter"
+            else:
+                category_clause = ""
+
+            sql_query = text(f"""
                 SELECT
                     p.id,
                     p.name,
@@ -59,20 +65,20 @@ class ProductRAGService:
                 FROM product_embeddings pe
                 JOIN products p ON pe.product_id = p.id
                 WHERE 1=1
-                    AND (:category_filter IS NULL OR p.category = :category_filter)
+                    {category_clause}
                 ORDER BY pe.embedding <=> CAST(:query_embedding AS vector)
                 LIMIT :top_k
             """)
 
             # Execute query
-            result = await self.db.execute(
-                sql_query,
-                {
-                    "query_embedding": str(query_embedding),
-                    "category_filter": category_filter,
-                    "top_k": top_k
-                }
-            )
+            params = {
+                "query_embedding": str(query_embedding),
+                "top_k": top_k
+            }
+            if category_filter:
+                params["category_filter"] = category_filter
+
+            result = await self.db.execute(sql_query, params)
 
             rows = result.fetchall()
 

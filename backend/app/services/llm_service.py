@@ -3,6 +3,7 @@
 import json
 from typing import Any, Optional
 from anthropic import Anthropic, AsyncAnthropic
+from openai import AsyncOpenAI
 from app.config import settings
 from app.utils.logger import get_logger
 
@@ -13,10 +14,12 @@ class LLMService:
     """Service for interacting with Claude API."""
 
     def __init__(self):
-        """Initialize Anthropic client."""
+        """Initialize Anthropic and OpenAI clients."""
         self.client = AsyncAnthropic(api_key=settings.anthropic_api_key)
+        self.openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
         self.model = settings.anthropic_model
         self.model_haiku = settings.anthropic_model_haiku
+        self.openai_extraction_model = settings.openai_extraction_model
 
     async def execute_structured(
         self,
@@ -24,7 +27,10 @@ class LLMService:
         system_prompt: str = "",
         response_format: str = "json",
         temperature: float = 0.0,
-        use_haiku: bool = False
+        use_haiku: bool = False,
+        use_extended_thinking: bool = False,
+        use_openai: bool = False,
+        openai_model: str = None
     ) -> Any:
         """
         Execute a structured prompt and return parsed result.
@@ -40,33 +46,66 @@ class LLMService:
             Parsed JSON or text response
         """
 
+        # Use OpenAI for extraction if requested
+        if use_openai:
+            return await self._execute_openai_structured(
+                prompt, system_prompt, response_format, temperature, openai_model
+            )
+
         model = self.model_haiku if use_haiku else self.model
 
         try:
+            # Don't use prefill - it breaks markdown cleanup
             messages = [{"role": "user", "content": prompt}]
 
-            response = await self.client.messages.create(
-                model=model,
-                max_tokens=4096,
-                temperature=temperature,
-                system=system_prompt if system_prompt else None,
-                messages=messages
-            )
+            # Build kwargs, only include system if provided
+            kwargs = {
+                "model": model,
+                "max_tokens": 4096,
+                "temperature": temperature,
+                "messages": messages
+            }
 
+            if system_prompt:
+                kwargs["system"] = system_prompt
+
+            # Enable extended thinking if requested
+            if use_extended_thinking:
+                kwargs["thinking"] = {
+                    "type": "enabled",
+                    "budget_tokens": 2000
+                }
+                # Extended thinking requires temperature=1.0
+                kwargs["temperature"] = 1.0
+
+            response = await self.client.messages.create(**kwargs)
+
+            # Simple content extraction - just get the text
             content = response.content[0].text
 
             # Parse JSON if requested
             if response_format == "json":
+                # Strip whitespace
+                content = content.strip()
+
+                # Remove markdown code blocks if present
+                if content.startswith("```json"):
+                    content = content[7:]  # Remove ```json
+                elif content.startswith("```"):
+                    content = content[3:]  # Remove ```
+
+                if content.endswith("```"):
+                    content = content[:-3]  # Remove trailing ```
+
+                content = content.strip()
+
                 try:
                     return json.loads(content)
                 except json.JSONDecodeError as e:
-                    logger.error("json_parse_failed", error=str(e), content=content[:500])
-                    # Try to extract JSON from markdown code blocks
-                    if "```json" in content:
-                        json_start = content.find("```json") + 7
-                        json_end = content.find("```", json_start)
-                        json_str = content[json_start:json_end].strip()
-                        return json.loads(json_str)
+                    logger.error("json_parse_failed",
+                               error=str(e),
+                               content_length=len(content),
+                               content_preview=content[:500])
                     raise
 
             return content
@@ -79,7 +118,8 @@ class LLMService:
         self,
         prompt: str,
         system_prompt: str = "",
-        temperature: float = 0.3
+        temperature: float = 0.3,
+        model: str = None
     ) -> str:
         """
         Execute a long-form generation (like report writing).
@@ -88,6 +128,7 @@ class LLMService:
             prompt: User prompt
             system_prompt: System prompt
             temperature: Slightly higher for more natural writing
+            model: Optional model override
 
         Returns:
             Generated text
@@ -96,13 +137,18 @@ class LLMService:
         try:
             messages = [{"role": "user", "content": prompt}]
 
-            response = await self.client.messages.create(
-                model=self.model,  # Use full Sonnet for quality
-                max_tokens=8192,
-                temperature=temperature,
-                system=system_prompt if system_prompt else None,
-                messages=messages
-            )
+            # Build kwargs, only include system if provided
+            kwargs = {
+                "model": model or self.model,
+                "max_tokens": 8192,
+                "temperature": temperature,
+                "messages": messages
+            }
+
+            if system_prompt:
+                kwargs["system"] = system_prompt
+
+            response = await self.client.messages.create(**kwargs)
 
             return response.content[0].text
 
@@ -115,7 +161,11 @@ class LLMService:
         prompt: str,
         tools: list[dict],
         max_iterations: int = 5,
-        system_prompt: str = ""
+        system_prompt: str = "",
+        temperature: float = 0.0,
+        model: str = None,
+        use_openai: bool = False,
+        openai_model: str = None
     ) -> Any:
         """
         Execute with tool calling support (for subagents).
@@ -125,22 +175,44 @@ class LLMService:
             tools: List of tool definitions
             max_iterations: Max tool call iterations
             system_prompt: System prompt
+            temperature: Model temperature
+            model: Optional Claude model override
+            use_openai: Use OpenAI instead of Claude
+            openai_model: Optional OpenAI model override
 
         Returns:
             Final result after tool interactions
         """
 
+        # If use_openai is True, delegate to OpenAI structured execution
+        # (Note: OpenAI tool calling format is different, so for now we just use structured output)
+        if use_openai:
+            return await self.execute_structured(
+                prompt=prompt,
+                system_prompt=system_prompt,
+                response_format="text",
+                temperature=temperature,
+                use_openai=True,
+                openai_model=openai_model
+            )
+
         try:
             messages = [{"role": "user", "content": prompt}]
 
             for iteration in range(max_iterations):
-                response = await self.client.messages.create(
-                    model=self.model,
-                    max_tokens=4096,
-                    system=system_prompt if system_prompt else None,
-                    messages=messages,
-                    tools=tools
-                )
+                # Build kwargs, only include system if provided
+                kwargs = {
+                    "model": model or self.model,
+                    "max_tokens": 4096,
+                    "temperature": temperature,
+                    "messages": messages,
+                    "tools": tools
+                }
+
+                if system_prompt:
+                    kwargs["system"] = system_prompt
+
+                response = await self.client.messages.create(**kwargs)
 
                 # Check if model wants to use tools
                 if response.stop_reason == "tool_use":
@@ -184,6 +256,41 @@ class LLMService:
 
         except Exception as e:
             logger.error("llm_tool_execution_failed", error=str(e))
+            raise
+
+    async def _execute_openai_structured(
+        self,
+        prompt: str,
+        system_prompt: str,
+        response_format: str,
+        temperature: float,
+        openai_model: str = None
+    ) -> Any:
+        """Execute structured output with OpenAI (better JSON handling)."""
+        try:
+            messages = [{"role": "user", "content": prompt}]
+            if system_prompt:
+                messages.insert(0, {"role": "system", "content": system_prompt})
+
+            # Use specified model or fallback to default
+            model = openai_model or self.openai_extraction_model
+
+            # Use configured OpenAI model (gpt-5, gpt-mini, gpt-nano, etc.) with JSON mode for reliable structured outputs
+            response = await self.openai_client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                response_format={"type": "json_object"} if response_format == "json" else {"type": "text"}
+            )
+
+            content = response.choices[0].message.content
+
+            if response_format == "json":
+                return json.loads(content)
+            return content
+
+        except Exception as e:
+            logger.error("openai_execution_failed", error=str(e))
             raise
 
     async def _execute_tool(self, tool_name: str, tool_input: dict) -> Any:

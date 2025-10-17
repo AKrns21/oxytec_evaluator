@@ -14,6 +14,7 @@ from app.agents.graph import run_agent_graph
 from app.config import settings
 from app.utils.helpers import ensure_dir_exists, sanitize_filename
 from app.utils.logger import get_logger
+from app.db.session import AsyncSessionLocal
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -169,6 +170,8 @@ async def execute_agent_workflow(
             session.result = {
                 "final_report": result.get("final_report"),
                 "extracted_facts": result.get("extracted_facts"),
+                "planner_plan": result.get("planner_plan"),
+                "subagent_results": result.get("subagent_results", []),
                 "risk_assessment": result.get("risk_assessment"),
                 "num_subagents": len(result.get("subagent_results", [])),
                 "errors": result.get("errors", []),
@@ -185,7 +188,3 @@ async def execute_agent_workflow(
             session.status = "failed"
             session.error = str(e)
             await db.commit()
-
-
-# Import for background task
-from app.db.session import AsyncSessionLocal
