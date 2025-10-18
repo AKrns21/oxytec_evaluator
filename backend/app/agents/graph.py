@@ -14,6 +14,7 @@ from app.agents.nodes.planner import planner_node
 from app.agents.nodes.subagent import execute_subagents_parallel
 from app.agents.nodes.risk_assessor import risk_assessor_node
 from app.agents.nodes.writer import writer_node
+from app.agents.timing import track_agent_timing
 from app.config import settings
 from app.utils.logger import get_logger
 
@@ -38,12 +39,12 @@ def create_agent_graph():
     # Initialize graph with state
     workflow = StateGraph(GraphState)
 
-    # Add nodes
-    workflow.add_node("extractor", extractor_node)
-    workflow.add_node("planner", planner_node)
-    workflow.add_node("execute_subagents", execute_subagents_parallel)
-    workflow.add_node("risk_assessor", risk_assessor_node)
-    workflow.add_node("writer", writer_node)
+    # Add nodes with timing tracking
+    workflow.add_node("extractor", track_agent_timing("extractor")(extractor_node))
+    workflow.add_node("planner", track_agent_timing("planner")(planner_node))
+    workflow.add_node("execute_subagents", track_agent_timing("execute_subagents")(execute_subagents_parallel))
+    workflow.add_node("risk_assessor", track_agent_timing("risk_assessor")(risk_assessor_node))
+    workflow.add_node("writer", track_agent_timing("writer")(writer_node))
 
     # Define edges (workflow sequence)
     workflow.set_entry_point("extractor")
