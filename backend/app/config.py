@@ -83,6 +83,12 @@ class Settings(BaseSettings):
     redis_url: Optional[str] = None
     cache_ttl_seconds: int = 3600
 
+    # LangSmith Tracing (optional)
+    langchain_tracing_v2: bool = False
+    langchain_api_key: Optional[str] = None
+    langchain_endpoint: Optional[str] = None  # Use https://eu.api.smith.langchain.com for EU region
+    langchain_project: str = "oxytec-feasibility-platform"
+
 
 # Global settings instance
 settings = Settings()

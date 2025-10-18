@@ -1,6 +1,7 @@
 """LangGraph workflow definition and execution."""
 
 import asyncio
+import os
 from typing import Any
 from langgraph.graph import StateGraph, END
 try:
@@ -19,6 +20,17 @@ from app.config import settings
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
+
+# Configure LangSmith tracing for LangGraph if enabled
+if settings.langchain_tracing_v2 and settings.langchain_api_key:
+    os.environ["LANGCHAIN_TRACING_V2"] = "true"
+    os.environ["LANGCHAIN_API_KEY"] = settings.langchain_api_key
+    os.environ["LANGCHAIN_PROJECT"] = settings.langchain_project
+    if settings.langchain_endpoint:
+        os.environ["LANGCHAIN_ENDPOINT"] = settings.langchain_endpoint
+    logger.info("langsmith_graph_tracing_enabled",
+                project=settings.langchain_project,
+                endpoint=settings.langchain_endpoint or "default")
 
 
 def create_agent_graph():

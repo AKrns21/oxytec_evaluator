@@ -22,6 +22,7 @@ pip install uv && uv pip install -r pyproject.toml
 # Configure environment
 cp .env.example .env
 # Edit .env with ANTHROPIC_API_KEY and OPENAI_API_KEY
+# Optional: Add LANGCHAIN_API_KEY for LangSmith tracing (see backend/docs/LANGSMITH_SETUP.md)
 
 # Start database (PostgreSQL with pgvector on port 5433)
 docker-compose up -d postgres
@@ -275,6 +276,7 @@ For debugging agent execution:
 1. Check session logs: `GET /api/sessions/{id}/debug`
 2. Examine agent outputs in database: `agent_outputs` table
 3. Review LangGraph checkpoints (stored in PostgreSQL if enabled)
+4. **Use LangSmith tracing**: Enable comprehensive tracing with LangSmith for visual debugging, timing analysis, and token tracking. See `backend/docs/LANGSMITH_SETUP.md` for setup instructions.
 
 ## Common Patterns
 

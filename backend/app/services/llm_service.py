@@ -1,6 +1,7 @@
 """LLM service wrapper for Claude API calls."""
 
 import json
+import os
 from typing import Any, Optional
 from anthropic import Anthropic, AsyncAnthropic
 from openai import AsyncOpenAI
@@ -9,14 +10,43 @@ from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+# Configure LangSmith tracing if enabled
+if settings.langchain_tracing_v2 and settings.langchain_api_key:
+    os.environ["LANGCHAIN_TRACING_V2"] = "true"
+    os.environ["LANGCHAIN_API_KEY"] = settings.langchain_api_key
+    os.environ["LANGCHAIN_PROJECT"] = settings.langchain_project
+    if settings.langchain_endpoint:
+        os.environ["LANGCHAIN_ENDPOINT"] = settings.langchain_endpoint
+    logger.info("langsmith_tracing_enabled",
+                project=settings.langchain_project,
+                endpoint=settings.langchain_endpoint or "default")
+
 
 class LLMService:
     """Service for interacting with Claude API."""
 
     def __init__(self):
-        """Initialize Anthropic and OpenAI clients."""
-        self.client = AsyncAnthropic(api_key=settings.anthropic_api_key)
-        self.openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
+        """Initialize Anthropic and OpenAI clients with LangSmith tracing."""
+        # Create base clients
+        base_anthropic_client = AsyncAnthropic(api_key=settings.anthropic_api_key)
+        base_openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
+
+        # Wrap with LangSmith if tracing is enabled
+        if settings.langchain_tracing_v2 and settings.langchain_api_key:
+            try:
+                from langsmith.wrappers import wrap_anthropic, wrap_openai
+                self.client = wrap_anthropic(base_anthropic_client)
+                self.openai_client = wrap_openai(base_openai_client)
+                logger.info("langsmith_wrappers_applied")
+            except ImportError:
+                logger.warning("langsmith_wrappers_not_available",
+                             message="Install langsmith package to enable tracing")
+                self.client = base_anthropic_client
+                self.openai_client = base_openai_client
+        else:
+            self.client = base_anthropic_client
+            self.openai_client = base_openai_client
+
         self.model = settings.anthropic_model
         self.model_haiku = settings.anthropic_model_haiku
 
