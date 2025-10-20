@@ -7,32 +7,55 @@ import { Download, FileText } from "lucide-react";
 
 interface ResultsViewerProps {
   result: any;
+  sessionId?: string;
 }
 
-export default function ResultsViewer({ result }: ResultsViewerProps) {
-  const handleDownload = () => {
-    const report = result.final_report || "No report available";
-    const blob = new Blob([report], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `feasibility-report-${new Date().toISOString().split('T')[0]}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+export default function ResultsViewer({ result, sessionId }: ResultsViewerProps) {
+  const handleDownload = async () => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const finalSessionId = sessionId || result.session_id || window.location.pathname.split("/").pop();
+
+      const response = await fetch(`${apiUrl}/api/sessions/${finalSessionId}/pdf`);
+
+      if (!response.ok) {
+        throw new Error("Failed to download PDF");
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `feasibility-report-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      alert("Failed to download PDF. Please try again.");
+    }
   };
 
   const report = result.final_report || result.report || "No report generated";
 
   // Extract feasibility rating for visual indicator
   const getFeasibilityRating = (reportText: string) => {
-    if (reportText.includes("**GUT GEEIGNET**")) {
-      return { rating: "GUT GEEIGNET", color: "text-green-600 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800" };
+    // Check for new emoji-based ratings first
+    if (reportText.includes("🟢 GUT GEEIGNET") || reportText.includes("**🟢 GUT GEEIGNET**")) {
+      return { rating: "🟢 GUT GEEIGNET", color: "text-green-600 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800" };
+    } else if (reportText.includes("🟡 MACHBAR") || reportText.includes("**🟡 MACHBAR**")) {
+      return { rating: "🟡 MACHBAR", color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800" };
+    } else if (reportText.includes("🔴 SCHWIERIG") || reportText.includes("**🔴 SCHWIERIG**")) {
+      return { rating: "🔴 SCHWIERIG", color: "text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800" };
+    }
+    // Fallback to old format for backward compatibility
+    else if (reportText.includes("**GUT GEEIGNET**")) {
+      return { rating: "🟢 GUT GEEIGNET", color: "text-green-600 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800" };
     } else if (reportText.includes("**MACHBAR**")) {
-      return { rating: "MACHBAR", color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800" };
+      return { rating: "🟡 MACHBAR", color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800" };
     } else if (reportText.includes("**SCHWIERIG**")) {
-      return { rating: "SCHWIERIG", color: "text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800" };
+      return { rating: "🔴 SCHWIERIG", color: "text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800" };
     }
     return null;
   };

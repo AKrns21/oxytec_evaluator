@@ -107,7 +107,7 @@ export default function SessionPage() {
           </TabsList>
 
           <TabsContent value="report" className="mt-6">
-            <ResultsViewer result={result} />
+            <ResultsViewer result={result} sessionId={sessionId} />
           </TabsContent>
 
           <TabsContent value="analysis" className="mt-6">

@@ -73,11 +73,11 @@ Provide a concise 2-3 sentence summary in German of the customer's current situa
 
 ### Bewertung
 
-Provide a concise 2-3 sentence assessment of overall feasibility in German as continuous paragraph text. Balance risk assessment with mitigation potential. End with a final line containing ONLY one of the following evaluations: **GUT GEEIGNET** | **MACHBAR** | **SCHWIERIG**
+Provide a concise 2-3 sentence assessment of overall feasibility in German as continuous paragraph text. Balance risk assessment with mitigation potential. End with a final line containing ONLY one of the following evaluations with its icon: **🟢 GUT GEEIGNET** | **🟡 MACHBAR** | **🔴 SCHWIERIG**
 
-- GUT GEEIGNET: No CRITICAL risks, ≤1 HIGH risk with clear mitigation, favorable economics
-- MACHBAR: No CRITICAL risks, 2-3 HIGH risks with feasible mitigation strategies, viable economics
-- SCHWIERIG: ≥1 CRITICAL risk with no viable mitigation, OR ≥4 HIGH risks without clear solutions, OR Risk Assessor recommendation is STRONG REJECT/REJECT
+- 🟢 GUT GEEIGNET: No CRITICAL risks, ≤1 HIGH risk with clear mitigation, favorable economics
+- 🟡 MACHBAR: No CRITICAL risks, 2-3 HIGH risks with feasible mitigation strategies, viable economics
+- 🔴 SCHWIERIG: ≥1 CRITICAL risk with no viable mitigation, OR ≥4 HIGH risks without clear solutions, OR Risk Assessor recommendation is STRONG REJECT/REJECT
 
 ## VOC-Zusammensetzung und Eignung
 
@@ -141,7 +141,7 @@ Include only Critical and High priority actions. Be specific and actionable. Foc
 - Use ## for section headers (bold and larger), ### for subsections
 - **DO NOT use horizontal rules (---) between sections** - just leave blank lines for spacing
 - Use bullet points (-) for lists in Positive Faktoren, Kritische Herausforderungen, and Handlungsempfehlungen
-- Use **bold** for emphasis (like GUT GEEIGNET / MACHBAR / SCHWIERIG)
+- Use **bold** for emphasis and ALWAYS include the appropriate icon emoji for feasibility ratings (🟢 GUT GEEIGNET / 🟡 MACHBAR / 🔴 SCHWIERIG)
 - Write paragraph sections (Ausgangslage, Bewertung, VOC-Zusammensetzung) as continuous text WITHOUT blank lines between paragraphs
 - Keep Handlungsempfehlungen brief (4-6 bullets total, no subsections)
 - Balance realism (identify challenges) with solution-focus (provide paths forward)
@@ -158,7 +158,7 @@ Der Kunde aus der chemischen Industrie verarbeitet VOCs mit Konzentrationen von 
 
 Die VOC-Behandlung ist mit NTP-Technologie technisch machbar, erfordert jedoch eine mehrstufige Lösung zur Handhabung der Schwefelsäurebildung. Die wirtschaftlichen Parameter sind akzeptabel bei moderaten CAPEX- und OPEX-Werten.
 
-**MACHBAR**
+**🟡 MACHBAR**
 
 ## VOC-Zusammensetzung und Eignung
 
