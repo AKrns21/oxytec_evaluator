@@ -57,62 +57,89 @@ async def extractor_node(state: GraphState) -> dict[str, Any]:
         )
 
         # Create extraction prompt
-        extraction_prompt = f"""You are an agent responsible for extracting all explicit facts from the user's documents regarding industrial exhaust air purification - including the measures currently implemented and the technologies employed (e.g., questionnaires, measurement reports, tables, time-series charts, safety documents). Your goal is to convert these facts into a structured JSON string for further processing.
+        extraction_prompt = f"""You are an agent responsible for extracting all explicit facts from industrial exhaust air treatment inquiry documents. These may include questionnaires, measurement reports, safety documents, permits, or process descriptions.
 
 **Constraints:**
-- Output only ONE valid JSON object following the schema.
-- Do not add commentary, bullet points, or prose.
-- If a field is unknown use null or "".
-- Always preserve original wording, units, decimal separators, and column/row structure.
-- For tables: include all rows/columns exactly as seen.
-- For charts: capture axis labels, ranges, tick marks, and qualitative patterns (never estimate missing numbers).
-- For questionnaires: treat answers as factual entries, including explicit references to the source.
-- **CRITICAL**: Properly escape all special characters in JSON strings. Replace curly quotes („ " " ") with straight quotes, escape backslashes and double quotes.
+- Output only ONE valid JSON object following the schema below
+- Do not add commentary, bullet points, or prose outside the JSON
+- If a field is unknown use null or ""
+- Always preserve original wording, units, decimal separators, and table structure
+- For tables: include all rows/columns exactly as seen
+- **CRITICAL**: Properly escape all special characters in JSON strings (replace curly quotes with straight quotes)
+
+**CRITICAL: Flag data quality issues**
+For each missing or anomalous parameter, add an entry to "data_quality_issues" array:
+- Duplicate identifiers (CAS numbers, substance names)
+- Unusual parameter ranges (e.g., very low/high temperatures, pressures)
+- Missing critical parameters (humidity, oxygen content, particle load)
+- Inconsistent units or incompatible values
 
 Documents:
 {combined_text}
 
 Extract the following information (if available):
 
-1. **VOC Analysis**:
-   - List of VOC compounds with names and concentrations (preserve exact units: ppm, mg/m³, etc.)
-   - Total VOC concentration
-   - Any particularly challenging compounds (halogenated, SVOC, etc.)
-   - Any VOC-related tables or measurement data (include all rows/columns)
+1. **Pollutant Characterization**:
+   - List of pollutants with names, concentrations, and units
+   - Pollutant categories: VOCs, odors, inorganic gases (NH₃, H₂S, SO₂, HCl, etc.), particulates, bioaerosols
+   - Total pollutant load (TVOC, Total-C, odor units, etc.)
+   - Any measurement data tables (preserve all rows/columns)
+   - Chemical formulas and CAS numbers where available
 
 2. **Process Parameters**:
-   - Flow rate (preserve exact units: m³/h, Nm³/h, etc.)
-   - Temperature (preserve exact value and unit)
-   - Pressure (preserve exact value and unit)
-   - Humidity level if specified
-   - Operating schedule (continuous, batch, hours/day, etc.)
+   - Exhaust air flow rate (preserve exact units: m³/h, Nm³/h, kg/h, etc.)
+   - Gas temperature (exact value and unit)
+   - Pressure (exact value and unit; note if positive/negative)
+   - Humidity/relative humidity/dew point
+   - Oxygen content (if specified)
+   - Particulate/aerosol load (if specified)
+   - Operating schedule (continuous, batch, hours per day, seasonal)
 
-3. **Current Abatement Measures/Technologies**:
-   - Existing VOC treatment systems in place
-   - Technologies employed (thermal oxidizer, scrubber, adsorption, etc.)
-   - Performance of current systems
-   - Limitations or problems with current setup
+3. **Current Abatement Systems** (if any):
+   - Existing treatment technologies in place
+   - Current removal efficiencies or outlet concentrations
+   - Problems with existing systems (fouling, OPEX, compliance issues)
+   - Maintenance schedules and costs
 
-4. **Application Context**:
-   - Industry type (printing, coating, chemical, etc.)
-   - Process type (continuous, batch, etc.)
-   - Specific processes generating VOCs
+4. **Industry and Process Context**:
+   - Industry sector (chemical, food, printing, coating, wastewater, etc.)
+   - Specific processes generating exhaust air
+   - Production volumes or capacity
+   - Raw materials used (relevant to pollutant composition)
 
 5. **Requirements & Constraints**:
-   - Target removal efficiency (%)
-   - Space constraints
-   - Energy consumption targets or limits
-   - Regulatory requirements (emissions limits, permits, etc.)
-   - Budget constraints
-   - ATEX/safety requirements
+   - Target removal efficiency (%) or outlet concentration limits
+   - Regulatory requirements (TA Luft, IED BAT, local permits, emission limits)
+   - Space constraints (footprint, height, weight limits)
+   - Energy consumption limits or targets
+   - Budget constraints (CAPEX/OPEX)
+   - ATEX classification (if mentioned: Zone 0/1/2, explosive atmospheres)
+   - Safety requirements (fire protection, corrosion resistance, etc.)
 
-6. **Additional Information**:
-   - Any special requirements
-   - Timeline expectations
-   - Existing infrastructure
-   - Site conditions
+6. **Site Conditions**:
+   - Available utilities (electricity voltage/phases, water, compressed air, steam)
+   - Installation location (indoor/outdoor, rooftop, ground level)
+   - Ambient conditions (temperature range, humidity, corrosive environment)
+   - Access constraints
 
-Return ONLY the extracted facts as a valid JSON object. Preserve all original wording, numbers, and units exactly as they appear in the documents.
+7. **Customer Knowledge & Expectations**:
+   - Does customer mention oxytec, NTP, UV/ozone, or scrubbers explicitly?
+   - What technologies is customer currently considering or has experience with?
+   - Any previous quotes, pilots, or engagements mentioned?
+   - Specific technology preferences or constraints stated?
+   - Customer's technical sophistication level (if apparent from document style)
+
+8. **Timeline & Project Phase**:
+   - Project timeline or urgency
+   - Current project phase (inquiry, feasibility, detailed design, tender)
+
+9. **Data Quality Issues** (CRITICAL - always populate):
+   - List all missing standard parameters (e.g., "Humidity not specified")
+   - Flag anomalies (e.g., "Duplicate CAS 104-76-7 for different substances")
+   - Note unusual values (e.g., "Gas temperature 10°C unusually low for industrial exhaust")
+   - Estimate impact: CRITICAL (prevents sizing), HIGH (±30% uncertainty), MEDIUM (±10-20%), LOW (<10%)
+
+Return ONLY a valid JSON object. Preserve all original wording, numbers, and units exactly as they appear.
 """
 
         # Execute extraction with configured OpenAI model (gpt-5 by default)

@@ -2,6 +2,7 @@
 
 from typing import Any, Dict, List
 from app.services.rag_service import ProductRAGService
+from app.services.technology_rag_service import TechnologyRAGService
 from app.db.session import AsyncSessionLocal
 from app.utils.logger import get_logger
 
@@ -56,6 +57,69 @@ Categories:
 }
 
 
+OXYTEC_KNOWLEDGE_TOOL = {
+    "name": "search_oxytec_knowledge",
+    "description": """Search Oxytec's internal knowledge base for technology capabilities, application examples,
+design guidelines, and case studies from the Oxytec catalog.
+
+Use this tool to:
+- Find which oxytec technologies (NTP, UV/ozone, scrubbers, hybrids) are suitable for specific pollutants or industries
+- Retrieve performance data (removal efficiencies, energy consumption, maintenance requirements)
+- Access application examples and case studies for similar situations
+- Get design parameters (GHSV, temperature ranges, flow rates) for different technologies
+- Check technology limitations and constraints
+
+Available technology types:
+- uv_ozone: UV/Ozon systems (CEA, CFA)
+- scrubber: Wet scrubbers (CWA, CSA)
+- catalyst: Catalytic reactors (KAT)
+- heat_recovery: Heat recovery systems (AAH)
+- hybrid: Multi-stage combinations
+
+Available pollutant types:
+- VOC, formaldehyde, H2S, ammonia, SO2, odor, fett, keime, particulates, teer
+
+Available industries:
+- food_processing, wastewater, chemical, textile, printing, agriculture, rendering
+
+Query Strategy:
+- Start broad: "UV ozone VOC removal food industry" before "UV ozone 1800 mg/m3 2-ethylhexanol"
+- Use natural language: "formaldehyde removal efficiency textile coating"
+- Combine pollutants and industries: "ammonia H2S livestock wastewater"
+""",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "query": {
+                "type": "string",
+                "description": "Natural language search query describing pollutant, industry, or technical parameter"
+            },
+            "technology_type": {
+                "type": "string",
+                "enum": ["uv_ozone", "scrubber", "catalyst", "heat_recovery", "hybrid"],
+                "description": "Optional: Filter by specific technology type"
+            },
+            "pollutant_filter": {
+                "type": "string",
+                "description": "Optional: Filter by pollutant type (e.g., 'VOC', 'formaldehyde', 'H2S')"
+            },
+            "industry_filter": {
+                "type": "string",
+                "description": "Optional: Filter by industry (e.g., 'food_processing', 'wastewater')"
+            },
+            "top_k": {
+                "type": "integer",
+                "description": "Number of results to return (1-10, default: 5)",
+                "default": 5,
+                "minimum": 1,
+                "maximum": 10
+            }
+        },
+        "required": ["query"]
+    }
+}
+
+
 WEB_SEARCH_TOOL = {
     "name": "search_web",
     "description": """Search the web for technical information about plasma treatment, UV/ozone processes,
@@ -97,6 +161,7 @@ def get_tools_for_subagent(tool_names: List[str]) -> List[Dict[str, Any]]:
 
     available_tools = {
         "product_database": PRODUCT_DATABASE_TOOL,
+        "oxytec_knowledge_search": OXYTEC_KNOWLEDGE_TOOL,
         "web_search": WEB_SEARCH_TOOL,
     }
 
@@ -141,6 +206,8 @@ class ToolExecutor:
         try:
             if tool_name == "search_product_database":
                 return await self._search_product_database(tool_input)
+            elif tool_name == "search_oxytec_knowledge":
+                return await self._search_oxytec_knowledge(tool_input)
             elif tool_name == "search_web":
                 return await self._search_web(tool_input)
             else:
@@ -171,6 +238,53 @@ class ToolExecutor:
             "query": query,
             "results_count": len(results),
             "results": results
+        }
+
+    async def _search_oxytec_knowledge(self, tool_input: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute oxytec knowledge base search."""
+
+        query = tool_input.get("query")
+        technology_type = tool_input.get("technology_type")
+        pollutant_filter = tool_input.get("pollutant_filter")
+        industry_filter = tool_input.get("industry_filter")
+        top_k = tool_input.get("top_k", 5)
+
+        # Create a new database session for this tool call
+        async with AsyncSessionLocal() as db:
+            tech_rag_service = TechnologyRAGService(db)
+            results = await tech_rag_service.search_knowledge(
+                query=query,
+                top_k=top_k,
+                technology_type=technology_type,
+                pollutant_filter=pollutant_filter,
+                industry_filter=industry_filter
+            )
+
+        # Format results for agent consumption
+        formatted_results = []
+        for result in results:
+            formatted_results.append({
+                "title": result["title"],
+                "technology_type": result["technology_type"],
+                "page_number": result["page_number"],
+                "chunk_type": result["chunk_type"],
+                "content": result["chunk_text"],
+                "pollutants": result["pollutant_types"],
+                "industries": result["industries"],
+                "products": result["products_mentioned"],
+                "relevance_score": round(result["similarity"], 3)
+            })
+
+        return {
+            "query": query,
+            "filters_applied": {
+                "technology_type": technology_type,
+                "pollutant": pollutant_filter,
+                "industry": industry_filter
+            },
+            "results_count": len(formatted_results),
+            "results": formatted_results,
+            "message": f"Found {len(formatted_results)} relevant knowledge chunks from Oxytec catalog"
         }
 
     async def _search_web(self, tool_input: Dict[str, Any]) -> Dict[str, Any]:

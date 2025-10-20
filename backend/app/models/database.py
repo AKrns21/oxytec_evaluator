@@ -215,3 +215,99 @@ class ProductEmbedding(Base):
 
     # Relationships
     product: Mapped["Product"] = relationship(back_populates="embeddings")
+
+
+class TechnologyKnowledge(Base):
+    """Oxytec technology knowledge base (from catalog pages)."""
+
+    __tablename__ = "technology_knowledge"
+
+    id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid4
+    )
+
+    # Source identification
+    page_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    rubric: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+
+    # Technology categorization
+    technology_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    # Values: 'uv_ozone', 'plasma_ntp', 'scrubber', 'heat_recovery', 'hybrid', 'general'
+
+    # Content (structured from JSON)
+    content: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    # Stores: body text, tables, sections, application examples, technical specs
+
+    # Metadata for filtering
+    pollutant_types: Mapped[Optional[list]] = mapped_column(JSONB, nullable=True)
+    # e.g., ["VOC", "formaldehyde", "H2S", "ammonia", "odor", "keime", "fett"]
+
+    industries: Mapped[Optional[list]] = mapped_column(JSONB, nullable=True)
+    # e.g., ["food_processing", "textile", "printing", "chemical", "wastewater"]
+
+    products_mentioned: Mapped[Optional[list]] = mapped_column(JSONB, nullable=True)
+    # e.g., ["CEA", "CFA", "CWA", "CSA", "KAT"]
+
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now()
+    )
+
+    # Relationships
+    embeddings: Mapped[list["TechnologyEmbedding"]] = relationship(
+        back_populates="technology",
+        cascade="all, delete-orphan"
+    )
+
+    __table_args__ = (
+        Index("idx_tech_knowledge_type", "technology_type"),
+        Index("idx_tech_knowledge_page", "page_number"),
+    )
+
+
+class TechnologyEmbedding(Base):
+    """Vector embeddings for technology knowledge (RAG)."""
+
+    __tablename__ = "technology_embeddings"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    technology_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("technology_knowledge.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    # Chunking strategy
+    chunk_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    # Values: 'header', 'description', 'application_example', 'technical_data',
+    #         'function', 'advantages', 'process_step', 'table_data'
+
+    chunk_text: Mapped[str] = mapped_column(Text, nullable=False)
+    chunk_metadata: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+    # Stores: pollutants, industries, removal_efficiency, case_study_details
+
+    embedding: Mapped[Optional[list[float]]] = mapped_column(Vector(1536), nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=func.now()
+    )
+
+    # Relationships
+    technology: Mapped["TechnologyKnowledge"] = relationship(back_populates="embeddings")
+
+    __table_args__ = (
+        Index("idx_tech_embeddings_tech_id", "technology_id"),
+        Index("idx_tech_embeddings_type", "chunk_type"),
+    )

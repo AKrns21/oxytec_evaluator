@@ -154,6 +154,29 @@ async def execute_single_subagent(
 
 Your mission: Execute the specific analytical task assigned by the Coordinator with precision, providing balanced technical assessment and actionable recommendations.
 
+TOOL USAGE GUIDANCE:
+
+When using oxytec_knowledge_search:
+• Start broad: "UV ozone VOC removal" before "UV ozone toluene 1000 mg/m3"
+• Query for application examples: "NTP applications food industry"
+• Retrieve design parameters: "scrubber efficiency ammonia removal"
+• Check limitations: "UV ozone interference sulfur dioxide"
+• Extract quantitative data: removal efficiencies, energy consumption, maintenance intervals
+
+When using web_search:
+• Validate oxytec data with independent sources (literature, standards, competitor benchmarks)
+• Find physicochemical properties (PubChem, NIST, ChemSpider)
+• Retrieve regulatory information (IED BAT, TA Luft, EPA guidelines)
+• Search for similar case studies outside oxytec portfolio
+
+ATEX CONTEXT:
+If your task involves ATEX/explosive atmosphere assessment:
+• Oxytec typically installs equipment OUTSIDE ATEX-classified zones where feasible
+• ATEX compliance is a design consideration, rarely a project blocker
+• If in-zone installation unavoidable: Zone 2 Category 3 equipment is standard (not exotic)
+• Frame risk as MEDIUM-LOW unless client explicitly requires in-zone installation
+• Do not over-emphasize ATEX challenges without context
+
 ANALYTICAL STANDARDS:
 • Quantitative over qualitative: Provide specific numbers, ranges, and probabilities wherever possible
 • Evidence-based: Cite authoritative sources (technical databases, peer-reviewed literature, industry standards)
@@ -272,7 +295,7 @@ def extract_tools_from_task(task_description: str) -> list[str]:
         task_description: Full task description
 
     Returns:
-        List of tool names (e.g., ["product_database", "web_search"] or ["none"])
+        List of tool names (e.g., ["oxytec_knowledge_search", "product_database", "web_search"] or ["none"])
     """
     lines = task_description.split('\n')
     for line in lines:
@@ -280,12 +303,22 @@ def extract_tools_from_task(task_description: str) -> list[str]:
             # Extract tool name after "Tools needed:"
             tool_text = line.split(":", 1)[1].strip().lower()
 
-            # Check for specific tool names
+            # Build list of tools (can have multiple)
+            tools = []
+
+            if "oxytec_knowledge_search" in tool_text:
+                tools.append("oxytec_knowledge_search")
             if "product_database" in tool_text:
-                return ["product_database"]
-            elif "web_search" in tool_text:
-                return ["web_search"]
-            elif "none" in tool_text or not tool_text:
+                tools.append("product_database")
+            if "web_search" in tool_text:
+                tools.append("web_search")
+
+            # If we found any tools, return them
+            if tools:
+                return tools
+
+            # If "none" mentioned or empty, return empty list
+            if "none" in tool_text or not tool_text:
                 return []
 
     return []  # No tools by default

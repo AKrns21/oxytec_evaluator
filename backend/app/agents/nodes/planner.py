@@ -60,7 +60,7 @@ async def planner_node(state: GraphState) -> dict[str, Any]:
    - **Method hints / quality criteria**: Provide specific guidance on HOW to perform the analysis (e.g., "Use authoritative property databases like PubChem", "Provide conservative assessments", "Compare against industry benchmarks")
    - **Deliverables (concise outputs, machine-usable)**: Specify exact format of outputs (e.g., "Table of compounds with properties", "Ranked shortlist with justification")
    - **Dependencies / sequencing**: Note what can run in parallel vs what needs other results
-   - **Tools needed** (if any): Specify which tools this subagent should use: "product_database" for searching Oxytec catalog, "web_search" for external research, or "none"
+   - **Tools needed** (if any): Specify which tools this subagent should use: "oxytec_knowledge_search" for Oxytec's internal knowledge base, "product_database" for Oxytec catalog, "web_search" for external research, or "none"
 
 2. **relevant_content** (JSON string): Extract ONLY the specific JSON fields this subagent needs from the extracted_facts above. Pass them as a JSON string (not a list of field names). Do not alter values or structure.
 
@@ -131,13 +131,49 @@ Dependencies / sequencing: Independent — can run in parallel with chemical ana
 Tools needed: product_database (to check typical Oxytec reactor volumes for GHSV estimation)
 ```
 
+**Example 3: Technology Screening (MUST use oxytec_knowledge_search)**
+```
+Subagent: Technology Screening & Selection Specialist
+
+Objective (narrow): Determine which oxytec technologies (NTP, UV/ozone, wet scrubbers, or combinations) are technically suitable for the pollutants in this exhaust stream. Provide quantitative comparison and ranked recommendations.
+
+Questions to answer (explicit):
+- Query oxytec knowledge base: Which oxytec technologies have been successfully applied to similar pollutants? Retrieve application examples and performance data.
+- For each pollutant category (e.g., VOCs, odors, inorganics): What are typical removal efficiencies for NTP, UV/ozone, and scrubbers? [Cite oxytec data + literature]
+- Compare technologies on:
+  • Technical feasibility (can achieve target outlet concentration?)
+  • Specific energy consumption [kWh per kg pollutant or per 1000 Nm³]
+  • Footprint and weight (relevant for rooftop installations)
+  • CAPEX scaling factors [€ per Nm³/h capacity]
+  • Maintenance requirements (cleaning intervals, consumables)
+  • Known limitations for this pollutant mix
+- Is a single-stage or multi-stage system required? Justify.
+- Create scoring matrix: Technical (1-5), Economic (1-5), Safety (1-5), Integration (1-5)
+
+Method hints:
+- START with oxytec_knowledge_search: "UV ozone removal efficiency [pollutant name]", "NTP applications [industry type]", "scrubber design [gas type]"
+- Cross-reference with web_search for independent validation and competitor benchmarks
+- Use conservative estimates (90th percentile, not best-case)
+- For hybrid systems: Evaluate synergies (e.g., scrubber removes interferences, improves NTP efficiency)
+
+Deliverables:
+- Technology comparison table (4-5 technologies × 8-10 criteria)
+- Ranked shortlist (1st, 2nd, 3rd choice) with 2-3 sentence justification each
+- Hybrid system recommendation if single technology insufficient (with staging logic)
+
+Dependencies: INDEPENDENT - can run immediately, but results inform all downstream tasks
+
+Tools needed: oxytec_knowledge_search, web_search
+```
+
 **Key differences to note:**
 - Example 1: Chemical/analytical focus, uses web_search for literature
 - Example 2: Quantitative/engineering focus, uses product_database for equipment data
-- Both: Highly specific questions, quantitative method hints, structured deliverables, explicit confidence/uncertainty
-- Both: Clear dependencies and tools needed statement
-- Both: **Require risk severity classification (CRITICAL/HIGH/MEDIUM/LOW) and mitigation strategies for each challenge**
-- Both: **Balance technical rigor - assess both challenges AND opportunities, not just risks**
+- Example 3: Technology selection focus, uses oxytec_knowledge_search for internal knowledge base
+- All: Highly specific questions, quantitative method hints, structured deliverables, explicit confidence/uncertainty
+- All: Clear dependencies and tools needed statement
+- All: **Require risk severity classification (CRITICAL/HIGH/MEDIUM/LOW) and mitigation strategies for each challenge**
+- All: **Balance technical rigor - assess both challenges AND opportunities, not just risks**
 
 **Important rules:**
 - Create 3-8 subagents depending on case complexity
@@ -149,15 +185,34 @@ Tools needed: product_database (to check typical Oxytec reactor volumes for GHSV
 - **Require risk severity classification**: Subagents must classify risks as CRITICAL/HIGH/MEDIUM/LOW (not assume all risks are project-killing)
 - Include specific quality criteria and deliverable formats
 
+**CRITICAL PLANNING MANDATES:**
+
+**A. TECHNOLOGY SELECTION MANDATE**
+ALWAYS create a "Technology Screening" subagent that:
+- Uses **oxytec_knowledge_search** to find which oxytec technologies (NTP, UV/ozone, scrubbers, hybrids) match the pollutants
+- Checks application examples from oxytec knowledge base
+- Compares technologies quantitatively (efficiency, energy, CAPEX, footprint)
+- Provides ranked shortlist with justifications
+
+**B. ATEX GUIDANCE** ⚠️
+IF pollutant concentrations suggest potential explosive atmosphere:
+- Create "Safety & Explosive Atmosphere" subagent
+- **IMPORTANT CONTEXT**: Oxytec typically installs equipment OUTSIDE ATEX zones where feasible
+- Subagent should assess:
+  • LEL calculations and zone classification
+  • Whether installation outside ATEX zone is possible (typical case)
+  • If equipment must be in ATEX zone: Required certifications (Zone 2 Category 3 typical)
+  • ATEX compliance is a DESIGN CONSIDERATION, not usually a project blocker
+- Risk classification: Usually MEDIUM or LOW (not HIGH) unless client explicitly requires in-zone installation
+
 Common subagent types (adapt as needed):
-1. VOC Analysis: Composition, concentrations, challenging compounds, destruction efficiency
-2. Product Selection: Identify suitable Oxytec equipment (NTP, UV, ozone, scrubbers)
+1. Pollutant Analysis: Composition, concentrations, challenging compounds, reactivity
+2. Technology Screening: Compare oxytec technologies (NTP, UV/ozone, scrubbers, hybrids) - **MUST use oxytec_knowledge_search**
 3. Flow/Mass Balance: Convert mass flows to volumetric flows, calculate removal loads
-4. Technology Screening: Compare NTP/UV/ozone/scrubbers/thermal, flag incompatibilities
-5. Safety/ATEX: Flammability risk, corrosion, materials of construction, safety controls
-6. Process Integration: Sizing, utilities, footprint, site requirements
-7. Economic Analysis: CAPEX/OPEX estimates, ROI, payback vs alternatives
-8. Regulatory Compliance: Emissions limits, permits, ATEX zones
+4. Safety/ATEX: Flammability risk (with context: usually installed outside ATEX zone)
+5. Process Integration: Sizing, utilities, footprint, site requirements
+6. Economic Analysis: CAPEX/OPEX estimates, ROI, payback vs alternatives
+7. Regulatory Compliance: Emissions limits, permits, standards
 
 Return a JSON object with this EXACT structure:
 {{

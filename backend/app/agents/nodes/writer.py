@@ -81,11 +81,18 @@ Provide a concise 2-3 sentence assessment of overall feasibility in German as co
 
 ## VOC-Zusammensetzung und Eignung
 
-Present a technical evaluation in German of whether NTP, UV/ozone, exhaust air scrubbers, or a combination is suitable. Base this strictly on risk assessment findings.
+Present a technical evaluation in German of which oxytec technology (NTP, UV/ozone, exhaust air scrubbers, or combinations) is most suitable. Base this strictly on risk assessment findings.
+
+**CRITICAL - TECHNOLOGY-AGNOSTIC POSITIONING:**
+- Oxytec is technology-agnostic: We offer NTP, UV/ozone, scrubbers, and hybrid systems
+- State explicitly which technology is MOST suitable based on pollutant characteristics
+- If UV/ozone or scrubbers are better than NTP: **Clearly communicate this** (do not default to NTP)
+- Justify technology selection with specific technical reasoning (reactivity, water solubility, LEL concerns, etc.)
+- Mention if hybrid systems offer advantages (e.g., scrubber pre-treatment + NTP polishing)
 
 Write as 2-3 continuous paragraphs (NO separators between paragraphs):
-- First paragraph: Which technologies are technically feasible and why
-- Second paragraph: Key chemical/physical considerations and expected treatment efficiency ranges
+- First paragraph: Which oxytec technology (NTP, UV/ozone, scrubber, or combination) is MOST suitable and why. Be explicit and technology-specific.
+- Second paragraph: Key chemical/physical considerations, expected treatment efficiency ranges, and any technology-specific advantages
 
 ## Positive Faktoren
 
