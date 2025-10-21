@@ -21,14 +21,14 @@ pip install uv && uv pip install -r pyproject.toml
 
 # Configure environment
 cp .env.example .env
-# Edit .env with ANTHROPIC_API_KEY and OPENAI_API_KEY
+# Edit .env with:
+#   - ANTHROPIC_API_KEY (for Claude models)
+#   - OPENAI_API_KEY (for GPT models and embeddings)
+#   - DATABASE_URL (Supabase connection string)
 # Optional: Add LANGCHAIN_API_KEY for LangSmith tracing (see backend/docs/LANGSMITH_SETUP.md)
 
-# Start database (PostgreSQL with pgvector on port 5433)
-docker-compose up -d postgres
-
-# Load product data (required before first use)
-python backend/scripts/ingest_products.py --source backend/scripts/example_products.json
+# Note: Database is hosted on Supabase - no local setup needed
+# Product and technology data already loaded in Supabase
 
 # Frontend setup
 cd frontend
@@ -75,29 +75,14 @@ mypy app/              # Type checking
 
 ### Database Operations
 
-```bash
-# Create migration
-alembic revision --autogenerate -m "description"
+The application uses **Supabase** as the database backend with pgvector for semantic search.
 
-# Apply migrations
-alembic upgrade head
+**Schema includes:**
+- `sessions`, `documents`, `session_logs`, `agent_outputs` (session management)
+- `products`, `product_embeddings` (product catalog RAG)
+- `technology_knowledge`, `technology_embeddings` (technology knowledge RAG)
 
-# Rollback
-alembic downgrade -1
-
-# Reset database (development)
-docker-compose down -v && docker-compose up -d postgres
-```
-
-### Product Data Management
-
-```bash
-# Ingest products from JSON
-cd backend
-python scripts/ingest_products.py --source path/to/products.json
-
-# Example products provided in backend/scripts/example_products.json
-```
+All schema changes should be made directly in Supabase or via the SQLAlchemy models in `app/models/database.py`. The `init_db()` function in `app/db/session.py` creates tables automatically on startup if they don't exist.
 
 ## Architecture Overview
 
@@ -167,29 +152,42 @@ Tools are provided to Claude via the Anthropic SDK's tool calling API. The `Tool
 
 ### RAG Implementation
 
-Product database search (`app/services/rag_service.py`):
+**Product RAG** (`app/services/rag_service.py`):
 1. User query → OpenAI embedding (1536 dimensions)
-2. PostgreSQL pgvector cosine similarity search: `embedding <=> query_embedding`
+2. Supabase pgvector cosine similarity search: `embedding <=> query_embedding`
 3. Returns top-k products with similarity scores
-4. Chunks are pre-generated during product ingestion to ensure relevant context
+4. Chunks are pre-generated to ensure relevant context
+
+**Technology Knowledge RAG** (`app/services/technology_rag_service.py`):
+1. Similar embedding-based search over Oxytec technology catalog
+2. Supports filtering by technology type, pollutant, industry, and chunk type
+3. Currently contains 21 technology knowledge entries with 95 embeddings
 
 Product data is chunked into:
 - Header (name + category)
 - Description chunks (max 500 chars)
 - Technical specifications
 
-## Database Schema
+## Database Schema (Supabase)
+
+All tables hosted on **Supabase PostgreSQL with pgvector extension**.
 
 Key tables in `app/models/database.py`:
 
+**Session Management:**
 - **sessions**: Main session tracking (status: pending/processing/completed/failed)
 - **session_logs**: Detailed logs for debugging each agent execution
 - **agent_outputs**: Stores output from each agent node with token usage and duration
 - **documents**: Uploaded files with extracted content cached in JSONB
+
+**RAG Tables:**
 - **products**: Oxytec product catalog
-- **product_embeddings**: Vector embeddings for RAG (uses pgvector type)
+- **product_embeddings**: Vector embeddings for product search (pgvector)
+- **technology_knowledge**: Oxytec technology catalog knowledge base
+- **technology_embeddings**: Vector embeddings for technology search (pgvector)
 
 All use async SQLAlchemy 2.0 with proper type hints via `Mapped[]`.
+Database connection is managed via `app/db/session.py` with connection pooling (20 connections).
 
 ## API Endpoints
 
@@ -249,9 +247,7 @@ Environment variables in `app/config.py` (loaded from `.env`):
 Critical settings:
 - `ANTHROPIC_API_KEY`: Required for Writer agent (German report generation)
 - `OPENAI_API_KEY`: Required for Extractor, Planner, Subagents, Risk Assessor, and embeddings/RAG
-- `DATABASE_URL`: Use `postgresql+asyncpg://` scheme for async
-  - Local development: `postgresql+asyncpg://oxytec:oxytec_password@localhost:5433/oxytec_db`
-  - Docker internal: `postgresql+asyncpg://oxytec:oxytec_dev_password@postgres:5432/oxytec_db`
+- `DATABASE_URL`: Supabase PostgreSQL connection string (format: `postgresql+asyncpg://user:pass@host.supabase.co:5432/postgres`)
 
 **Agent-specific model configuration:**
 - `EXTRACTOR_MODEL`: Model for data extraction (default: gpt-5)
@@ -379,9 +375,10 @@ docker-compose up frontend
 
 - Typical processing time: 40-70 seconds per feasibility study
 - Parallel subagent execution is CPU-bound on LLM API calls, not I/O
-- Database connection pool sized for concurrent agent operations (20 connections)
+- Supabase connection pool sized for concurrent agent operations (20 connections)
 - Document extraction is cached in `documents.extracted_content` JSONB field
 - Consider using Haiku model for simple extraction tasks to reduce costs
+- RAG searches use pgvector cosine similarity for fast semantic retrieval
 
 ## Testing Philosophy
 

@@ -87,7 +87,7 @@ class PDFService:
         body {{
             font-family: 'Roboto', Arial, sans-serif;
             font-size: 11pt;
-            line-height: 1.6;
+            line-height: 1.3;
             color: #333;
         }}
 
@@ -119,7 +119,7 @@ class PDFService:
         p {{
             margin-bottom: 10pt;
             text-align: justify;
-            line-height: 1.6;
+            line-height: 1.3;
         }}
 
         ul {{
@@ -131,7 +131,7 @@ class PDFService:
         li {{
             margin-left: 20pt;
             margin-bottom: 8pt;
-            line-height: 1.6;
+            line-height: 1.3;
             padding-left: 5pt;
         }}
 
