@@ -4,11 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, FileText } from "lucide-react";
-
-interface ResultsViewerProps {
-  result: any;
-  sessionId?: string;
-}
+import { ResultsViewerProps, extractFeasibilityRating } from "@/types/session";
 
 export default function ResultsViewer({ result, sessionId }: ResultsViewerProps) {
   const handleDownload = async () => {

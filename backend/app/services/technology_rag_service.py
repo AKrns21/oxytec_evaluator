@@ -74,11 +74,13 @@ class TechnologyRAGService:
                 params["technology_type"] = technology_type
 
             if pollutant_filter:
-                where_clauses.append(":pollutant = ANY(tk.pollutant_types)")
+                # JSONB arrays need to be accessed as JSON text arrays, not native PostgreSQL arrays
+                where_clauses.append("tk.pollutant_types ? :pollutant")
                 params["pollutant"] = pollutant_filter
 
             if industry_filter:
-                where_clauses.append(":industry = ANY(tk.industries)")
+                # JSONB arrays need to be accessed as JSON text arrays, not native PostgreSQL arrays
+                where_clauses.append("tk.industries ? :industry")
                 params["industry"] = industry_filter
 
             if chunk_type:
@@ -205,6 +207,7 @@ class TechnologyRAGService:
         """
 
         try:
+            # Use JSONB ? operator to check if pollutant exists in the JSONB array
             sql_query = text("""
                 SELECT DISTINCT
                     technology_type,
@@ -212,7 +215,7 @@ class TechnologyRAGService:
                     page_number,
                     products_mentioned
                 FROM technology_knowledge
-                WHERE :pollutant = ANY(pollutant_types)
+                WHERE pollutant_types ? :pollutant
                 ORDER BY technology_type, page_number
             """)
 
@@ -261,11 +264,13 @@ class TechnologyRAGService:
             params = {}
 
             if industry:
-                where_clauses.append(":industry = ANY(tk.industries)")
+                # JSONB ? operator checks if key exists in JSONB array
+                where_clauses.append("tk.industries ? :industry")
                 params["industry"] = industry
 
             if pollutant:
-                where_clauses.append(":pollutant = ANY(tk.pollutant_types)")
+                # JSONB ? operator checks if key exists in JSONB array
+                where_clauses.append("tk.pollutant_types ? :pollutant")
                 params["pollutant"] = pollutant
 
             where_sql = " AND ".join(where_clauses)

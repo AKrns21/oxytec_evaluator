@@ -1,19 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SSEEvent, SessionResult, SessionStatus } from "@/types/session";
 
-interface SSEEvent {
-  type: string;
-  status?: string;
-  updated_at?: string;
-  result?: any;
-  error?: string;
-}
-
+/**
+ * Custom hook for Server-Sent Events (SSE) to track session progress
+ *
+ * @param sessionId - UUID of the session to monitor
+ * @returns Object containing events, status, result, and error state
+ */
 export function useSSE(sessionId: string) {
   const [events, setEvents] = useState<SSEEvent[]>([]);
-  const [status, setStatus] = useState<string>("connecting");
-  const [result, setResult] = useState<any>(null);
+  const [status, setStatus] = useState<SessionStatus | "connecting" | "connected" | "error">("connecting");
+  const [result, setResult] = useState<SessionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,29 +26,49 @@ export function useSSE(sessionId: string) {
     };
 
     eventSource.addEventListener("status", (event) => {
-      const data = JSON.parse(event.data);
-      setEvents((prev) => [...prev, data]);
-      setStatus(data.status);
+      try {
+        const data = JSON.parse(event.data) as SSEEvent;
+        setEvents((prev) => [...prev, data]);
+        if (data.status) {
+          setStatus(data.status);
+        }
+      } catch (parseError) {
+        console.error("Failed to parse status event:", parseError);
+        setError("Failed to parse server response");
+      }
     });
 
     eventSource.addEventListener("final", (event) => {
-      const data = JSON.parse(event.data);
-      setEvents((prev) => [...prev, data]);
-      setStatus(data.status);
+      try {
+        const data = JSON.parse(event.data) as SSEEvent;
+        setEvents((prev) => [...prev, data]);
+        if (data.status) {
+          setStatus(data.status);
+        }
 
-      if (data.status === "completed") {
-        setResult(data.result);
-      } else if (data.status === "failed") {
-        setError(data.error || "Unknown error occurred");
+        if (data.status === "completed" && data.result) {
+          setResult(data.result);
+        } else if (data.status === "failed") {
+          setError(data.error || "Unknown error occurred");
+        }
+
+        eventSource.close();
+      } catch (parseError) {
+        console.error("Failed to parse final event:", parseError);
+        setError("Failed to parse final result");
+        eventSource.close();
       }
-
-      eventSource.close();
     });
 
-    eventSource.addEventListener("error", (event: any) => {
-      const data = event.data ? JSON.parse(event.data) : {};
-      setError(data.error || "Connection error");
-      setStatus("error");
+    eventSource.addEventListener("error", (event: MessageEvent) => {
+      try {
+        const data = event.data ? JSON.parse(event.data) : {};
+        setError(data.error || "Connection error");
+        setStatus("error");
+      } catch (parseError) {
+        setError("Connection error");
+        setStatus("error");
+      }
       eventSource.close();
     });
 

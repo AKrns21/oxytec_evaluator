@@ -202,6 +202,12 @@ Return a JSON object with the following structure:
   "justification": "Detailed justification referencing specific risk classifications and mitigation feasibility"
 }}
 
+**UNIT FORMATTING**: Use plain ASCII for all units to avoid encoding issues:
+- Write "h^-1" or "h-1" instead of "h⁻¹"
+- Write "m^3" or "m3" instead of "m³"
+- Write "degC" or just "C" instead of "°C"
+- Avoid all Unicode superscripts, subscripts, and special characters
+
 Remember: Oxytec's business success depends on realistic assessment AND finding viable paths forward. Distinguish between insurmountable barriers (REJECT) and solvable engineering challenges (PROCEED with mitigation plan).
 """
 

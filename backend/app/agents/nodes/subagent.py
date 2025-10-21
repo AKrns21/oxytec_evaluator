@@ -22,6 +22,8 @@ async def execute_subagents_parallel(state: GraphState) -> dict[str, Any]:
     - Relevant subset of extracted facts
     - Access to specific tools
 
+    Uses a semaphore to limit concurrent execution to prevent resource exhaustion.
+
     Args:
         state: Current graph state with planner_plan
 
@@ -34,7 +36,12 @@ async def execute_subagents_parallel(state: GraphState) -> dict[str, Any]:
     subagent_definitions = plan.get("subagents", [])
 
     if not subagent_definitions:
-        logger.warning("no_subagents_to_execute", session_id=session_id)
+        logger.warning(
+            "no_subagents_to_execute",
+            session_id=session_id,
+            planner_plan_keys=list(plan.keys()) if isinstance(plan, dict) else "not_a_dict",
+            planner_plan_type=type(plan).__name__
+        )
         return {"subagent_results": []}
 
     logger.info(
@@ -43,21 +50,77 @@ async def execute_subagents_parallel(state: GraphState) -> dict[str, Any]:
         num_subagents=len(subagent_definitions)
     )
 
-    # Create tasks for parallel execution
+    # Validate subagent definitions structure
+    valid_definitions = []
+    for idx, subagent_def in enumerate(subagent_definitions):
+        if not isinstance(subagent_def, dict):
+            logger.error(
+                "invalid_subagent_definition_not_dict",
+                session_id=session_id,
+                index=idx,
+                type=type(subagent_def).__name__
+            )
+            continue
+
+        if "task" not in subagent_def or "relevant_content" not in subagent_def:
+            logger.error(
+                "invalid_subagent_definition_missing_fields",
+                session_id=session_id,
+                index=idx,
+                has_task="task" in subagent_def,
+                has_relevant_content="relevant_content" in subagent_def,
+                available_keys=list(subagent_def.keys())
+            )
+            continue
+
+        valid_definitions.append(subagent_def)
+
+    if not valid_definitions:
+        logger.error(
+            "no_valid_subagent_definitions",
+            session_id=session_id,
+            total_definitions=len(subagent_definitions)
+        )
+        return {
+            "subagent_results": [],
+            "errors": [f"All {len(subagent_definitions)} subagent definitions were invalid"]
+        }
+
+    if len(valid_definitions) < len(subagent_definitions):
+        logger.warning(
+            "some_subagent_definitions_invalid",
+            session_id=session_id,
+            valid=len(valid_definitions),
+            invalid=len(subagent_definitions) - len(valid_definitions)
+        )
+
+    subagent_definitions = valid_definitions
+
+    # Create semaphore to limit concurrent subagent execution
+    # This prevents database connection pool exhaustion and API rate limit issues
+    MAX_PARALLEL_SUBAGENTS = 5
+    semaphore = asyncio.Semaphore(MAX_PARALLEL_SUBAGENTS)
+
+    # Create tasks for parallel execution with semaphore
+    async def limited_execute_subagent(subagent_def, state, instance_name):
+        """Execute single subagent with semaphore control."""
+        async with semaphore:
+            return await execute_single_subagent(subagent_def, state, instance_name)
+
     tasks = []
     for idx, subagent_def in enumerate(subagent_definitions):
         # Extract name from task description for instance naming
         task_desc = subagent_def.get("task", "")
         agent_name = extract_agent_name(task_desc) or f"agent_{idx}"
 
-        task = execute_single_subagent(
+        task = limited_execute_subagent(
             subagent_def=subagent_def,
             state=state,
             instance_name=f"subagent_{idx}_{agent_name}"
         )
         tasks.append(task)
 
-    # Execute all subagents in parallel
+    # Execute all subagents in parallel with semaphore limiting
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     # Collect results and errors
@@ -137,6 +200,13 @@ async def execute_single_subagent(
         logger.debug("step_2_extract_tools", agent_name=agent_name)
         tool_names = extract_tools_from_task(task_description)
 
+        # CRITICAL LOGGING: Verify tool extraction for debugging
+        logger.info("tools_extracted_from_task",
+                   agent_name=agent_name,
+                   tool_names=tool_names,
+                   has_tools=len(tool_names) > 0,
+                   task_preview=task_description[:300])  # Log task start to verify "Tools needed:" line
+
         # Build subagent prompt (now much simpler - task description has everything)
         logger.debug("step_3_build_prompt", agent_name=agent_name)
         prompt = build_subagent_prompt_v2(
@@ -147,7 +217,20 @@ async def execute_single_subagent(
         # Get tool definitions for this subagent
         logger.debug("step_4_get_tools", agent_name=agent_name, tool_names=tool_names)
         tools = get_tools_for_subagent(tool_names)
-        logger.debug("step_4_tools_retrieved", agent_name=agent_name, num_tools=len(tools) if tools else 0)
+
+        # CRITICAL VALIDATION: Ensure tools were retrieved successfully
+        logger.info("tools_retrieved",
+                   agent_name=agent_name,
+                   requested_tools=tool_names,
+                   retrieved_tools=[t.get("name") for t in tools] if tools else [],
+                   num_tools=len(tools) if tools else 0)
+
+        # ALERT: Technology screening without RAG is a critical failure
+        if "technology" in agent_name.lower() and "oxytec_knowledge_search" not in [t.get("name") for t in tools if t]:
+            logger.error("technology_screening_missing_rag_tool",
+                        agent_name=agent_name,
+                        available_tools=[t.get("name") for t in tools] if tools else [],
+                        message="Technology screening subagent created without oxytec_knowledge_search tool!")
 
         # Define enhanced system prompt for subagents with balanced analysis and solution focus
         system_prompt = """You are a specialist subagent contributing to a feasibility study for Oxytec AG (non-thermal plasma, UV/ozone, and air scrubbing technologies for industrial exhaust-air purification).
@@ -219,27 +302,37 @@ OUTPUT REQUIREMENTS:
 • **CRITICAL: Do NOT use markdown headers (# ## ###). Use plain text with clear section labels, paragraph breaks, and bullet/numbered lists only.**
 • Write in a professional, technical report style without decorative formatting
 • **INCLUDE MITIGATION STRATEGIES**: For each risk/challenge identified, provide specific recommendations for how Oxytec can address it
+• **UNIT FORMATTING**: Use plain ASCII for units - write "h^-1" or "h-1" instead of "h⁻¹", write "m^3" instead of "m³", write "°C" as "degC" or "C". Avoid Unicode superscripts/subscripts.
 
 Remember: Oxytec's business is solving difficult industrial exhaust-air challenges. Your role is to provide realistic assessment AND actionable paths forward. A good analysis identifies both obstacles AND solutions."""
 
         # Execute with configured model
-        # Note: Tools use Claude format, so use Claude for subagents with tools
-        # OpenAI for subagents without tools (text-only analysis)
+        # CRITICAL: Tools are in Claude/Anthropic format, so ALWAYS use Claude when tools are present
+        # Use OpenAI only for tool-free analysis tasks (cost optimization)
         from app.config import settings
 
         if tools:
-            # Use Claude for tool calling (tools are in Claude format)
-            logger.debug("step_5_execute_with_tools", agent_name=agent_name)
+            # ALWAYS use Claude for tool calling - tools are in Claude/Anthropic format
+            # OpenAI tool calling uses different format and is not compatible
+            logger.info("subagent_using_claude_for_tools",
+                       agent_name=agent_name,
+                       num_tools=len(tools),
+                       tool_names=[t.get("name") for t in tools])
+
             result = await llm_service.execute_with_tools(
                 prompt=prompt,
                 tools=tools,
                 max_iterations=5,
                 system_prompt=system_prompt,
-                temperature=settings.subagent_temperature
+                temperature=settings.subagent_temperature,
+                model="claude-3-haiku-20240307"  # Fast, cost-effective for tool calling
             )
         else:
-            # Use OpenAI for text-only analysis
-            logger.debug("step_5_execute_openai", agent_name=agent_name, model=settings.subagent_model)
+            # Use OpenAI for text-only analysis (no tools needed)
+            logger.info("subagent_using_openai_text_only",
+                       agent_name=agent_name,
+                       model=settings.subagent_model)
+
             result = await llm_service.execute_structured(
                 prompt=prompt,
                 response_format="text",
@@ -289,38 +382,61 @@ def extract_agent_name(task_description: str) -> str:
 def extract_tools_from_task(task_description: str) -> list[str]:
     """
     Extract tool names from task description.
-    Looks for "Tools needed: tool_name" line.
+    Looks for "Tools needed: tool_name" or "Tools: tool_name" line.
+
+    Supports variations:
+    - "Tools needed: oxytec_knowledge_search"
+    - "Tools: oxytec_knowledge_search, web_search"
+    - "Tools needed: none"
 
     Args:
         task_description: Full task description
 
     Returns:
-        List of tool names (e.g., ["oxytec_knowledge_search", "product_database", "web_search"] or ["none"])
+        List of tool names (e.g., ["oxytec_knowledge_search", "product_database", "web_search"])
+        Empty list if "none" or no tools line found
     """
     lines = task_description.split('\n')
     for line in lines:
-        if line.strip().lower().startswith("tools needed:"):
-            # Extract tool name after "Tools needed:"
+        line_lower = line.strip().lower()
+
+        # Support multiple variations of the tools line
+        if line_lower.startswith("tools needed:") or line_lower.startswith("tools:"):
+            # Extract tool text after the colon
             tool_text = line.split(":", 1)[1].strip().lower()
 
-            # Build list of tools (can have multiple)
+            # Build list of tools (can have multiple comma-separated)
             tools = []
 
-            if "oxytec_knowledge_search" in tool_text:
+            # Check for each known tool (case-insensitive, flexible matching)
+            if "oxytec_knowledge_search" in tool_text or "search_oxytec_knowledge" in tool_text:
                 tools.append("oxytec_knowledge_search")
-            if "product_database" in tool_text:
+            if "product_database" in tool_text or "search_product_database" in tool_text:
                 tools.append("product_database")
-            if "web_search" in tool_text:
+            if "web_search" in tool_text or "search_web" in tool_text:
                 tools.append("web_search")
 
-            # If we found any tools, return them
+            # If we found any tools, log and return them
             if tools:
+                logger.info("tools_parsed_from_task",
+                           raw_line=line.strip(),
+                           extracted_tools=tools)
                 return tools
 
-            # If "none" mentioned or empty, return empty list
+            # If "none" mentioned or empty, log and return empty list
             if "none" in tool_text or not tool_text:
+                logger.info("no_tools_specified", raw_line=line.strip())
                 return []
 
+            # If we found the line but couldn't parse tools, warn
+            logger.warning("tools_line_found_but_unparseable",
+                          raw_line=line.strip(),
+                          tool_text=tool_text)
+            return []
+
+    # No tools line found - log warning
+    logger.warning("no_tools_line_in_task",
+                  task_preview=task_description[:200])
     return []  # No tools by default
 
 

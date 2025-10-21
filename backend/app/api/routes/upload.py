@@ -141,13 +141,48 @@ async def execute_agent_workflow(
     """
     Background task to execute the agent workflow.
 
+    Includes retry logic with exponential backoff for transient failures
+    like network glitches or temporary LLM API rate limits.
+
     Args:
         session_id: Session UUID
         documents: List of document metadata
         user_input: User-provided metadata
     """
 
+    from tenacity import (
+        retry,
+        stop_after_attempt,
+        wait_exponential,
+        retry_if_exception_type,
+        before_sleep_log
+    )
+    import httpx
+    import asyncio
+
     logger.info("agent_workflow_started", session_id=session_id)
+
+    # Define which exceptions should trigger a retry
+    # Network errors and rate limits are retryable; logic errors are not
+    retryable_exceptions = (
+        httpx.HTTPError,  # Network errors
+        asyncio.TimeoutError,  # Timeout errors
+        ConnectionError,  # Connection errors
+    )
+
+    @retry(
+        stop=stop_after_attempt(3),  # Maximum 3 attempts
+        wait=wait_exponential(multiplier=1, min=4, max=60),  # 4s, 16s, 60s delays
+        retry=retry_if_exception_type(retryable_exceptions),
+        before_sleep=before_sleep_log(logger, "WARNING")
+    )
+    async def run_agent_graph_with_retry():
+        """Execute agent graph with automatic retry on transient failures."""
+        return await run_agent_graph(
+            session_id=session_id,
+            documents=documents,
+            user_input=user_input
+        )
 
     async with AsyncSessionLocal() as db:
         try:
@@ -158,12 +193,8 @@ async def execute_agent_workflow(
             session.status = "processing"
             await db.commit()
 
-            # Run agent graph
-            result = await run_agent_graph(
-                session_id=session_id,
-                documents=documents,
-                user_input=user_input
-            )
+            # Run agent graph with retry logic
+            result = await run_agent_graph_with_retry()
 
             # Update session with results
             session.status = "completed"

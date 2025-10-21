@@ -193,6 +193,17 @@ ALWAYS create a "Technology Screening" subagent that:
 - Checks application examples from oxytec knowledge base
 - Compares technologies quantitatively (efficiency, energy, CAPEX, footprint)
 - Provides ranked shortlist with justifications
+- **CRITICAL**: The task description MUST include the exact line: "Tools needed: oxytec_knowledge_search"
+
+**VALIDATION**: Every technology screening task MUST have:
+```
+Tools needed: oxytec_knowledge_search
+```
+or
+```
+Tools needed: oxytec_knowledge_search, web_search
+```
+Without this exact format, the subagent will NOT have access to Oxytec's technology knowledge base and will fail to provide evidence-based technology recommendations.
 
 **B. ATEX GUIDANCE** ⚠️
 IF pollutant concentrations suggest potential explosive atmosphere:
@@ -214,7 +225,44 @@ Common subagent types (adapt as needed):
 6. Economic Analysis: CAPEX/OPEX estimates, ROI, payback vs alternatives
 7. Regulatory Compliance: Emissions limits, permits, standards
 
-Return a JSON object with this EXACT structure:
+**C. TOOL SPECIFICATION REQUIREMENTS** 🔧
+
+For EVERY subagent task description, you MUST include one of these tool specification lines:
+
+**Format Options:**
+- `Tools needed: none` (for pure analytical tasks without external data needs)
+- `Tools needed: oxytec_knowledge_search` (for Oxytec technology knowledge queries - **USE THIS FOR TECHNOLOGY SCREENING**)
+- `Tools needed: product_database` (for Oxytec product catalog queries)
+- `Tools needed: web_search` (for external research - literature, standards, competitor data)
+- `Tools needed: oxytec_knowledge_search, web_search` (multiple tools - common for technology screening)
+- `Tools needed: oxytec_knowledge_search, product_database` (for comprehensive technology + product research)
+- `Tools needed: product_database, web_search` (for product + external research)
+
+**Critical Rules:**
+- Format MUST be: "Tools needed: " followed by comma-separated tool names (lowercase, underscores)
+- Spelling must be exact: `oxytec_knowledge_search` NOT `oxytec-knowledge-search` or `oxytec_knowledge`
+- If no tools needed, explicitly write "Tools needed: none" (don't omit the line)
+- Technology screening subagents MUST have `oxytec_knowledge_search` or they will fail
+- Multiple tools should be comma-separated: `Tools needed: tool1, tool2`
+
+**Example Task Structure:**
+```
+Subagent: Technology Screening Engineer
+
+Objective: Determine suitable Oxytec technologies for VOC removal...
+
+Questions to answer:
+- Which Oxytec technologies handle these specific VOCs?
+- What are typical removal efficiencies?
+...
+
+Tools needed: oxytec_knowledge_search, web_search
+```
+
+**OUTPUT FORMAT - CRITICAL:**
+
+You MUST return a valid JSON object with this EXACT structure. Do NOT add markdown code blocks or any other formatting.
+
 {{
   "subagents": [
     {{
@@ -225,11 +273,21 @@ Return a JSON object with this EXACT structure:
   "reasoning": "Brief explanation of planning strategy emphasizing risk identification and parallel execution"
 }}
 
+**VALIDATION REQUIREMENTS:**
+- Include 3-10 subagents (min: 3, max: 10)
+- Each "task" field: 10-12000 characters
+- Each "relevant_content" field: Must be a non-empty JSON string
+- "reasoning" field: Optional but recommended
+- Return ONLY valid JSON, no markdown formatting
+
 Remember: The quality of subagent outputs depends entirely on the quality and detail of your task descriptions. Be thorough and prescriptive.
 """
 
         # Execute planning with configured OpenAI model (gpt-mini by default)
         from app.config import settings
+        from app.agents.validation import validate_planner_output
+        from pydantic import ValidationError
+
         plan = await llm_service.execute_structured(
             prompt=planning_prompt,
             system_prompt="You are a strategic planning coordinator for critical feasibility assessments. Create comprehensive, risk-focused parallel execution plans. Return only valid JSON.",
@@ -239,30 +297,50 @@ Remember: The quality of subagent outputs depends entirely on the quality and de
             openai_model=settings.planner_model
         )
 
-        num_subagents = len(plan.get("subagents", []))
+        # Validate plan structure with Pydantic
+        try:
+            validated_plan = validate_planner_output(plan)
+            plan = validated_plan.model_dump()  # Convert back to dict
 
-        logger.info(
-            "planner_completed",
-            session_id=session_id,
-            num_subagents=num_subagents
-        )
+            num_subagents = len(plan.get("subagents", []))
 
-        # Validate plan
-        if num_subagents == 0:
-            logger.warning("planner_no_subagents", session_id=session_id)
-            return {
-                "planner_plan": plan,
-                "warnings": ["Planner created 0 subagents"]
-            }
-
-        if num_subagents > 10:
-            logger.warning(
-                "planner_too_many_subagents",
+            logger.info(
+                "planner_completed_validated",
                 session_id=session_id,
-                count=num_subagents
+                num_subagents=num_subagents
             )
-            # Truncate to first 10
-            plan["subagents"] = plan["subagents"][:10]
+
+        except ValidationError as e:
+            logger.error(
+                "planner_validation_failed",
+                session_id=session_id,
+                validation_errors=str(e),
+                raw_plan_preview=str(plan)[:500]  # Log first 500 chars for debugging
+            )
+
+            # Check if plan has subagents despite validation error
+            if isinstance(plan, dict) and "subagents" in plan and len(plan["subagents"]) > 0:
+                logger.warning(
+                    "planner_validation_failed_but_has_subagents",
+                    session_id=session_id,
+                    num_subagents=len(plan["subagents"]),
+                    message="Proceeding with unvalidated plan to avoid blocking execution"
+                )
+                # Continue with unvalidated plan rather than blocking
+                return {
+                    "planner_plan": plan,
+                    "warnings": [f"Planner output validation failed but proceeding: {str(e)}"]
+                }
+            else:
+                # No subagents found - this is a critical failure
+                logger.error(
+                    "planner_validation_failed_no_subagents",
+                    session_id=session_id
+                )
+                return {
+                    "planner_plan": {"subagents": []},
+                    "errors": [f"Planner output validation failed: {str(e)}"]
+                }
 
         return {
             "planner_plan": plan

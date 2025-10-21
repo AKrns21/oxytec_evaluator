@@ -89,9 +89,10 @@ Present a technical evaluation in German of which oxytec technology (NTP, UV/ozo
 - If UV/ozone or scrubbers are better than NTP: **Clearly communicate this** (do not default to NTP)
 - Justify technology selection with specific technical reasoning (reactivity, water solubility, LEL concerns, etc.)
 - Mention if hybrid systems offer advantages (e.g., scrubber pre-treatment + NTP polishing)
+- **INCLUDE SPECIFIC OXYTEC PRODUCT NAMES** when mentioned in risk assessment (e.g., CEA, CFA, CWA, CSA, KAT product families)
 
 Write as 2-3 continuous paragraphs (NO separators between paragraphs):
-- First paragraph: Which oxytec technology (NTP, UV/ozone, scrubber, or combination) is MOST suitable and why. Be explicit and technology-specific.
+- First paragraph: Which oxytec technology (NTP, UV/ozone, scrubber, or combination) is MOST suitable and why. Be explicit and technology-specific. **Include specific Oxytec product family names (CEA, CFA, CWA, CSA, KAT) if available in the risk assessment.**
 - Second paragraph: Key chemical/physical considerations, expected treatment efficiency ranges, and any technology-specific advantages
 
 ## Positive Faktoren

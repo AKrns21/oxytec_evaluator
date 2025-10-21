@@ -216,6 +216,15 @@ class ProductEmbedding(Base):
     # Relationships
     product: Mapped["Product"] = relationship(back_populates="embeddings")
 
+    __table_args__ = (
+        Index("idx_product_embeddings_product_id", "product_id"),
+        # Vector index for fast similarity search using HNSW algorithm
+        # This dramatically improves performance for cosine similarity queries
+        # Note: This index is created via raw SQL in migrations
+        # CREATE INDEX product_embeddings_embedding_idx ON product_embeddings
+        # USING hnsw (embedding vector_cosine_ops);
+    )
+
 
 class TechnologyKnowledge(Base):
     """Oxytec technology knowledge base (from catalog pages)."""
@@ -310,4 +319,9 @@ class TechnologyEmbedding(Base):
     __table_args__ = (
         Index("idx_tech_embeddings_tech_id", "technology_id"),
         Index("idx_tech_embeddings_type", "chunk_type"),
+        # Vector index for fast similarity search using HNSW algorithm
+        # This dramatically improves performance for cosine similarity queries
+        # Note: This index is created via raw SQL in migrations
+        # CREATE INDEX technology_embeddings_embedding_idx ON technology_embeddings
+        # USING hnsw (embedding vector_cosine_ops);
     )

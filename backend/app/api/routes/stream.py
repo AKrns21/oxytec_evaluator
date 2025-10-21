@@ -47,11 +47,32 @@ async def stream_session(
         """
         Generate SSE events for this session.
 
-        This is a simple implementation that polls the database.
-        For production, consider using Redis pub/sub or similar.
+        This is a polling implementation that queries the database periodically.
+        Includes heartbeat mechanism to keep connections alive through proxies.
+
+        For production with high concurrency, consider using Redis pub/sub or
+        PostgreSQL LISTEN/NOTIFY to eliminate polling overhead.
         """
 
+        import time
+
         last_status = None
+        last_heartbeat = time.time()
+        poll_interval = 2  # seconds
+        heartbeat_interval = 30  # seconds - keep connection alive
+
+        # Send initial status immediately on connection
+        try:
+            event_data = {
+                "type": "connection_established",
+                "status": session.status,
+                "session_id": str(session_id),
+                "updated_at": session.updated_at.isoformat()
+            }
+            yield f"event: status\ndata: {json.dumps(event_data)}\n\n"
+            last_status = session.status
+        except Exception as e:
+            logger.error("sse_initial_status_error", session_id=str(session_id), error=str(e))
 
         while True:
             try:
@@ -59,43 +80,58 @@ async def stream_session(
                 async with AsyncSessionLocal() as poll_db:
                     stmt = select(DBSession).where(DBSession.id == session_id)
                     result = await poll_db.execute(stmt)
-                    session = result.scalar_one_or_none()
+                    session_data = result.scalar_one_or_none()
 
-                    if not session:
+                    if not session_data:
+                        logger.warning("sse_session_not_found", session_id=str(session_id))
                         break
 
-                    current_status = session.status
+                    current_status = session_data.status
 
                     # Send status update if changed
                     if current_status != last_status:
                         event_data = {
                             "type": "status_update",
                             "status": current_status,
-                            "updated_at": session.updated_at.isoformat()
+                            "updated_at": session_data.updated_at.isoformat()
                         }
 
                         yield f"event: status\ndata: {json.dumps(event_data)}\n\n"
                         last_status = current_status
+                        logger.info(
+                            "sse_status_update",
+                            session_id=str(session_id),
+                            status=current_status
+                        )
 
                     # If completed or failed, send final event and close
                     if current_status in ["completed", "failed"]:
                         final_data = {
                             "type": "final",
                             "status": current_status,
-                            "result": session.result,
-                            "error": session.error
+                            "result": session_data.result,
+                            "error": session_data.error
                         }
                         yield f"event: final\ndata: {json.dumps(final_data)}\n\n"
+                        logger.info("sse_stream_completed", session_id=str(session_id))
                         break
 
-                # Poll every 2 seconds
-                await asyncio.sleep(2)
+                # Send heartbeat comment to keep connection alive
+                # Many proxies/firewalls close idle connections after 60-120 seconds
+                current_time = time.time()
+                if current_time - last_heartbeat > heartbeat_interval:
+                    # Send a comment (starts with :) which clients ignore
+                    yield f": heartbeat {current_time}\n\n"
+                    last_heartbeat = current_time
+
+                # Poll every N seconds
+                await asyncio.sleep(poll_interval)
 
             except Exception as e:
                 logger.error("sse_error", session_id=str(session_id), error=str(e))
                 error_data = {
                     "type": "error",
-                    "error": str(e)
+                    "error": "Internal server error"  # Don't expose details
                 }
                 yield f"event: error\ndata: {json.dumps(error_data)}\n\n"
                 break
