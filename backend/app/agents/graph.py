@@ -2,6 +2,7 @@
 
 import asyncio
 import os
+import json
 from typing import Any
 from langgraph.graph import StateGraph, END
 try:
@@ -20,6 +21,31 @@ from app.config import settings
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
+
+
+def sanitize_unicode_for_postgres(obj: Any) -> Any:
+    """
+    Recursively sanitize Unicode strings to remove characters that PostgreSQL cannot store.
+
+    PostgreSQL JSONB cannot store:
+    - Null bytes (\u0000)
+    - Invalid Unicode escape sequences
+
+    Args:
+        obj: Any Python object (dict, list, str, etc.)
+
+    Returns:
+        Sanitized object with PostgreSQL-safe strings
+    """
+    if isinstance(obj, str):
+        # Remove null bytes and other problematic characters
+        return obj.replace('\x00', '').replace('\u0000', '')
+    elif isinstance(obj, dict):
+        return {k: sanitize_unicode_for_postgres(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize_unicode_for_postgres(item) for item in obj]
+    else:
+        return obj
 
 # Configure LangSmith tracing for LangGraph if enabled
 if settings.langchain_tracing_v2 and settings.langchain_api_key:
@@ -119,6 +145,9 @@ async def run_agent_graph(
         # Execute graph
         config = {"configurable": {"thread_id": session_id}}
         result = await graph.ainvoke(initial_state, config=config)
+
+        # Sanitize Unicode characters that PostgreSQL cannot store
+        result = sanitize_unicode_for_postgres(result)
 
         logger.info(
             "agent_graph_execution_completed",

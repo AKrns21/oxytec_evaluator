@@ -15,6 +15,7 @@ class SubagentDefinition(BaseModel):
 
     task: str = Field(min_length=10, max_length=12000, description="Task description for the subagent")
     relevant_content: str = Field(min_length=1, description="Relevant context/facts for the subagent")
+    tools: list[str] = Field(default_factory=list, description="List of tool names to use")
 
     @field_validator('task')
     @classmethod
@@ -32,6 +33,16 @@ class SubagentDefinition(BaseModel):
             raise ValueError("Relevant content cannot be empty")
         return v.strip()
 
+    @field_validator('tools')
+    @classmethod
+    def validate_tools(cls, v: list[str]) -> list[str]:
+        """Validate tool names."""
+        valid_tools = {"oxytec_knowledge_search", "product_database", "web_search"}
+        invalid = [t for t in v if t not in valid_tools]
+        if invalid:
+            raise ValueError(f"Invalid tool names: {invalid}. Valid tools: {valid_tools}")
+        return v
+
 
 class PlannerOutput(BaseModel):
     """Validation model for PLANNER agent output."""
@@ -41,7 +52,7 @@ class PlannerOutput(BaseModel):
         max_length=10,
         description="List of subagent definitions"
     )
-    reasoning: Optional[str] = Field(default="", description="Reasoning behind the plan")
+    reasoning: str = Field(min_length=50, description="Required reasoning behind the plan (min 50 chars)")
     rationale: Optional[str] = Field(default="", description="Alternative field for reasoning")
     strategy: Optional[str] = Field(default="", description="Overall investigation strategy")
 

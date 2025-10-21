@@ -8,6 +8,7 @@ from app.agents.state import GraphState
 from app.services.llm_service import LLMService
 from app.agents.tools import get_tools_for_subagent, ToolExecutor
 from app.utils.logger import get_logger
+from app.agents.prompts import UNIT_FORMATTING_INSTRUCTIONS, MITIGATION_STRATEGY_EXAMPLES
 
 logger = get_logger(__name__)
 
@@ -196,16 +197,27 @@ async def execute_single_subagent(
         logger.debug("step_1_init_llm_service", agent_name=agent_name)
         llm_service = LLMService()
 
-        # Extract tool names from task description
+        # Extract tool names - try JSON field first, fall back to text parsing
         logger.debug("step_2_extract_tools", agent_name=agent_name)
-        tool_names = extract_tools_from_task(task_description)
+        tool_names = subagent_def.get("tools", [])
+        if not tool_names:
+            # Fallback: Try parsing from task description
+            tool_names = extract_tools_from_task(task_description)
+            logger.warning("tools_not_in_json_using_fallback",
+                          agent_name=agent_name,
+                          parsed_tools=tool_names,
+                          message="Tools field not in JSON, using text parsing fallback")
+        else:
+            logger.info("tools_from_json_field",
+                       agent_name=agent_name,
+                       tool_names=tool_names)
 
         # CRITICAL LOGGING: Verify tool extraction for debugging
-        logger.info("tools_extracted_from_task",
+        logger.info("tools_extracted_final",
                    agent_name=agent_name,
                    tool_names=tool_names,
                    has_tools=len(tool_names) > 0,
-                   task_preview=task_description[:300])  # Log task start to verify "Tools needed:" line
+                   task_preview=task_description[:300])  # Log task start to verify tools
 
         # Build subagent prompt (now much simpler - task description has everything)
         logger.debug("step_3_build_prompt", agent_name=agent_name)
@@ -233,9 +245,15 @@ async def execute_single_subagent(
                         message="Technology screening subagent created without oxytec_knowledge_search tool!")
 
         # Define enhanced system prompt for subagents with balanced analysis and solution focus
-        system_prompt = """You are a specialist subagent contributing to a feasibility study for Oxytec AG (non-thermal plasma, UV/ozone, and air scrubbing technologies for industrial exhaust-air purification).
+        system_prompt = f"""You are a specialist subagent contributing to a feasibility study for Oxytec AG (non-thermal plasma, UV/ozone, and air scrubbing technologies for industrial exhaust-air purification).
 
 Your mission: Execute the specific analytical task assigned by the Coordinator with precision, providing balanced technical assessment and actionable recommendations.
+
+**CRITICAL COST ESTIMATION RESTRICTION:**
+Do NOT generate or estimate cost values (CAPEX/OPEX/€ amounts) based on general knowledge.
+Cost information ONLY permitted if retrieved from product_database tool with actual pricing.
+If cost estimation requested but no database pricing available, state: "Cost estimation requires product database with pricing data. Current status: [TBD/requires quotation]"
+NEVER use phrases like "estimated €X", "approximately €Y", "typical cost €Z" without database source.
 
 TOOL USAGE GUIDANCE:
 
@@ -283,9 +301,12 @@ SOLUTION-ORIENTED APPROACH:
   - Operational solutions (monitoring, maintenance schedules, training requirements)
   - Economic solutions (phased implementation, pilot testing, performance guarantees)
   - Timeline and resource implications of each mitigation
+  - **COST INFORMATION**: Only include if retrieved from product_database tool with pricing. Otherwise use "Cost TBD - requires product selection"
 • Recommend additional measurements or tests to reduce uncertainty
 • Suggest collaboration opportunities (customer site visits, lab testing, vendor consultations)
-• Identify "quick wins" - actions that significantly reduce risk with minimal effort/cost
+• Identify "quick wins" - actions that significantly reduce risk with minimal effort
+
+{MITIGATION_STRATEGY_EXAMPLES}
 
 TECHNICAL RIGOR:
 • Compare parameters against industry benchmarks and typical successful projects
@@ -299,10 +320,28 @@ OUTPUT REQUIREMENTS:
 • Provide deliverables in the exact format requested
 • Use clear, actionable language suitable for integration into final report
 • Prioritize machine-readable formats (tables, structured lists) over prose when appropriate
-• **CRITICAL: Do NOT use markdown headers (# ## ###). Use plain text with clear section labels, paragraph breaks, and bullet/numbered lists only.**
-• Write in a professional, technical report style without decorative formatting
 • **INCLUDE MITIGATION STRATEGIES**: For each risk/challenge identified, provide specific recommendations for how Oxytec can address it
-• **UNIT FORMATTING**: Use plain ASCII for units - write "h^-1" or "h-1" instead of "h⁻¹", write "m^3" instead of "m³", write "°C" as "degC" or "C". Avoid Unicode superscripts/subscripts.
+• {UNIT_FORMATTING_INSTRUCTIONS}
+
+**OUTPUT FORMATTING REQUIREMENTS (CRITICAL - PREVENTS PARSING ERRORS):**
+
+Your analysis will be passed to downstream agents that expect plain text. Markdown headers break their parsing.
+
+✅ USE THESE FORMATS:
+- Section labels: "SECTION 1: VOC ANALYSIS" or "1. VOC ANALYSIS" (all caps with numbers/labels)
+- Subsections: Use indentation with dashes: "  - Subsection: Chemical Properties"
+- Emphasis: Use ALL CAPS for emphasis, not **bold** or *italics*
+- Lists: Use bullet points (-) or numbered lists (1. 2. 3.)
+- Tables: Use plain text tables with pipes (|) or simple columnar format
+- Separators: Use blank lines between sections, or "═══" for visual breaks
+
+❌ DO NOT USE:
+- Markdown headers: # ## ### (these break JSON parsing in downstream agents)
+- Markdown formatting: **bold**, *italic*, `code`, [links](url)
+- Markdown code blocks: ```language ... ```
+
+**WHY THIS MATTERS:**
+Downstream agents (RISK_ASSESSOR, WRITER) parse your output as plain text and extract structured information. Markdown syntax like ## or ** breaks their regex patterns and causes parsing failures. Your analysis is valuable - don't let formatting errors discard it.
 
 Remember: Oxytec's business is solving difficult industrial exhaust-air challenges. Your role is to provide realistic assessment AND actionable paths forward. A good analysis identifies both obstacles AND solutions."""
 
@@ -494,13 +533,48 @@ EXECUTION REQUIREMENTS
 9. **Propose mitigation strategies**: For EVERY identified challenge/risk, provide specific, actionable recommendations:
    - What technical/operational measures could address this risk?
    - What additional data/testing would reduce uncertainty?
-   - What is the estimated effort/cost/timeline for mitigation?
+   - What is the estimated effort/timeline for mitigation?
+   - **COST RESTRICTION**: ONLY include cost estimates if retrieved from product_database tool. If not available, write "Cost TBD - requires product selection and quotation"
    - Are there "quick wins" that significantly reduce risk with minimal effort?
 10. **Identify measurement gaps**: List missing data that impacts your analysis accuracy
 11. **Consider dependencies**: Note what inputs from other subagents would refine your analysis
 
-**FORMATTING RULE:**
-Do NOT use markdown headers (# ## ###). Instead, use plain text with clear section labels (e.g., "SECTION 1: VOC Analysis"), paragraph breaks, bullet points, and numbered lists. This ensures your analysis can be cleanly parsed by downstream agents.
+**FORMATTING RULE (CRITICAL):**
+Use plain text formatting only. Your output will be parsed by downstream agents.
+
+✅ CORRECT:
+- Section labels: "SECTION 1: VOC ANALYSIS" or "1. VOC ANALYSIS"
+- Emphasis: ALL CAPS
+- Lists: Use - or 1. 2. 3.
+- Tables: Plain text with | separators
+
+❌ WRONG:
+- Markdown headers: # ## ###
+- Markdown formatting: **bold**, *italic*, `code`
+- Code blocks: ```...```
+
+Example correct format:
+SECTION 1: VOC COMPOSITION ANALYSIS
+
+The exhaust stream contains 3 major VOC groups:
+
+  - Aromatic hydrocarbons: Toluene (850 mg/Nm3), Xylene (420 mg/Nm3)
+  - Oxygenated compounds: Ethyl acetate (340 mg/Nm3)
+  - Aliphatic alcohols: Ethanol (180 mg/Nm3)
+
+REACTIVITY ASSESSMENT:
+
+Compound             Ozone Rate Constant    NTP Reactivity    Expected By-products
+Toluene              1.8e-15 cm3/s          HIGH              Benzaldehyde, benzoic acid
+Ethyl acetate        1.2e-16 cm3/s          MEDIUM            Acetic acid, formaldehyde
+
+RISK CLASSIFICATION:
+
+Challenge: Acetaldehyde formation from ethanol oxidation
+Severity: HIGH (60% probability)
+Impact: Toxic by-product requires catalytic post-treatment
+Mitigation: Install KAT catalytic reactor downstream of NTP (Cost TBD - requires product selection, 99.5% aldehyde removal typical)
+Feasibility: STANDARD (proven in food industry applications)
 
 **MITIGATION STRATEGIES ARE MANDATORY:**
 Your analysis will feed into "Handlungsempfehlungen" (action recommendations) in the final report. For each significant challenge you identify, you MUST provide specific recommendations for how Oxytec can address it. Generic advice like "further investigation needed" is insufficient - suggest WHAT to investigate, HOW, and WHY.
