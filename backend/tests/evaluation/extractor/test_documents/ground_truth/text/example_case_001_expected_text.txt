@@ -1,0 +1,26 @@
+--- Page 1 ---
+VOC Measurement Report
+Customer: Example Manufacturing GmbH
+Date: 2025-01-15
+
+Exhaust Air Parameters:
+Flow rate: 5000 m3/h
+Temperature: 45 degC
+Pressure: -5 mbar
+Humidity: 60%
+
+Pollutant Analysis:
+| Substance      | CAS Number | Concentration | Unit    | Category |
+|----------------|------------|---------------|---------|----------|
+| Toluene        | 108-88-3   | 850.5         | mg/Nm3  | VOC      |
+| Ethyl acetate  | 141-78-6   | 420.0         | mg/Nm3  | VOC      |
+
+Total VOC Load: 1270.5 mg/Nm3
+
+Industry: Chemical manufacturing
+Process: Solvent-based coating line
+Operating Schedule: Continuous (24/7)
+
+Customer Questions:
+1. Can Oxytec NTP technology handle these VOC concentrations?
+2. What is the expected energy consumption?

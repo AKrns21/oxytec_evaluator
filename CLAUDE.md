@@ -8,6 +8,30 @@ This is the **Oxytec Multi-Agent Feasibility Platform** - an automated system th
 
 **Key Innovation**: Unlike traditional sequential workflows, the PLANNER agent autonomously decides how many specialized subagents to create (3-8) based on inquiry complexity, and these subagents execute in parallel for dramatic speed improvements.
 
+## Development Standards
+
+### Python Command Requirements
+
+**CRITICAL**: Always use `python3` (not `python`) and activate the virtual environment for all backend operations:
+
+```bash
+# ALWAYS do this first
+cd backend
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# Then use python3 for all commands
+python3 -m pytest tests/ -v        # ✅ CORRECT
+python -m pytest tests/ -v         # ❌ WRONG - may use system Python
+
+python3 manage.py migrate          # ✅ CORRECT
+python manage.py migrate           # ❌ WRONG
+
+python3 scripts/ingest_data.py     # ✅ CORRECT
+python scripts/ingest_data.py      # ❌ WRONG
+```
+
+**Why**: `python` may point to Python 2.x or system Python 3.x, while `python3` ensures Python 3.x. The virtual environment ensures correct dependencies.
+
 ## Development Commands
 
 ### Environment Setup
@@ -56,13 +80,36 @@ docker-compose up
 
 ### Testing
 
+**IMPORTANT**: Always activate the virtual environment and use `python3` (not `python`) for all commands:
+
 ```bash
 cd backend
-pytest tests/ -v                    # Run all tests
-pytest tests/test_agents.py -v     # Run specific test file
-pytest tests/ -k "test_planner"    # Run tests matching pattern
-pytest tests/ --cov=app            # With coverage
+source .venv/bin/activate           # REQUIRED: Activate virtual environment first
+                                    # Windows: .venv\Scripts\activate
+
+# Run all tests
+python3 -m pytest tests/ -v
+
+# Run tests by category
+python3 -m pytest tests/unit/ -v                    # Unit tests only
+python3 -m pytest tests/integration/ -v             # Integration tests only
+python3 -m pytest tests/e2e/ -v                     # End-to-end tests only
+
+# Run extractor evaluation
+python3 -m pytest tests/evaluation/extractor/layer2_llm_interpretation/ -v
+python3 tests/evaluation/extractor/test_single_file.py <filename.xlsx>
+
+# Run tests matching pattern
+python3 -m pytest tests/ -k "test_planner" -v
+
+# Run with coverage
+python3 -m pytest tests/ --cov=app --cov-report=html
+
+# Run specific test file
+python3 -m pytest tests/unit/test_llm_service.py -v
 ```
+
+See `backend/tests/README.md` for complete testing documentation.
 
 ### Code Quality
 
@@ -391,6 +438,8 @@ When writing tests:
 
 ## File Organization
 
+### Code Organization
+
 - Agent logic: `app/agents/` - All LangGraph workflow code
 - API layer: `app/api/routes/` - FastAPI endpoints only, no business logic
 - Services: `app/services/` - Reusable business logic (LLM, RAG, documents)
@@ -399,3 +448,62 @@ When writing tests:
 - Utils: `app/utils/` - Logger, helpers, utilities
 
 Keep API routes thin - delegate to services. Agents should call services, not database directly.
+
+### Documentation Organization
+
+**Project-level documentation** (`docs/`):
+- `docs/architecture/` - System architecture, design decisions, UI/UX flows
+- `docs/development/` - Code reviews, prompt engineering updates, dev guides
+- `docs/evaluation/` - Testing strategies, evaluation frameworks, quality analysis
+- `docs/examples/` - Example outputs, sample data, screenshots, PDFs
+
+**Backend-specific documentation** (`backend/docs/`):
+- `backend/docs/setup/` - Setup guides (LangSmith, Supabase, RAG systems)
+- `backend/docs/implementation/` - Implementation summaries, change logs, fixes
+- `backend/docs/api/` - API specifications and integration guides
+- `backend/docs/reports/` - Generated feasibility reports (PDF outputs)
+
+**Test documentation** (`backend/tests/`):
+- `backend/tests/unit/` - Unit tests for services, utilities, models
+- `backend/tests/integration/` - Agent node and multi-component integration tests
+- `backend/tests/e2e/` - End-to-end workflow tests
+- `backend/tests/evaluation/` - Quality evaluation frameworks (extractor, planner, etc.)
+
+See README.md files in each directory for detailed organization guidelines.
+
+### File Placement Guidelines
+
+**When creating new documentation:**
+
+1. **Architecture/Design docs** → `docs/architecture/`
+   - System design, workflow diagrams, technology decisions
+
+2. **Code reviews/Prompt updates** → `docs/development/`
+   - Code review reports, prompt engineering changes, refactoring notes
+
+3. **Evaluation/Testing strategies** → `docs/evaluation/`
+   - Agent quality frameworks, test strategies, evaluation results
+
+4. **Examples/Sample data** → `docs/examples/`
+   - Example agent outputs (JSON), sample PDFs, screenshots, test data
+
+5. **Setup/Configuration guides** → `backend/docs/setup/`
+   - Installation instructions, environment configuration, service setup
+
+6. **Implementation notes** → `backend/docs/implementation/`
+   - Feature implementation summaries, bug fix documentation, change logs
+
+7. **Generated reports** → `backend/docs/reports/`
+   - PDF feasibility reports, output templates
+
+8. **Test files** → `backend/tests/<category>/`
+   - Unit tests → `tests/unit/`
+   - Integration tests → `tests/integration/`
+   - E2E tests → `tests/e2e/`
+   - Evaluation frameworks → `tests/evaluation/<agent_name>/`
+
+**Naming conventions:**
+- Date-stamped: `TOPIC_YYYY-MM-DD.md` (e.g., `CODE_REVIEW_2025-10-21.md`)
+- Versioned: `TOPIC_vN.md` (e.g., `EVALUATION_STRATEGY_v2.md`)
+- General: `TOPIC.md` (e.g., `ARCHITECTURE.md`)
+- Test files: `test_<feature>.py` (e.g., `test_extractor.py`)

@@ -1,0 +1,106 @@
+Excel file: UHU_VOC_Konz_Daten.xlsx
+Total sheets: 4
+
+
+======================================================================
+Sheet: Tabelle1 (2)
+Dimensions: 23 rows × 6 columns
+Columns: Unnamed: 0, Unnamed: 1, Unnamed: 2, Unnamed: 3, Unnamed: 4, Unnamed: 5
+
+--- Data Preview (first 23 rows) ---
+                   Unnamed: 0    Unnamed: 1 Unnamed: 2 Unnamed: 3      Unnamed: 4      Unnamed: 5
+                          NaN           NaN        NaN        NaN             NaN             NaN
+                    Klebstoff Lösungsmittel    CAS Nr.     Anteil Emissionsstelle Emissionsstelle
+                  Alleskleber        Aceton    67-64-1     0.0737             2.3             2.5
+            Alleskleber extra        Aceton    67-64-1     0.0026             2.3             2.5
+Alleskleber Kraft Transparent        Aceton    67-64-1     0.5837               x               x
+                     Allplast        Aceton    67-64-1      0.349               x               x
+                  FliFla m.L.        Aceton    67-64-1     0.0396             2.5             2.5
+                        Plast        Aceton    67-64-1      0.378               x               x
+                Plast Spezial        Aceton    67-64-1      0.298               x               x
+                     Allplast       Butanon    78-93-3      0.135               x               x
+                         Hart   Butylacetat   123-86-4     0.0542             2.3               x
+                Plast Spezial   Butylacetat   123-86-4      0.561               x               x
+                  Alleskleber       Ethanol    64-17-5     0.0818             2.3             2.5
+            Alleskleber extra       Ethanol    64-17-5     0.3805             2.3             2.5
+                  FliFla m.L.       Ethanol    64-17-5       0.49             2.5             2.5
+            Alleskleber extra   Ethylacetat   141-78-6     0.0038             2.3             2.5
+Alleskleber Kraft Transparent   Ethylacetat   141-78-6      0.204               x               x
+                     Allplast   Ethylacetat   141-78-6       0.33               x               x
+                  FliFla m.L.   Ethylacetat   141-78-6     0.0565             2.5             2.5
+                          Por        Heptan        NaN     0.6919               x               x
+                  Alleskleber  Methylacetat    79-20-9     0.5023             2.3             2.5
+            Alleskleber extra  Methylacetat    79-20-9     0.3192             2.3             2.5
+                         Hart  Methylacetat    79-20-9     0.6331             2.3               x
+======================================================================
+
+======================================================================
+Sheet: Tabelle1
+Dimensions: 23 rows × 6 columns
+Columns: Unnamed: 0, Unnamed: 1, Unnamed: 2, Unnamed: 3, Unnamed: 4, Unnamed: 5
+
+--- Data Preview (first 23 rows) ---
+                   Unnamed: 0    Unnamed: 1 Unnamed: 2 Unnamed: 3      Unnamed: 4      Unnamed: 5
+                          NaN           NaN        NaN        NaN             NaN             NaN
+                    Klebstoff Lösungsmittel    CAS Nr.     Anteil Emissionsstelle Emissionsstelle
+                  Alleskleber        Aceton    67-64-1     0.0737             2.3             2.5
+                  Alleskleber       Ethanol    64-17-5     0.0818             2.3             2.5
+                  Alleskleber  Methylacetat    79-20-9     0.5023             2.3             2.5
+            Alleskleber extra        Aceton    67-64-1     0.0026             2.3             2.5
+            Alleskleber extra       Ethanol    64-17-5     0.3805             2.3             2.5
+            Alleskleber extra   Ethylacetat   141-78-6     0.0038             2.3             2.5
+            Alleskleber extra  Methylacetat    79-20-9     0.3192             2.3             2.5
+Alleskleber Kraft Transparent        Aceton    67-64-1     0.5837               x               x
+Alleskleber Kraft Transparent   Ethylacetat   141-78-6      0.204               x               x
+                     Allplast        Aceton    67-64-1      0.349               x               x
+                     Allplast       Butanon    78-93-3      0.135               x               x
+                     Allplast   Ethylacetat   141-78-6       0.33               x               x
+                  FliFla m.L.        Aceton    67-64-1     0.0396             2.5             2.5
+                  FliFla m.L.       Ethanol    64-17-5       0.49             2.5             2.5
+                  FliFla m.L.   Ethylacetat   141-78-6     0.0565             2.5             2.5
+                         Hart   Butylacetat   123-86-4     0.0542             2.3               x
+                         Hart  Methylacetat    79-20-9     0.6331             2.3               x
+                        Plast        Aceton    67-64-1      0.378               x               x
+                Plast Spezial        Aceton    67-64-1      0.298               x               x
+                Plast Spezial   Butylacetat   123-86-4      0.561               x               x
+                          Por        Heptan        NaN     0.6919               x               x
+======================================================================
+
+======================================================================
+Sheet: Tabelle3
+Dimensions: 0 rows × 0 columns
+Columns: 
+
+--- Complete Data ---
+Empty DataFrame
+Columns: []
+Index: []
+======================================================================
+
+======================================================================
+Sheet: Tabelle2
+Dimensions: 19 rows × 1 columns
+Columns: Unnamed: 0
+
+--- Data Preview (first 19 rows) ---
+                                                                                                                                                                                                                                                                       Unnamed: 0
+                                                                                                                                                                     1. Hätte Oxytec für, die von uns benötigte Abluftmenge“ von 9600 m³/h (Neue Auslegung) eine passende Anlage?
+                                                                                                                                                                                                                                                                              NaN
+                                                                                                                   -> ja, wer hätten eine 10.000 cbm/h Plasmaanlage plus UV-C/Ozonanlage sowie Aktivkohlefilter. Wenn ein Wäscher benötigt wird, könnten wir diesen auch liefern.
+                                                                                                                                                                                                                                                                              NaN
+                 2. Bitte versuchen Sie den Aufstellplan auch im 2D dwg Format, bestenfalls auch im IFC Format zu erhalten damit wir die Anlage in unser Layout einbauen können (auch wenn im Angebot steht, dass wir diese Daten erst nach der Auftragsvergabe erhalten würden).
+                                                                                                                                                                                                                                                                              NaN
+                                                                                                                                                                            -> wir senden Ihnen DWG Zeichnungen für Plasma, UV-C Anlage und Katalysator in der kommenden Woche zu
+                                                                                                                                                                                                                                                                              NaN
+                                                                                  3. Entsprechend dem Angebot wäre auch ein Aktivkohlefilter Bestandteil der Anlage. Die Aktivkohlemenge von 3.500 kg ist „nicht wenig“. Könnte sich die Menge nach den Test ggfls.. reduzieren ?
+                                                                                                                                                                                                                                                                              NaN
+                                                                                                                                    -> das können wir erst nach einem Test richtig einschätzen. Wir gehen bei erhöhter Luftmenge eher von einer Erhöhung der Aktivkohlemenge aus.
+                                                                                                                                                                                                                                                                              NaN
+4. Offensichtlich wird ein Warmwasseranschluß zum Betreiben der Anlage benötigt. Damit fällt offensichtlich auch Abwasser an. Welche Bestandteile sind in diesem Abwasser zu erwarten? Kann dieses in eine normale, biologische Kläranlage ohne Vorbehandlung eingeleitet werden?
+                                                                                                                                                                                                                                                                              NaN
+                                                                                                                                                                                              -> Davon gehen wir aus. Der Test im Labor wird dazu aber mehr Informationen liefern
+                                                                                                                                                                                                                                                                              NaN
+                                                                                                                                                                                                                                      5. Benötigt die Anlage eine ATEX Auslegung?
+                                                                                                                                                                                                                                                                              NaN
+                                                                                                                    -> Das ist abhängig von den eingesetzten Lösungsmitteln. Ob dann eine ATEX Auslegung erforderlich ist, können wir durch einen Sachverständigen prüfen lassen.
+======================================================================

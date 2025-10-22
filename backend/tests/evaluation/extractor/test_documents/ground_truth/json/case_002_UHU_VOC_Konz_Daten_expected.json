@@ -1,0 +1,278 @@
+{
+  "test_case_id": "case_002_UHU_VOC_Konz_Daten",
+  "description": "Ground truth generated from UHU_VOC_Konz_Daten.xlsx",
+  "difficulty": "medium",
+  "format": "xlsx",
+  "focus_areas": [
+    "pollutant_extraction",
+    "value_parsing"
+  ],
+  "expected_extraction": {
+    "pollutant_characterization": {
+      "pollutant_list": [
+        {
+          "name": "Aceton",
+          "cas_number": "67-64-1",
+          "concentration": null,
+          "concentration_unit": "",
+          "category": "VOC"
+        },
+        {
+          "name": "Ethanol",
+          "cas_number": "64-17-5",
+          "concentration": null,
+          "concentration_unit": "",
+          "category": "VOC"
+        },
+        {
+          "name": "Methylacetat",
+          "cas_number": "79-20-9",
+          "concentration": null,
+          "concentration_unit": "",
+          "category": "VOC"
+        },
+        {
+          "name": "Ethylacetat",
+          "cas_number": "141-78-6",
+          "concentration": null,
+          "concentration_unit": "",
+          "category": "VOC"
+        },
+        {
+          "name": "Butanon",
+          "cas_number": "78-93-3",
+          "concentration": null,
+          "concentration_unit": "",
+          "category": "VOC"
+        },
+        {
+          "name": "Butylacetat",
+          "cas_number": "123-86-4",
+          "concentration": null,
+          "concentration_unit": "",
+          "category": "VOC"
+        },
+        {
+          "name": "Heptan",
+          "cas_number": null,
+          "concentration": null,
+          "concentration_unit": "",
+          "category": "VOC"
+        }
+      ],
+      "total_load": {
+        "tvoc": null,
+        "tvoc_unit": null,
+        "total_carbon": null,
+        "odor_units": null
+      },
+      "measurement_tables": "Sheet: Tabelle1 (2)\nDimensions: 23 rows × 6 columns\nColumns: Unnamed: 0, Unnamed: 1, Unnamed: 2, Unnamed: 3, Unnamed: 4, Unnamed: 5\n\n--- Data Preview (first 23 rows) ---\n                   Unnamed: 0    Unnamed: 1 Unnamed: 2 Unnamed: 3      Unnamed: 4      Unnamed: 5\n                          NaN           NaN        NaN        NaN             NaN             NaN\n                    Klebstoff Lösungsmittel    CAS Nr.     Anteil Emissionsstelle Emissionsstelle\n                  Alleskleber        Aceton    67-64-1     0.0737             2.3             2.5\n            Alleskleber extra        Aceton    67-64-1     0.0026             2.3             2.5\nAlleskleber Kraft Transparent        Aceton    67-64-1     0.5837               x               x\n                     Allplast        Aceton    67-64-1      0.349               x               x\n                  FliFla m.L.        Aceton    67-64-1     0.0396             2.5             2.5\n                        Plast        Aceton    67-64-1      0.378               x               x\n                Plast Spezial        Aceton    67-64-1      0.298               x               x\n                     Allplast       Butanon    78-93-3      0.135               x               x\n                         Hart   Butylacetat   123-86-4     0.0542             2.3               x\n                Plast Spezial   Butylacetat   123-86-4      0.561               x               x\n                  Alleskleber       Ethanol    64-17-5     0.0818             2.3             2.5\n            Alleskleber extra       Ethanol    64-17-5     0.3805             2.3             2.5\n                  FliFla m.L.       Ethanol    64-17-5       0.49             2.5             2.5\n            Alleskleber extra   Ethylacetat   141-78-6     0.0038             2.3             2.5\nAlleskleber Kraft Transparent   Ethylacetat   141-78-6      0.204               x               x\n                     Allplast   Ethylacetat   141-78-6       0.33               x               x\n                  FliFla m.L.   Ethylacetat   141-78-6     0.0565             2.5             2.5\n                          Por        Heptan        NaN     0.6919               x               x\n                  Alleskleber  Methylacetat    79-20-9     0.5023             2.3             2.5\n            Alleskleber extra  Methylacetat    79-20-9     0.3192             2.3             2.5\n                         Hart  Methylacetat    79-20-9     0.6331             2.3               x\n======================================================================\n\n======================================================================\nSheet: Tabelle1\nDimensions: 23 rows × 6 columns\nColumns: Unnamed: 0, Unnamed: 1, Unnamed: 2, Unnamed: 3, Unnamed: 4, Unnamed: 5\n\n--- Data Preview (first 23 rows) ---\n                   Unnamed: 0    Unnamed: 1 Unnamed: 2 Unnamed: 3      Unnamed: 4      Unnamed: 5\n                          NaN           NaN        NaN        NaN             NaN             NaN\n                    Klebstoff Lösungsmittel    CAS Nr.     Anteil Emissionsstelle Emissionsstelle\n                  Alleskleber        Aceton    67-64-1     0.0737             2.3             2.5\n                  Alleskleber       Ethanol    64-17-5     0.0818             2.3             2.5\n                  Alleskleber  Methylacetat    79-20-9     0.5023             2.3             2.5\n            Alleskleber extra        Aceton    67-64-1     0.0026             2.3             2.5\n            Alleskleber extra       Ethanol    64-17-5     0.3805             2.3             2.5\n            Alleskleber extra   Ethylacetat   141-78-6     0.0038             2.3             2.5\n            Alleskleber extra  Methylacetat    79-20-9     0.3192             2.3             2.5\nAlleskleber Kraft Transparent        Aceton    67-64-1     0.5837               x               x\nAlleskleber Kraft Transparent   Ethylacetat   141-78-6      0.204               x               x\n                     Allplast        Aceton    67-64-1      0.349               x               x\n                     Allplast       Butanon    78-93-3      0.135               x               x\n                     Allplast   Ethylacetat   141-78-6       0.33               x               x\n                  FliFla m.L.        Aceton    67-64-1     0.0396             2.5             2.5\n                  FliFla m.L.       Ethanol    64-17-5       0.49             2.5             2.5\n                  FliFla m.L.   Ethylacetat   141-78-6     0.0565             2.5             2.5\n                         Hart   Butylacetat   123-86-4     0.0542             2.3               x\n                         Hart  Methylacetat    79-20-9     0.6331             2.3               x\n                        Plast        Aceton    67-64-1      0.378               x               x\n                Plast Spezial        Aceton    67-64-1      0.298               x               x\n                Plast Spezial   Butylacetat   123-86-4      0.561               x               x\n                          Por        Heptan        NaN     0.6919               x               x\n======================================================================\n\n======================================================================\nSheet: Tabelle3\nDimensions: 0 rows × 0 columns\nColumns: \n\n--- Complete Data ---\nEmpty DataFrame\nColumns: []\nIndex: []\n======================================================================\n\n======================================================================\nSheet: Tabelle2\nDimensions: 19 rows × 1 columns\nColumns: Unnamed: 0\n\n--- Data Preview (first 19 rows) ---\n                                                                                                                                                                                                                                                                       Unnamed: 0\n                                                                                                                                                                     1. Hätte Oxytec für, die von uns benötigte Abluftmenge“ von 9600 m³/h (Neue Auslegung) eine passende Anlage?\n                                                                                                                                                                                                                                                                              NaN\n                                                                                                                   -> ja, wer hätten eine 10.000 cbm/h Plasmaanlage plus UV-C/Ozonanlage sowie Aktivkohlefilter. Wenn ein Wäscher benötigt wird, könnten wir diesen auch liefern.\n                                                                                                                                                                                                                                                                              NaN\n                 2. Bitte versuchen Sie den Aufstellplan auch im 2D dwg Format, bestenfalls auch im IFC Format zu erhalten damit wir die Anlage in unser Layout einbauen können (auch wenn im Angebot steht, dass wir diese Daten erst nach der Auftragsvergabe erhalten würden).\n                                                                                                                                                                                                                                                                              NaN\n                                                                                                                                                                            -> wir senden Ihnen DWG Zeichnungen für Plasma, UV-C Anlage und Katalysator in der kommenden Woche zu\n                                                                                                                                                                                                                                                                              NaN\n                                                                                  3. Entsprechend dem Angebot wäre auch ein Aktivkohlefilter Bestandteil der Anlage. Die Aktivkohlemenge von 3.500 kg ist „nicht wenig“. Könnte sich die Menge nach den Test ggfls.. reduzieren ?\n                                                                                                                                                                                                                                                                              NaN\n                                                                                                                                    -> das können wir erst nach einem Test richtig einschätzen. Wir gehen bei erhöhter Luftmenge eher von einer Erhöhung der Aktivkohlemenge aus.\n                                                                                                                                                                                                                                                                              NaN\n4. Offensichtlich wird ein Warmwasseranschluß zum Betreiben der Anlage benötigt. Damit fällt offensichtlich auch Abwasser an. Welche Bestandteile sind in diesem Abwasser zu erwarten? Kann dieses in eine normale, biologische Kläranlage ohne Vorbehandlung eingeleitet werden?\n                                                                                                                                                                                                                                                                              NaN\n                                                                                                                                                                                              -> Davon gehen wir aus. Der Test im Labor wird dazu aber mehr Informationen liefern\n                                                                                                                                                                                                                                                                              NaN\n                                                                                                                                                                                                                                      5. Benötigt die Anlage eine ATEX Auslegung?\n                                                                                                                                                                                                                                                                              NaN\n                                                                                                                    -> Das ist abhängig von den eingesetzten Lösungsmitteln. Ob dann eine ATEX Auslegung erforderlich ist, können wir durch einen Sachverständigen prüfen lassen.\n======================================================================"
+    },
+    "process_parameters": {
+      "flow_rate": {
+        "value": 9600,
+        "unit": "m³/h",
+        "min_value": null,
+        "max_value": null
+      },
+      "temperature": {
+        "value": null,
+        "unit": null
+      },
+      "pressure": {
+        "value": null,
+        "unit": null,
+        "type": null
+      },
+      "humidity": {
+        "value": null,
+        "unit": null,
+        "type": null
+      },
+      "oxygen_content_percent": null,
+      "particulate_load": {
+        "value": null,
+        "unit": null
+      },
+      "operating_schedule": null
+    },
+    "current_abatement_systems": {
+      "technologies_in_place": [],
+      "removal_efficiencies": null,
+      "problems_reported": null,
+      "maintenance_costs": null
+    },
+    "industry_and_process": {
+      "industry_sector": "unknown",
+      "specific_processes": "Klebstoff Anwendung; Lösungsmittel: Aceton, Ethanol, Methylacetat, Ethylacetat, Butanon, Butylacetat, Heptan",
+      "production_volumes": null,
+      "raw_materials": "Klebstoff; Lösungsmittelgemische laut Tabelle"
+    },
+    "requirements_and_constraints": {
+      "target_removal_efficiency_percent": null,
+      "outlet_concentration_limit": {
+        "value": null,
+        "unit": null
+      },
+      "regulatory_requirements": "",
+      "space_constraints": "",
+      "energy_consumption_limits": null,
+      "budget_constraints": {
+        "capex": null,
+        "opex": null
+      },
+      "atex_classification": null,
+      "safety_requirements": ""
+    },
+    "site_conditions": {
+      "utilities_available": {
+        "electricity": null,
+        "water": "Warmwasseranschluß zum Betreiben der Anlage benötigt",
+        "compressed_air": null,
+        "steam": null
+      },
+      "installation_location": "",
+      "ambient_conditions": {
+        "temperature_range": null,
+        "humidity": null,
+        "corrosive_environment": null
+      },
+      "access_constraints": null
+    },
+    "customer_knowledge_and_expectations": {
+      "technologies_mentioned": [
+        "Oxytec",
+        "Plasmaanlage",
+        "UV-C/Ozonanlage",
+        "Aktivkohlefilter",
+        "Wäscher",
+        "Katalysator"
+      ],
+      "technologies_currently_considering": [
+        "Plasmaanlage",
+        "UV-C/Ozonanlage",
+        "Aktivkohlefilter",
+        "Wäscher"
+      ],
+      "previous_experience": null,
+      "technology_preferences": null,
+      "technical_sophistication": "medium"
+    },
+    "customer_specific_questions": [
+      {
+        "question_text": "1. Hätte Oxytec für, die von uns benötigte Abluftmenge“ von 9600 m³/h (Neue Auslegung) eine passende Anlage?",
+        "question_type": "feasibility_check",
+        "context": "Sheet Tabelle2 lists numbered customer questions and supplier responses.\n1. Hätte Oxytec für, die von uns benötigte Abluftmenge“ von 9600 m³/h (Neue Auslegung) eine passende Anlage?\n-> ja, wer hätten eine 10.000 cbm/h Plasmaanlage plus UV-C/Ozonanlage sowie Aktivkohlefilter. Wenn ein Wäscher benötigt wird, könnten wir diesen auch liefern.",
+        "priority": "HIGH",
+        "source_document": "UHU_VOC_Konz_Daten.xlsx"
+      },
+      {
+        "question_text": "2. Bitte versuchen Sie den Aufstellplan auch im 2D dwg Format, bestenfalls auch im IFC Format zu erhalten damit wir die Anlage in unser Layout einbauen können (auch wenn im Angebot steht, dass wir diese Daten erst nach der Auftragsvergabe erhalten würden).",
+        "question_type": "performance_inquiry",
+        "context": "Sheet Tabelle2 includes CAD/layout data request for planning.\n2. Bitte versuchen Sie den Aufstellplan auch im 2D dwg Format, bestenfalls auch im IFC Format zu erhalten ...\n-> wir senden Ihnen DWG Zeichnungen für Plasma, UV-C Anlage und Katalysator in der kommenden Woche zu",
+        "priority": "HIGH",
+        "source_document": "UHU_VOC_Konz_Daten.xlsx"
+      },
+      {
+        "question_text": "3. Entsprechend dem Angebot wäre auch ein Aktivkohlefilter Bestandteil der Anlage. Die Aktivkohlemenge von 3.500 kg ist „nicht wenig“. Könnte sich die Menge nach den Test ggfls.. reduzieren ?",
+        "question_type": "performance_inquiry",
+        "context": "Sheet Tabelle2 shows concern about activated carbon quantity and potential reduction after tests.\n3. Entsprechend dem Angebot ... Könnte sich die Menge nach den Test ggfls.. reduzieren ?\n-> das können wir erst nach einem Test richtig einschätzen. Wir gehen bei erhöhter Luftmenge eher von einer Erhöhung der Aktivkohlemenge aus.",
+        "priority": "HIGH",
+        "source_document": "UHU_VOC_Konz_Daten.xlsx"
+      },
+      {
+        "question_text": "4. Offensichtlich wird ein Warmwasseranschluß zum Betreiben der Anlage benötigt. Damit fällt offensichtlich auch Abwasser an. Welche Bestandteile sind in diesem Abwasser zu erwarten? Kann dieses in eine normale, biologische Kläranlage ohne Vorbehandlung eingeleitet werden?",
+        "question_type": "feasibility_check",
+        "context": "Sheet Tabelle2 includes utility and wastewater compatibility question.\n4. Offensichtlich wird ein Warmwasseranschluß ... Kann dieses in eine normale, biologische Kläranlage ohne Vorbehandlung eingeleitet werden?\n-> Davon gehen wir aus. Der Test im Labor wird dazu aber mehr Informationen liefern",
+        "priority": "HIGH",
+        "source_document": "UHU_VOC_Konz_Daten.xlsx"
+      },
+      {
+        "question_text": "5. Benötigt die Anlage eine ATEX Auslegung?",
+        "question_type": "feasibility_check",
+        "context": "Sheet Tabelle2 addresses explosion protection requirements.\n5. Benötigt die Anlage eine ATEX Auslegung?\n-> Das ist abhängig von den eingesetzten Lösungsmitteln. Ob dann eine ATEX Auslegung erforderlich ist, können wir durch einen Sachverständigen prüfen lassen.",
+        "priority": "HIGH",
+        "source_document": "UHU_VOC_Konz_Daten.xlsx"
+      }
+    ],
+    "timeline_and_project_phase": {
+      "timeline": "wir senden Ihnen DWG Zeichnungen ... in der kommenden Woche",
+      "project_phase": "inquiry"
+    },
+    "data_quality_issues": [
+      {
+        "issue": "No concentrations provided for listed VOCs (only 'Anteil' without units)",
+        "severity": "HIGH",
+        "impact_description": "Cannot perform mass balance or design abatement stages without inlet concentrations; sizing uncertainty remains >±50%",
+        "examples": [
+          "Anteil values such as 0.0737, 0.5023, 0.6919 with no unit in Tabelle1"
+        ]
+      },
+      {
+        "issue": "Flow unit inconsistency and special character",
+        "severity": "LOW",
+        "impact_description": "Flow noted as '9600 m³/h'; downstream calculations must preserve exact unit formatting",
+        "examples": [
+          "1. ... Abluftmenge“ von 9600 m³/h (Neue Auslegung)"
+        ]
+      },
+      {
+        "issue": "CAS number missing for Heptan",
+        "severity": "MEDIUM",
+        "impact_description": "Incomplete substance identification complicates regulatory checks and isomer specificity",
+        "examples": [
+          "Por Heptan CAS Nr.: NaN"
+        ]
+      },
+      {
+        "issue": "ATEX classification not defined",
+        "severity": "HIGH",
+        "impact_description": "Explosion protection zone affects equipment design, electrical components, and certification",
+        "examples": [
+          "Question 5 asks if ATEX Auslegung is needed; no classification provided"
+        ]
+      },
+      {
+        "issue": "Humidity, temperature, and pressure not specified",
+        "severity": "HIGH",
+        "impact_description": "Key for abatement selection, ozone/UV performance, and adsorption capacity; may change sizing by >±30%",
+        "examples": []
+      },
+      {
+        "issue": "Operating schedule not provided",
+        "severity": "MEDIUM",
+        "impact_description": "Impacts activated carbon bed sizing, regeneration intervals, and OPEX estimation",
+        "examples": []
+      },
+      {
+        "issue": "Utilities partially specified without parameters",
+        "severity": "MEDIUM",
+        "impact_description": "Warm water connection mentioned but no temperature/flow/quality given; affects heat integration and wastewater assessment",
+        "examples": [
+          "Warmwasseranschluß zum Betreiben der Anlage benötigt"
+        ]
+      },
+      {
+        "issue": "Measurement tables contain duplicate and placeholder rows",
+        "severity": "LOW",
+        "impact_description": "Potential confusion during data import; requires cleaning to avoid double counting",
+        "examples": [
+          "Two sheets 'Tabelle1' and 'Tabelle1 (2)' with overlapping rows",
+          "Header and NaN rows present"
+        ]
+      }
+    ]
+  },
+  "critical_fields": [
+    "pollutant_characterization.pollutant_list[0].name",
+    "pollutant_characterization.pollutant_list[1].name",
+    "pollutant_characterization.pollutant_list[2].name",
+    "pollutant_characterization.pollutant_list[3].name",
+    "pollutant_characterization.pollutant_list[4].name",
+    "pollutant_characterization.pollutant_list[5].name",
+    "pollutant_characterization.pollutant_list[6].name",
+    "process_parameters.flow_rate.value",
+    "process_parameters.flow_rate.unit"
+  ],
+  "acceptable_variations": {}
+}

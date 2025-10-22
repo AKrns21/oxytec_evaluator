@@ -1,0 +1,936 @@
+[
+  {
+    "success": true,
+    "filename": "8000880 TEKNODUR 3830-01_TS 20637 DANISH GREEN DG 15 NIR_2022-07-08_DK_DA_583521.PDF",
+    "text_length": 47460,
+    "pollutant_count": 6,
+    "has_process_params": true,
+    "data_quality_issues": 4,
+    "extracted_facts": {
+      "pollutant_characterization": {
+        "pollutant_list": [
+          {
+            "name": "xylen",
+            "cas_number": "1330-20-7",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "2-ethoxy-1-methylethyl acetat",
+            "cas_number": "54839-24-6",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "Solventnaphtha (råolie), let aromatisk",
+            "cas_number": "64742-95-6",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "n-Butylacetat",
+            "cas_number": "123-86-4",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "ethylbenzen",
+            "cas_number": "100-41-4",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "2,3-epoxypropylneodecanoat",
+            "cas_number": "26761-45-5",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          }
+        ],
+        "total_load": {
+          "tvoc": null,
+          "tvoc_unit": null,
+          "total_carbon": null,
+          "odor_units": null
+        },
+        "measurement_tables": "PUNKT 8: Eksponeringskontrol/personlige værnemidler\\nArbejdstilsynets grænseværdier\\nProdukt/ingrediens navn\\nGrænseværdier for eksponering\\nxylen\\nArbejdstilsynet (Danmark, 6/2021). [xylen, alle isomere]\\nAbsorberes gennem huden.\\n Gennemsnitværdier: 25 ppm 8 timer.\\n Gennemsnitværdier: 109 mg/m3 8 timer.\\nn-Butylacetat\\nArbejdstilsynet (Danmark, 6/2021). [butylacetat, alle isomerer]\\n Gennemsnitværdier: 50 ppm 8 timer.\\n Gennemsnitværdier: 241 mg/m3 8 timer.\\nethylbenzen\\nArbejdstilsynet (Danmark, 6/2021). Absorberes gennem huden.\\nCarcinogen.\\n Gennemsnitværdier: 50 ppm 8 timer.\\n Gennemsnitværdier: 217 mg/m3 8 timer.\\n\\nDNEL'er/DMEL'er (uddrag)\\nxylen\\nDNEL Langvarig Oral 1.6 mg/kg bw/dag Generel population Systemisk\\nDNEL Langvarig Indånding 14.8 mg/m3 Generel population Systemisk\\nDNEL Langvarig Indånding 77 mg/m3 Arbejdere Systemisk\\n...\\n2-ethoxy-1-methylethyl acetat\\nDNEL Langvarig Oral 13.1 mg/kg bw/dag Generel population Systemisk\\nDNEL Langvarig Indånding 152 mg/m3 Arbejdere Systemisk\\n...\\nSolventnaphtha (råolie), let aromatisk\\nDNEL Langvarig Indånding 1.9 mg/m3 Arbejdere Systemisk\\n...\\nn-Butylacetat\\nDNEL Langvarig Indånding 48 mg/m3 Arbejdere Systemisk\\n...\\nethylbenzen\\nDNEL Langvarig Indånding 77 mg/m3 Arbejdere Systemisk\\nDMEL Langvarig Indånding 442 mg/m3 Arbejdere Lokal\\n...\\n2,3-epoxypropylneodecanoat\\nDNEL Langvarig Indånding 2.7 mg/m3 Arbejdere Systemisk"
+      },
+      "process_parameters": {
+        "flow_rate": {
+          "value": null,
+          "unit": "m3/h",
+          "min_value": null,
+          "max_value": null
+        },
+        "temperature": {
+          "value": 25,
+          "unit": "degC"
+        },
+        "pressure": {
+          "value": null,
+          "unit": "mbar",
+          "type": null
+        },
+        "humidity": {
+          "value": null,
+          "unit": "%",
+          "type": null
+        },
+        "oxygen_content_percent": null,
+        "particulate_load": {
+          "value": null,
+          "unit": "mg/m3"
+        },
+        "operating_schedule": null
+      },
+      "current_abatement_systems": {
+        "technologies_in_place": [],
+        "removal_efficiencies": null,
+        "problems_reported": null,
+        "maintenance_costs": null
+      },
+      "industry_and_process": {
+        "industry_sector": "coating",
+        "specific_processes": "Maling.",
+        "production_volumes": null,
+        "raw_materials": "xylen; 2-ethoxy-1-methylethyl acetat; Solventnaphtha (råolie), let aromatisk; n-Butylacetat; ethylbenzen; 2,3-epoxypropylneodecanoat"
+      },
+      "requirements_and_constraints": {
+        "target_removal_efficiency_percent": null,
+        "outlet_concentration_limit": {
+          "value": null,
+          "unit": "mg/Nm3"
+        },
+        "regulatory_requirements": "Dette produkt er klassificeret som farligt i henhold til forordning (EF) 1272/2008 med ændringer. Seveso-direktivet - tærskelværdier for indberetning P5c.",
+        "space_constraints": "",
+        "energy_consumption_limits": null,
+        "budget_constraints": {
+          "capex": null,
+          "opex": null
+        },
+        "atex_classification": null,
+        "safety_requirements": "Brandfarlig væske og damp. Anvend eksplosionssikret ventilationsudstyr. Foretag forebyggende forholdsregler imod elektrostatiske udladninger."
+      },
+      "site_conditions": {
+        "utilities_available": {
+          "electricity": null,
+          "water": null,
+          "compressed_air": null,
+          "steam": null
+        },
+        "installation_location": "",
+        "ambient_conditions": {
+          "temperature_range": null,
+          "humidity": null,
+          "corrosive_environment": null
+        },
+        "access_constraints": null
+      },
+      "customer_knowledge_and_expectations": {
+        "technologies_mentioned": [],
+        "technologies_currently_considering": [],
+        "previous_experience": null,
+        "technology_preferences": null,
+        "technical_sophistication": "unknown"
+      },
+      "customer_specific_questions": [],
+      "timeline_and_project_phase": {
+        "timeline": null,
+        "project_phase": null
+      },
+      "data_quality_issues": [
+        {
+          "issue": "No exhaust measurement data (flow rate, pollutant concentrations, TVOC) provided; SDS only",
+          "severity": "CRITICAL",
+          "impact_description": "Prevents sizing of abatement equipment and mass balance; cannot estimate capture and removal requirements without inlet loads",
+          "examples": [
+            "No m3/h, ppm or mg/Nm3 values for emissions in document"
+          ]
+        },
+        {
+          "issue": "Oxygen content not measured/reported",
+          "severity": "MEDIUM",
+          "impact_description": "Affects LEL, oxidation design, and explosion protection assessment",
+          "examples": []
+        },
+        {
+          "issue": "Temperature value refers to flammability test condition (Flammepunkt: Lukket beholder: 25degC) not actual process exhaust temperature",
+          "severity": "LOW",
+          "impact_description": "Using this value for design could misrepresent thermal design and condensation risk",
+          "examples": [
+            "PUNKT 9: Flammepunkt Lukket beholder: 25degC (77degF)"
+          ]
+        },
+        {
+          "issue": "Potential presence of carcinogenic ethylbenzen noted in national list, but no emission concentrations provided",
+          "severity": "HIGH",
+          "impact_description": "Carcinogen handling may require stricter emission controls and monitoring; lack of concentrations increases compliance uncertainty",
+          "examples": [
+            "Danmark's kræftfremkaldende stoffer: Ethylbenzen Optaget på liste",
+            "Arbejdstilsynet note: Carcinogen"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "success": true,
+    "filename": "8000881 TEKNODUR HARDENER 7310-00 _2.pdf",
+    "text_length": 49334,
+    "pollutant_count": 5,
+    "has_process_params": false,
+    "data_quality_issues": 8,
+    "extracted_facts": {
+      "pollutant_characterization": {
+        "pollutant_list": [
+          {
+            "name": "Hexamethylendiisocyanate, oligomer",
+            "cas_number": "28182-81-2",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "2-Methoxy-1-methylethylacetat",
+            "cas_number": "108-65-6",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "xylen",
+            "cas_number": "1330-20-7",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "Ethyl Benzene",
+            "cas_number": "100-41-4",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "Hexamethylen-1,6-diisocyanat",
+            "cas_number": "822-06-0",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          }
+        ],
+        "total_load": {
+          "tvoc": null,
+          "tvoc_unit": null,
+          "total_carbon": null,
+          "odor_units": null
+        },
+        "measurement_tables": "PUNKT 8: Eksponeringskontrol/personlige værnemidler\\nArbejdstilsynets grænseværdier\\nProdukt/ingrediens navn\\nGrænseværdier for eksponering\\n2-Methoxy-1-methylethylacetat\\nArbejdstilsynet (Danmark, 3/2024) [2-methoxy-\\n1-methylethylacetat] Absorberes gennem huden.\\n Gennemsnitværdier 8 timer: 50 ppm.\\n Gennemsnitværdier 8 timer: 275 mg/m3.\\n STEL (S) 15 minutter: 550 mg/m3.\\n STEL (S) 15 minutter: 100 ppm.\\nxylen\\nArbejdstilsynet (Danmark, 3/2024) [xylen, alle isomere]\\nAbsorberes gennem huden.\\n Gennemsnitværdier 8 timer: 25 ppm.\\n Gennemsnitværdier 8 timer: 109 mg/m3.\\n STEL (S) 15 minutter: 442 mg/m3.\\n STEL (S) 15 minutter: 100 ppm.\\nEthyl Benzene\\nArbejdstilsynet (Danmark, 3/2024) K. Absorberes gennem huden.\\n Gennemsnitværdier 8 timer: 50 ppm.\\n Gennemsnitværdier 8 timer: 217 mg/m3.\\n STEL (S) 15 minutter: 434 mg/m3.\\n STEL (S) 15 minutter: 100 ppm.\\nHexamethylen-1,6-diisocyanat\\nArbejdstilsynet (Danmark, 3/2024)\\n Gennemsnitværdier 8 timer: 0.005 ppm.\\n Gennemsnitværdier 8 timer: 0.035 mg/m3.\\n STEL (S) 15 minutter: 0.07 mg/m3.\\n STEL (S) 15 minutter: 0.01 ppm.\\n"
+      },
+      "process_parameters": {
+        "flow_rate": {
+          "value": null,
+          "unit": "m3/h",
+          "min_value": null,
+          "max_value": null
+        },
+        "temperature": {
+          "value": null,
+          "unit": "degC"
+        },
+        "pressure": {
+          "value": null,
+          "unit": "mbar",
+          "type": null
+        },
+        "humidity": {
+          "value": null,
+          "unit": "%",
+          "type": null
+        },
+        "oxygen_content_percent": null,
+        "particulate_load": {
+          "value": null,
+          "unit": "mg/m3"
+        },
+        "operating_schedule": null
+      },
+      "current_abatement_systems": {
+        "technologies_in_place": [],
+        "removal_efficiencies": null,
+        "problems_reported": null,
+        "maintenance_costs": null
+      },
+      "industry_and_process": {
+        "industry_sector": "coating",
+        "specific_processes": "Hærdemiddel anvendt i maling/overfladebehandling",
+        "production_volumes": null,
+        "raw_materials": "Hexamethylendiisocyanate, oligomer; 2-Methoxy-1-methylethylacetat; xylen; Ethyl Benzene; Hexamethylen-1,6-diisocyanat"
+      },
+      "requirements_and_constraints": {
+        "target_removal_efficiency_percent": null,
+        "outlet_concentration_limit": {
+          "value": null,
+          "unit": null
+        },
+        "regulatory_requirements": "Er i overensstemmelse med Forordning (EF) nr. 1907/2006 (REACH), bilag II, med senere tilpasning i henhold til Forordning (EU) nr. 2020/878 - Danmark; Forordning (EF) nr. 1272/2008 [CLP/GHS]; Seveso Direktiv Kategori P5c",
+        "space_constraints": "",
+        "energy_consumption_limits": null,
+        "budget_constraints": {
+          "capex": null,
+          "opex": null
+        },
+        "atex_classification": "Seveso-direktivet Kategori P5c; Brandklasse II-1; Mal-kode (1993): 5-3",
+        "safety_requirements": "Indeholder isocyanater. Kan udløse allergisk reaktion.; Brandfarlig væske og damp.; Brug egnede beskyttelseshandsker. Bær beskyttelse til øjne og ansigt.; Holdes væk fra varme, varme overflader, gnister, åben ild og andre antændelseskilder. Rygning forbudt."
+      },
+      "site_conditions": {
+        "utilities_available": {
+          "electricity": null,
+          "water": null,
+          "compressed_air": null,
+          "steam": null
+        },
+        "installation_location": "",
+        "ambient_conditions": {
+          "temperature_range": null,
+          "humidity": null,
+          "corrosive_environment": null
+        },
+        "access_constraints": null
+      },
+      "customer_knowledge_and_expectations": {
+        "technologies_mentioned": [],
+        "technologies_currently_considering": [],
+        "previous_experience": null,
+        "technology_preferences": null,
+        "technical_sophistication": "unknown"
+      },
+      "customer_specific_questions": [],
+      "timeline_and_project_phase": {
+        "timeline": null,
+        "project_phase": null
+      },
+      "data_quality_issues": [
+        {
+          "issue": "No exhaust air flow rate provided",
+          "severity": "HIGH",
+          "impact_description": "Prevents mass balance and sizing of abatement equipment",
+          "examples": []
+        },
+        {
+          "issue": "No exhaust temperature provided",
+          "severity": "MEDIUM",
+          "impact_description": "Affects selection of materials, condensation risk, and treatment efficiency",
+          "examples": []
+        },
+        {
+          "issue": "No pressure data (draft/static) provided",
+          "severity": "MEDIUM",
+          "impact_description": "Impacts fan sizing and integration with abatement systems",
+          "examples": []
+        },
+        {
+          "issue": "No humidity data provided",
+          "severity": "MEDIUM",
+          "impact_description": "Impacts oxidation by-product formation and catalyst selection",
+          "examples": []
+        },
+        {
+          "issue": "No oxygen content provided",
+          "severity": "MEDIUM",
+          "impact_description": "Affects LEL calculations and explosion protection assessment",
+          "examples": []
+        },
+        {
+          "issue": "No measured VOC concentrations in exhaust air",
+          "severity": "CRITICAL",
+          "impact_description": "Prevents load calculation and technology selection for emission compliance",
+          "examples": []
+        },
+        {
+          "issue": "Safety Data Sheet lists hazardous ingredients but not emission concentrations",
+          "severity": "HIGH",
+          "impact_description": "Composition of product does not translate directly to air emission loads",
+          "examples": [
+            "Hexamethylendiisocyanate, oligomer ≥50 - ≤75; 2-Methoxy-1-methylethylacetat ≥10 - <20; xylen ≤12; Ethyl Benzene ≤2.7; Hexamethylen-1,6-diisocyanat ≤0.43"
+          ]
+        },
+        {
+          "issue": "Potential presence of Ethyl Benzene (possible carcinogen by some classifications) without emission limits",
+          "severity": "HIGH",
+          "impact_description": "May trigger stricter regulatory controls and monitoring",
+          "examples": [
+            "Ethyl Benzene listed as ingredient with STOT RE 2 and aspiration hazard"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "success": true,
+    "filename": "8240621 SEEVENAX-Verdünner -Thinner 73 farblos MSDS 1.pdf",
+    "text_length": 37074,
+    "pollutant_count": 4,
+    "has_process_params": true,
+    "data_quality_issues": 7,
+    "extracted_facts": {
+      "pollutant_characterization": {
+        "pollutant_list": [
+          {
+            "name": "1-methoxy-2-propanol",
+            "cas_number": "107-98-2",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "2-methylpropan-1-ol",
+            "cas_number": "78-83-1",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "xylen",
+            "cas_number": "1330-20-7",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "ethylbenzen",
+            "cas_number": "100-41-4",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          }
+        ],
+        "total_load": {
+          "tvoc": null,
+          "tvoc_unit": null,
+          "total_carbon": null,
+          "odor_units": null
+        },
+        "measurement_tables": "Komponenter\nKemisk betegnelse\tCAS-Nr.\tEF-Nr.\tIndeks-Nr.\tRegistreringsnummer\tKlassificering\tKoncentration\n(% w/w)\n1-methoxy-2-propanol\t107-98-2\t203-539-1\t603-064-00-3\t01-2119457435-35\tFlam. Liq. 3; H226\nSTOT SE 3; H336\n(Centralnervesystem)\t>= 40 - <= 100\n2-methylpropan-1-ol\t78-83-1\t201-148-0\t603-108-00-1\t01-2119484609-23\tFlam. Liq. 3; H226\nSkin Irrit. 2; H315\nEye Dam. 1; H318\nSTOT SE 3; H336\n(Centralnervesystem)\nSTOT SE 3; H335\n(Åndedrætssystem)\t>= 20 - < 25\nxylen\t1330-20-7\t215-535-7\t601-022-00-9\t01-2119488216-32\tFlam. Liq. 3; H226\nAcute Tox. 4; H332\nAcute Tox. 4; H312\nSkin Irrit. 2; H315\nEye Irrit. 2; H319\nSTOT SE 3; H335\n(Åndedrætssystem)\nSTOT RE 2; H373\nAsp. Tox. 1; H304\nAquatic Chronic 3;\nH412\t>= 20 - < 25\nethylbenzen\t100-41-4\t202-849-4\t601-023-00-4\t01-2119489370-35\tFlam. Liq. 2; H225\nAcute Tox. 4; H332\nSTOT RE 2; H373\nAsp. Tox. 1; H304\nAquatic Chronic 3;\nH412\t>= 5 - < 10\n\nGrænseværdier for erhvervsmæssig eksponering\nKomponenter\tCAS-Nr.\tVentil type (Påvirkningsform)\tKontrolparametre\tBasis\n1-methoxy-2-propanol\t107-98-2\tTWA\t100 ppm\t375 mg/m3\t2000/39/EC\nSTEL\t150 ppm\t568 mg/m3\t2000/39/EC\nGV\t50 ppm\t185 mg/m3\tDK OEL\n2-methylpropan-1-ol\t78-83-1\tL\t50 ppm\t150 mg/m3\tDK OEL\nxylen\t1330-20-7\tTWA\t50 ppm\t221 mg/m3\t2000/39/EC\nSTEL\t100 ppm\t442 mg/m3\t2000/39/EC\nGV\t25 ppm\t109 mg/m3\tDK OEL\nethylbenzen\t100-41-4\tTWA\t100 ppm\t442 mg/m3\t2000/39/EC\nSTEL\t200 ppm\t884 mg/m3\t2000/39/EC\nGV\t50 ppm\t217 mg/m3\tDK OEL"
+      },
+      "process_parameters": {
+        "flow_rate": {
+          "value": null,
+          "unit": "m3/h",
+          "min_value": null,
+          "max_value": null
+        },
+        "temperature": {
+          "value": 25,
+          "unit": "degC"
+        },
+        "pressure": {
+          "value": null,
+          "unit": "mbar",
+          "type": null
+        },
+        "humidity": {
+          "value": null,
+          "unit": "%",
+          "type": null
+        },
+        "oxygen_content_percent": null,
+        "particulate_load": {
+          "value": null,
+          "unit": "mg/m3"
+        },
+        "operating_schedule": null
+      },
+      "current_abatement_systems": {
+        "technologies_in_place": [],
+        "removal_efficiencies": null,
+        "problems_reported": null,
+        "maintenance_costs": null
+      },
+      "industry_and_process": {
+        "industry_sector": "coating",
+        "specific_processes": "Industriel serielakering",
+        "production_volumes": null,
+        "raw_materials": "Blanding af organiske opløsningsmidler, halogenfri"
+      },
+      "requirements_and_constraints": {
+        "target_removal_efficiency_percent": null,
+        "outlet_concentration_limit": {
+          "value": null,
+          "unit": "mg/Nm3"
+        },
+        "regulatory_requirements": "Europa-Parlamentets og Rådets direktiv 2010/75/EU af 24. november 2010 om industrielle emissioner (integreret forebyggelse og bekæmpelse af forurening)",
+        "space_constraints": "",
+        "energy_consumption_limits": null,
+        "budget_constraints": {
+          "capex": null,
+          "opex": null
+        },
+        "atex_classification": null,
+        "safety_requirements": "Produktet må kun bruges i områder, hvor åben ild og andre antændelseskilder er udelukkede. Materialet kan oplades elektrostatisk: ved omfyldning må der kun anven-des jordede ledninger. Det tilrådes at benytte antistatisk toj inkl. fodtoj. Anvend gnist-sikkert værktoj."
+      },
+      "site_conditions": {
+        "utilities_available": {
+          "electricity": "",
+          "water": "",
+          "compressed_air": "",
+          "steam": ""
+        },
+        "installation_location": "",
+        "ambient_conditions": {
+          "temperature_range": null,
+          "humidity": null,
+          "corrosive_environment": null
+        },
+        "access_constraints": null
+      },
+      "customer_knowledge_and_expectations": {
+        "technologies_mentioned": [],
+        "technologies_currently_considering": [],
+        "previous_experience": null,
+        "technology_preferences": null,
+        "technical_sophistication": "unknown"
+      },
+      "customer_specific_questions": [],
+      "timeline_and_project_phase": {
+        "timeline": null,
+        "project_phase": null
+      },
+      "data_quality_issues": [
+        {
+          "issue": "No exhaust flow rate provided",
+          "severity": "CRITICAL",
+          "impact_description": "Prevents sizing of abatement equipment and residence time calculations",
+          "examples": []
+        },
+        {
+          "issue": "No measured VOC concentrations in exhaust air",
+          "severity": "HIGH",
+          "impact_description": "High uncertainty in emission load, technology selection and compliance assessment",
+          "examples": []
+        },
+        {
+          "issue": "Oxygen content not provided",
+          "severity": "MEDIUM",
+          "impact_description": "Affects explosion risk assessment and combustion-based technology feasibility",
+          "examples": []
+        },
+        {
+          "issue": "Humidity not provided",
+          "severity": "MEDIUM",
+          "impact_description": "Influences adsorption capacity, corona/UV efficiency, and corrosion risk",
+          "examples": []
+        },
+        {
+          "issue": "Pressure not provided",
+          "severity": "LOW",
+          "impact_description": "Impacts duct/system integration and fan sizing",
+          "examples": []
+        },
+        {
+          "issue": "Particulate load not provided",
+          "severity": "LOW",
+          "impact_description": "May lead to fouling of catalysts/adsorbers if particulates are present",
+          "examples": []
+        },
+        {
+          "issue": "Potential carcinogen in components list (ethylbenzen flagged in DK OEL note) but no emission data",
+          "severity": "HIGH",
+          "impact_description": "Requires careful monitoring and potential stricter limits; lack of emission data increases compliance risk",
+          "examples": [
+            "DK OEL note: \"Betyder, at stoffet er optaget på listen over stoffer, der anses for at være kræftfremkaldende.\" for ethylbenzen"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "success": true,
+    "filename": "8240686 Seevenax Hærder 128 1150800000000_DK_DA_1000 1.pdf",
+    "text_length": 41059,
+    "pollutant_count": 6,
+    "has_process_params": false,
+    "data_quality_issues": 6,
+    "extracted_facts": {
+      "pollutant_characterization": {
+        "pollutant_list": [
+          {
+            "name": "2-methylpropan-1-ol",
+            "cas_number": "78-83-1",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "Aromatic hydrocarbons, C9; Alkylbenzenes; C9-aromatics",
+            "cas_number": "128601-23-0",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "xylen",
+            "cas_number": "1330-20-7",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "1-methoxy-2-propanol",
+            "cas_number": "107-98-2",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "ethylbenzen",
+            "cas_number": "100-41-4",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          },
+          {
+            "name": "butan-1-ol",
+            "cas_number": "71-36-3",
+            "concentration": null,
+            "concentration_unit": "",
+            "category": "VOC"
+          }
+        ],
+        "total_load": {
+          "tvoc": null,
+          "tvoc_unit": null,
+          "total_carbon": null,
+          "odor_units": null
+        },
+        "measurement_tables": "Komponenter\\nKemisk betegnelse\\nCAS-Nr.\\nEF-Nr.\\nIndeks-Nr.\\nRegistreringsnummer\\nKlassificering\\nKoncentration\\n(% w/w)\\n2-methylpropan-1-ol\\n78-83-1\\n201-148-0\\n603-108-00-1\\n01-2119484609-23\\nFlam. Liq. 3; H226\\nSkin Irrit. 2; H315\\nEye Dam. 1; H318\\nSTOT SE 3; H336\\n(Centralnervesystem)\\nSTOT SE 3; H335\\n(Åndedrætssystem)\\n>= 20 - < 25\\nAromatic hydrocarbons, C9;\\nAlkylbenzenes; C9-aromatics\\n128601-23-0\\n918-668-5\\n01-2119455851-35\\nFlam. Liq. 3; H226\\nSTOT SE 3; H336\\n(Centralnervesystem)\\nSTOT SE 3; H335\\n(Åndedrætssystem)\\nAsp. Tox. 1; H304\\nAquatic Chronic 2;\\nH411\\nEUH066\\nEUH066\\n>= 12,5 - < 20\\nxylen\\n1330-20-7\\n215-535-7\\n601-022-00-9\\n01-2119488216-32\\nFlam. Liq. 3; H226\\nAcute Tox. 4; H332\\nAcute Tox. 4; H312\\nSkin Irrit. 2; H315\\nEye Irrit. 2; H319\\nSTOT SE 3; H335\\n(Åndedrætssystem)\\nSTOT RE 2; H373\\nAsp. Tox. 1; H304\\nAquatic Chronic 3;\\nH412\\n>= 5 - < 10\\n1-methoxy-2-propanol\\n107-98-2\\n203-539-1\\n603-064-00-3\\n01-2119457435-35\\nFlam. Liq. 3; H226\\nSTOT SE 3; H336\\n(Centralnervesystem)\\n>= 5 - < 12,5\\nethylbenzen\\n100-41-4\\n202-849-4\\n601-023-00-4\\n01-2119489370-35\\nFlam. Liq. 2; H225\\nAcute Tox. 4; H332\\nSTOT RE 2; H373\\nAsp. Tox. 1; H304\\n>= 2,5 - < 5\\nbutan-1-ol\\n71-36-3\\n200-751-6\\n603-004-00-6\\n01-2119484630-38\\nFlam. Liq. 3; H226\\nAcute Tox. 4; H302\\nSkin Irrit. 2; H315\\nEye Dam. 1; H318\\nSTOT SE 3; H336\\n(Centralnervesystem)\\nSTOT SE 3; H335\\n(Åndedrætssystem)\\n>= 1 - < 3"
+      },
+      "process_parameters": {
+        "flow_rate": {
+          "value": null,
+          "unit": "m3/h",
+          "min_value": null,
+          "max_value": null
+        },
+        "temperature": {
+          "value": null,
+          "unit": "degC"
+        },
+        "pressure": {
+          "value": null,
+          "unit": "mbar",
+          "type": null
+        },
+        "humidity": {
+          "value": null,
+          "unit": "%",
+          "type": null
+        },
+        "oxygen_content_percent": null,
+        "particulate_load": {
+          "value": null,
+          "unit": null
+        },
+        "operating_schedule": null
+      },
+      "current_abatement_systems": {
+        "technologies_in_place": [],
+        "removal_efficiencies": null,
+        "problems_reported": null,
+        "maintenance_costs": null
+      },
+      "industry_and_process": {
+        "industry_sector": "coating",
+        "specific_processes": "Industriel serielakering",
+        "production_volumes": null,
+        "raw_materials": "SEEVENAX-Härter / Hardener 128; Hærder på basis af polyamin / aminoaddukt; opløsningsmidler: 2-methylpropan-1-ol; Aromatic hydrocarbons, C9; xylen; 1-methoxy-2-propanol; ethylbenzen; butan-1-ol"
+      },
+      "requirements_and_constraints": {
+        "target_removal_efficiency_percent": null,
+        "outlet_concentration_limit": {
+          "value": null,
+          "unit": null
+        },
+        "regulatory_requirements": "Europa-Parlamentets og Rådets direktiv 2010/75/EU; Flygtige organiske forbindelser (VOC) indhold: 59,81 %, 600 g/l; MAL-Kodenummer: 5-3 (1993); REACH bilag XVII begrænsninger (Nummer på listen 3)",
+        "space_constraints": "",
+        "energy_consumption_limits": null,
+        "budget_constraints": {
+          "capex": null,
+          "opex": null
+        },
+        "atex_classification": "Eksplosionsfare omtalt: Produktet må kun bruges i områder, hvor åben ild og andre antændelseskilder er udelukkede. Materialet kan oplades elektrostatisk",
+        "safety_requirements": "Brandbeskyttelse; antistatisk udstyr og tøj; åndedrætsværn ved overskridelse af luftgrænseværdier; gnistsikkert værktøj; ventilation; hånd- og øjenbeskyttelse"
+      },
+      "site_conditions": {
+        "utilities_available": {
+          "electricity": "",
+          "water": "",
+          "compressed_air": "",
+          "steam": ""
+        },
+        "installation_location": "",
+        "ambient_conditions": {
+          "temperature_range": null,
+          "humidity": null,
+          "corrosive_environment": null
+        },
+        "access_constraints": null
+      },
+      "customer_knowledge_and_expectations": {
+        "technologies_mentioned": [],
+        "technologies_currently_considering": [],
+        "previous_experience": null,
+        "technology_preferences": null,
+        "technical_sophistication": "unknown"
+      },
+      "customer_specific_questions": [],
+      "timeline_and_project_phase": {
+        "timeline": null,
+        "project_phase": null
+      },
+      "data_quality_issues": [
+        {
+          "issue": "No exhaust air measurement data (TVOC, individual VOC concentrations in mg/Nm3 or ppm) provided",
+          "severity": "CRITICAL",
+          "impact_description": "Prevents sizing of abatement system and assessment of destruction/removal efficiency requirements",
+          "examples": [
+            "SDS lists formulation components and hazards but no stack gas concentrations"
+          ]
+        },
+        {
+          "issue": "Process flow rate not provided",
+          "severity": "CRITICAL",
+          "impact_description": "Prevents equipment sizing and residence time calculations",
+          "examples": []
+        },
+        {
+          "issue": "Temperature, humidity, and pressure of exhaust not provided",
+          "severity": "HIGH",
+          "impact_description": "Impacts technology selection (condensation risk, adsorption performance, oxidation kinetics) and ATEX assessment",
+          "examples": []
+        },
+        {
+          "issue": "Oxygen content not provided",
+          "severity": "MEDIUM",
+          "impact_description": "Affects LEL calculations and explosion protection assessment for thermal/oxidative treatments",
+          "examples": []
+        },
+        {
+          "issue": "Operating schedule not provided",
+          "severity": "LOW",
+          "impact_description": "Impacts activated carbon changeout and maintenance scheduling; affects CAPEX/OPEX modeling",
+          "examples": []
+        },
+        {
+          "issue": "Potential carcinogen (ethylbenzen) flagged in OEL notes without emission data",
+          "severity": "HIGH",
+          "impact_description": "Requires consideration of occupational exposure and emission limits; emission concentrations unknown",
+          "examples": [
+            "Yderligere oplysninger: Stoffet anses for at kunne være kræftfremkaldende, Vejledende liste over organiske opløsningsmidler"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "success": true,
+    "filename": "8240687 SDS 1120070355000_DK_DA_1000 2.pdf",
+    "text_length": 43683,
+    "pollutant_count": 8,
+    "has_process_params": false,
+    "data_quality_issues": 5,
+    "extracted_facts": {
+      "pollutant_characterization": {
+        "pollutant_list": [
+          {
+            "name": "xylen",
+            "cas_number": "1330-20-7",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "1-methoxy-2-propanol",
+            "cas_number": "107-98-2",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "4-hydroxy-4-methyl-2-pentanon",
+            "cas_number": "123-42-2",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "2-methylpropan-1-ol",
+            "cas_number": "78-83-1",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "n-butylacetat",
+            "cas_number": "123-86-4",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "butan-1-ol",
+            "cas_number": "71-36-3",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          },
+          {
+            "name": "titandioxid",
+            "cas_number": "13463-67-7",
+            "concentration": null,
+            "concentration_unit": "mg/m3",
+            "category": "particulate"
+          },
+          {
+            "name": "reaktionsprodukt: bisphenol-A-epichlorhydrin; epoxy harpiks (gennemsnitlig molekylevægt \u001c 700)",
+            "cas_number": "25068-38-6",
+            "concentration": null,
+            "concentration_unit": "mg/Nm3",
+            "category": "VOC"
+          }
+        ],
+        "total_load": {
+          "tvoc": null,
+          "tvoc_unit": null,
+          "total_carbon": null,
+          "odor_units": null
+        },
+        "measurement_tables": "Gr\u0000e6nsev\u0000e6rdier for erhvervsm\u0000e6ssig eksponering\\nKomponenter\\nCAS-Nr.\\nVentil type\\n(P\u0000e5virkningsform)\\nKontrolparametre\\nBasis\\ntitandioxid\\n13463-67-7\\nGV\\n6 mg/m3\\n(Titan)\\nDK OEL\\n\\nYderligere oplysninger: Betyder, at stoffet er optaget p\u0000e5 listen over stoffer, der\\nanses for at v\u0000e6re kr\u0000e6ftfremkaldende.\\n\\n\\nS\\n12 mg/m3\\n(Titan)\\nDK OEL\\n\\nYderligere oplysninger: Betyder, at stoffet er optaget p\u0000e5 listen over stoffer, der\\nanses for at v\u0000e6re kr\u0000e6ftfremkaldende.\\nxylen\\n1330-20-7\\nTWA\\n50 ppm\\n221 mg/m3\\n2000/39/EC\\n\\nYderligere oplysninger: Identificerer muligheden for v\u0000e6sentlig optagelse\\ngennem huden, Vejledende\\n\\n\\nSTEL\\n100 ppm\\n442 mg/m3\\n2000/39/EC\\n\\nYderligere oplysninger: Identificerer muligheden for v\u0000e6sentlig optagelse\\ngennem huden, Vejledende\\n\\n\\nGV\\n25 ppm\\n109 mg/m3\\nDK OEL\\n\\nYderligere oplysninger: Betyder, at stoffet kan optages gennem huden.,\\nVejledende liste over organiske opl\u0000f8sningsmidler\\n\\n\\nS\\n100 ppm\\n442 mg/m3\\nDK OEL\\n\\nYderligere oplysninger: Betyder, at stoffet kan optages gennem huden.,\\nVejledende liste over organiske opl\u0000f8sningsmidler\\n1-methoxy-2-\\npropanol\\n107-98-2\\nTWA\\n100 ppm\\n375 mg/m3\\n2000/39/EC\\n\\nYderligere oplysninger: Identificerer muligheden for v\u0000e6sentlig optagelse\\ngennem huden, Vejledende\\n\\n\\nSTEL\\n150 ppm\\n568 mg/m3\\n2000/39/EC\\n\\nYderligere oplysninger: Identificerer muligheden for v\u0000e6sentlig optagelse\\ngennem huden, Vejledende\\n\\n\\nGV\\n50 ppm\\n185 mg/m3\\nDK OEL\\n\\nYderligere oplysninger: Betyder, at stoffet kan optages gennem huden.,\\nVejledende liste over organiske opl\u0000f8sningsmidler\\n\\n\\nS\\n150 ppm\\n568 mg/m3\\nDK OEL\\n\\nYderligere oplysninger: Betyder, at stoffet kan optages gennem huden.,\\nVejledende liste over organiske opl\u0000f8sningsmidler\\n4-hydroxy-4-\\nmethyl-2-pentanon\\n123-42-2\\nGV\\n50 ppm\\n240 mg/m3\\nDK OEL\\n\\nYderligere oplysninger: Vejledende liste over organiske opl\u0000f8sningsmidler\\n\\n\\nS\\n100 ppm\\n480 mg/m3\\nDK OEL\\n\\nYderligere oplysninger: Vejledende liste over organiske opl\u0000f8sningsmidler\\n2-methylpropan-1-\\nol\\n78-83-1\\nL\\n50 ppm\\n150 mg/m3\\nDK OEL\\n\\nYderligere oplysninger: Betyder, at stoffet kan optages gennem huden.,\\nVejledende liste over organiske opl\u0000f8sningsmidler\\nn-butylacetat\\n123-86-4\\nGV\\n50 ppm\\n241 mg/m3\\nDK OEL\\n\\nYderligere oplysninger: Vejledende liste over organiske opl\u0000f8sningsmidler\\n\\n\\nSTEL\\n150 ppm\\n723 mg/m3\\n2019/1831/E\\nU\\n\\nYderligere oplysninger: Vejledende\\n\\n\\nTWA\\n50 ppm\\n241 mg/m3\\n2019/1831/E\\nU\\n\\nYderligere oplysninger: Vejledende\\n\\n\\nS\\n150 ppm\\n723 mg/m3\\nDK OEL\\n\\nYderligere oplysninger: Vejledende liste over organiske opl\u0000f8sningsmidler\\nbutan-1-ol\\n71-36-3\\nL\\n50 ppm\\n150 mg/m3\\nDK OEL\\n\\nYderligere oplysninger: Betyder, at stoffet kan optages gennem huden.,\\nVejledende liste over organiske opl\u0000f8sningsmidler"
+      },
+      "process_parameters": {
+        "flow_rate": {
+          "value": null,
+          "unit": "m3/h",
+          "min_value": null,
+          "max_value": null
+        },
+        "temperature": {
+          "value": null,
+          "unit": "degC"
+        },
+        "pressure": {
+          "value": null,
+          "unit": "mbar",
+          "type": null
+        },
+        "humidity": {
+          "value": null,
+          "unit": "%",
+          "type": null
+        },
+        "oxygen_content_percent": null,
+        "particulate_load": {
+          "value": null,
+          "unit": "mg/m3"
+        },
+        "operating_schedule": null
+      },
+      "current_abatement_systems": {
+        "technologies_in_place": [],
+        "removal_efficiencies": null,
+        "problems_reported": null,
+        "maintenance_costs": null
+      },
+      "industry_and_process": {
+        "industry_sector": "coating",
+        "specific_processes": "Industriel serielakering",
+        "production_volumes": null,
+        "raw_materials": "Blanding af syntetiske harpiske, organiske opl\u0000f8sningsmidler og pigmenter."
+      },
+      "requirements_and_constraints": {
+        "target_removal_efficiency_percent": null,
+        "outlet_concentration_limit": {
+          "value": null,
+          "unit": "mg/Nm3"
+        },
+        "regulatory_requirements": "Europa-Parlamentets og R\u0000e5dets direktiv 2010/75/EU af 24. november 2010 om industrielle emissioner (integreret forebyggelse og bek\u0000e6mpelse af forurening)",
+        "space_constraints": "",
+        "energy_consumption_limits": null,
+        "budget_constraints": {
+          "capex": null,
+          "opex": null
+        },
+        "atex_classification": "Produktet m\u0000e5 kun bruges i omr\u0000e5der, hvor \u0000e5ben ild og andre ant\u0000e6ndelseskilder er udelukkede. Materialet kan oplades elektrostatisk: ved omfyldning m\u0000e5 der kun anven-des jordede ledninger. Det tilr\u0000e5des at benytte antistatisk toj inkl. fodtoj. Anvend gnist-sikkert v\u0000e6rktoj. Dampe fra opl\u0000f8sningsmidler er tungere end luft og spredes langs medjorden. Dampene danner sammen med luft en eksplosiv blanding.",
+        "safety_requirements": "P210 Holdes v\u0000e6k fra varme, varme overflader, gnister, \u0000e5ben ild og andre ant\u0000e6ndelseskilder. Rygning forbudt. P261 Undg\u0000e5 ind\u0000e5nding af t\u0000e5ge eller damp. P280 B\u0000e6r beskyttelseshandsker/ beskyttelsest\u0000f8j/ \u0000f8jenbeskyttelse/ ansigtsbeskyttelse/ h\u0000f8rev\u0000e6rn."
+      },
+      "site_conditions": {
+        "utilities_available": {
+          "electricity": "",
+          "water": "",
+          "compressed_air": "",
+          "steam": ""
+        },
+        "installation_location": "",
+        "ambient_conditions": {
+          "temperature_range": null,
+          "humidity": null,
+          "corrosive_environment": null
+        },
+        "access_constraints": null
+      },
+      "customer_knowledge_and_expectations": {
+        "technologies_mentioned": [],
+        "technologies_currently_considering": [],
+        "previous_experience": null,
+        "technology_preferences": null,
+        "technical_sophistication": "unknown"
+      },
+      "customer_specific_questions": [],
+      "timeline_and_project_phase": {
+        "timeline": null,
+        "project_phase": null
+      },
+      "data_quality_issues": [
+        {
+          "issue": "No exhaust air flow, temperature, pressure, humidity, or oxygen content data provided",
+          "severity": "CRITICAL",
+          "impact_description": "Prevents sizing of abatement equipment, LEL assessment, heat/mass balance, and materials selection",
+          "examples": []
+        },
+        {
+          "issue": "Pollutant concentrations in exhaust air not provided",
+          "severity": "CRITICAL",
+          "impact_description": "Cannot determine loading, catalyst/adsorbent sizing, or compliance margins",
+          "examples": []
+        },
+        {
+          "issue": "Only SDS information provided; workplace exposure limits shown but no emission measurements",
+          "severity": "HIGH",
+          "impact_description": "Introduces high uncertainty when translating product composition to air emission profiles",
+          "examples": [
+            "Gr\u0000e6nsev\u0000e6rdier for erhvervsm\u0000e6ssig eksponering listed (DK OEL, 2000/39/EC, 2019/1831/EU) without stack measurements"
+          ]
+        },
+        {
+          "issue": "Potential particulate emissions (titandioxid) not quantified",
+          "severity": "MEDIUM",
+          "impact_description": "Affects need for prefiltration and dust handling before VOC treatment",
+          "examples": [
+            "Stoffer med en gr\u0000e6nsev\u0000e6rdi for erhvervsm\u0000e6ssig eksponering : titandioxid"
+          ]
+        },
+        {
+          "issue": "CARCINOGEN RISK IN PRODUCTION PROCESS not indicated by documents",
+          "severity": "LOW",
+          "impact_description": "No explicit Group 1/2A carcinogens detected in listed components; continue to verify in broader process context",
+          "examples": []
+        }
+      ]
+    }
+  }
+]

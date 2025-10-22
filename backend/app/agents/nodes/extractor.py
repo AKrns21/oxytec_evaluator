@@ -10,6 +10,39 @@ from app.agents.prompts import CARCINOGEN_DATABASE
 logger = get_logger(__name__)
 
 
+def normalize_units(data: dict) -> dict:
+    """
+    Post-processing function to normalize Unicode units to ASCII format.
+
+    This is a safety net in case the LLM doesn't follow unit normalization instructions.
+    Converts: ³ → 3, ² → 2, ° → deg
+
+    Args:
+        data: Extracted facts dictionary
+
+    Returns:
+        Dictionary with normalized units
+    """
+    def normalize_string(s: Any) -> Any:
+        """Recursively normalize strings in data structure."""
+        if isinstance(s, str):
+            # Normalize superscripts
+            s = s.replace('³', '3')
+            s = s.replace('²', '2')
+            s = s.replace('°C', 'degC')
+            s = s.replace('°F', 'degF')
+            s = s.replace('°', 'deg')
+            return s
+        elif isinstance(s, dict):
+            return {k: normalize_string(v) for k, v in s.items()}
+        elif isinstance(s, list):
+            return [normalize_string(item) for item in s]
+        else:
+            return s
+
+    return normalize_string(data)
+
+
 async def extractor_node(state: GraphState) -> dict[str, Any]:
     """
     EXTRACTOR node: Extract structured information from uploaded documents.
@@ -205,9 +238,12 @@ Extract the following information into this EXACT JSON structure:
    - Use null for missing numbers/booleans
    - Use "" (empty string) for missing text where context matters
    - Use [] (empty array) for missing lists
-5. Preserve original formatting:
-   - Exact units as written (don't convert m3/h to m^3/h)
-   - Original decimal separators (comma vs period)
+5. Unit normalization and formatting:
+   - **ALWAYS normalize Unicode superscripts to ASCII**: Convert ³ → 3, ² → 2, ° → deg
+   - **ALWAYS use ASCII format for units**: m3/h (NOT m³/h), m2 (NOT m²), degC (NOT °C)
+   - **When multiple unit formats exist in document** (e.g., both "m³/h" and "m3/h"), ALWAYS normalize to ASCII format (m3/h)
+   - **Extract ALL process parameters when available**: pressure, humidity, temperature, oxygen - do NOT skip optional fields if data is present
+   - Preserve original decimal separators (comma vs period)
    - Complete table structures with all rows/columns
 6. Character escaping (RFC 8259):
    - Backslash: \\ → \\\\
@@ -221,10 +257,12 @@ Extract the following information into this EXACT JSON structure:
 
 INPUT DOCUMENTS:
 "Document: VOC_Measurements.pdf
-Flow rate: 5000 m3/h
+Flow rate: 5000 m³/h (also written as 3000-6000 m3/h range)
 VOC concentration: Toluene 850 mg/Nm3, Ethyl acetate 420 mg/Nm3
-Temperature: 45 degC
-Note: Humidity measurement pending"
+Temperature: 45°C
+Pressure: -5 mbar (negative)
+Humidity: 60% RH
+Note: Oxygen content not measured"
 
 OUTPUT JSON:
 {{
@@ -257,22 +295,22 @@ OUTPUT JSON:
     "flow_rate": {{
       "value": 5000,
       "unit": "m3/h",
-      "min_value": null,
-      "max_value": null
+      "min_value": 3000,
+      "max_value": 6000
     }},
     "temperature": {{
       "value": 45,
       "unit": "degC"
     }},
     "humidity": {{
-      "value": null,
-      "unit": null,
-      "type": null
+      "value": 60,
+      "unit": "%",
+      "type": "relative"
     }},
     "pressure": {{
-      "value": null,
-      "unit": null,
-      "type": null
+      "value": -5,
+      "unit": "mbar",
+      "type": "negative"
     }},
     "oxygen_content_percent": null,
     "particulate_load": {{
@@ -337,10 +375,10 @@ OUTPUT JSON:
   }},
   "data_quality_issues": [
     {{
-      "issue": "Humidity not specified",
-      "severity": "HIGH",
-      "impact_description": "±20-30% uncertainty in scrubber sizing and condensation risk assessment",
-      "examples": ["Measurement pending according to document"]
+      "issue": "Oxygen content not measured",
+      "severity": "MEDIUM",
+      "impact_description": "Affects LEL calculations and explosion protection assessment for thermal oxidation",
+      "examples": ["Oxygen content not measured per document note"]
     }},
     {{
       "issue": "CAS numbers not provided for VOCs",
@@ -348,10 +386,11 @@ OUTPUT JSON:
       "impact_description": "±10% uncertainty in reactivity assessment, requires database lookup",
       "examples": []
     }}
-  ]
+  ],
+  "customer_specific_questions": []
 }}
 
-This example shows: correct nesting, null for missing numbers, severity classification for data quality issues.
+This example shows: (1) correct Unicode → ASCII unit normalization (m³/h → m3/h, °C → degC), (2) extraction of optional fields when available (pressure, humidity), (3) mixed format handling (both m³/h and m3/h normalized to m3/h), (4) null for missing numbers, (5) severity classification for data quality issues.
 
 **CUSTOMER-SPECIFIC QUESTIONS DETECTION:**
 
@@ -486,6 +525,9 @@ Return ONLY the valid JSON object. Preserve all original wording, numbers, and u
             use_openai=True,
             openai_model=settings.extractor_model
         )
+
+        # Post-process: Normalize units (safety net for LLM)
+        extracted_facts = normalize_units(extracted_facts)
 
         logger.info(
             "extractor_completed",

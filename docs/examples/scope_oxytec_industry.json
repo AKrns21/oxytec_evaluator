@@ -1,0 +1,705 @@
+{
+  "229": {
+    "page_number": 229,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie",
+      "title": "Industrielle Abluftreinigung: Moderne Umwelttechnik im Anlagenbau senkt Emissionen"
+    },
+    "left_column": [
+      "Das globale ökologische Ziel lautet, CO₂-Emissionen zu reduzieren. Die Steigerung der Energieeffizienz und der Einsatz von umweltfreundlichen Technologien sollen dafür sorgen, dass der Anstieg des CO₂-Ausstoßes reduziert bzw. gestoppt wird.",
+      "oxytec trägt dazu bei, den Emissionsausstoß in diesen Industriebereichen zu reduzieren. Dazu werden Fotolyseoxidation/Fotooxidation oder die Wäschertechnik zum Einsatz gebracht.",
+      "oxytec bietet den Kunden ein breites Produktspektrum, das Hauptaugenmerk liegt dabei auf der Lösungsorientierung um kostengünstig, effizient und umweltfreundlich gesetzliche Auflagen einzuhalten.",
+      "Vorteile:",
+      "• Einhaltung aller umweltrechtlichen Gesetzgebungen",
+      "• Über 3000 installierte Anlagen",
+      "• Branchenspezifische Beratung",
+      "• Lebenslanger Service",
+      "• Weltweite Betreuung vor Ort",
+      "oxytec baut auf modernste Anlagentechnologie, die eine effiziente Reinigung von Abluft ermöglicht, den Energieverbrauch reduziert und einen geringen Wartungsaufwand aufweist. oxytec liefert dafür Komplettlösungen, die überzeugen – von der Planung über die Umsetzung bis hin zum Service. Als Systempartner verbindet oxytec technisches Know-how und weltweite Verfügbarkeit, um Kunden eine internationale Betreuung zu bieten.",
+      "Schon seit Jahren entwickelt oxytec Produkte, um optimale Lösungen mit niedrigem Energieverbrauch zu bieten. Die Umwelttechnologien von oxytec sind die Basis für ökologische und ökonomische Abluftreinigung in den unterschiedlichsten Industriebereichen – und das seit über 15 Jahren."
+    ],
+    "right_column": [
+      "Mittlerweile werden durch verschiedenste Auflagen, sei es die TA Luft oder das Bundesimmissionsschutzgesetz, zahlreiche umweltrechtliche Grenzwerte festgelegt, die von Unternehmen aus den unterschiedlichsten Branchen eingehalten werden müssen. Damit diese gesetzlichen Bestimmungen erfüllt und Strafen vermieden werden können, wird das Thema Abluftreinigung branchenübergreifend immer wichtiger.",
+      "Oft genannte Schadstoffe sind dabei flüchtige organische Verbindungen (VOCs), die bei der Verarbeitung von unterschiedlichsten Lösemitteln frei werden und vor allem in Farben und Lacken enthalten sind. Die VOCs werden beispielsweise bei der Lackierung von Automobilkarosserien freigesetzt.",
+      "Eine weitere Schadstoffart bildet das Formaldehyd, das vor allem für den Einsatz in Klebstoffen für Holzmöbel bekannt ist und somit einen Schadstoff darstellt, der in jedem Haushalt zu finden sein kann. Formaldehyd wurde 2014 als krebserzeugend eingestuft, weshalb es hier besondere Verordnungen gibt. Diese Verordnungen haben das Ziel, Formaldehyd nachhaltig zu reduzieren, um die Gefährdung der Menschen zu verringern.",
+      "Um die Abluft von den genannten und noch weiteren Schadstoffen ganzheitlich reinigen zu können, bietet oxytec eine umfassende Produktpalette zum Thema Abluftreinigung an. Dazu gibt es verschiedene Verfahren, die den einzelnen Abluftreinigungsanlagen zu Grunde gelegt sind."
+    ],
+    "table": {
+      "caption": null,
+      "columns": ["Fett", "Geruch", "Keime", "VOC/Ges-C", "Formaldehyd", "H₂S", "Ammoniak", "Temperatur"],
+      "rows": [
+        {
+          "label": "CEA Clean Exhaust Air (UV/Ozon Anlage)",
+          "marks": ["x","x","x","x","x","x",null,null]
+        },
+        {
+          "label": "CFA Clean Fryer Air (UV/Ozon Anlage)",
+          "marks": ["x","x",null,"x",null,null,null,null]
+        },
+        {
+          "label": "CWA Clean Washer Air (Gegenstromwäscher)",
+          "marks": [null,"x",null,null,null,"x",null,null]
+        },
+        {
+          "label": "CSA Clean Smoke Air (Rauchwäscher)",
+          "marks": [null,"x",null,"x",null,null,null,"x"]
+        }
+      ]
+    }
+  },
+  "230": {
+    "page_number": 230,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie",
+      "title": "Anwendungsbeispiele"
+    },
+    "body": [
+      "oxytec bietet für alle organisch belasteten Abluftströme der Industrie sichere und günstige Lösungen im Kampf gegen Gerüche, organische Belastungen und Keime. Dabei kommen unterschiedliche Anlagen zum Einsatz, die genau auf den Anwendungsbereich zugeschnitten sind. Sie basieren auf dem Einsatz von UV-Licht und Ozon, teilweise auch in Kombination mit anderen Verfahren.",
+      "So sorgt das System bei einer Klärschlammtrocknung dafür, dass die Abluft von Gerüchen und Dimethylsulfid (DMS) gereinigt wird. Die Nutzung eines Biofilters war aus Platzgründen nicht möglich. Aspirationsluft und die Abluft aus dem Trockner werden heute von der UV-/Ozon-Anlage gereinigt und keimreduziert. Die Geräuschbelastung wird so von 120.000 auf 675 Geruchseinheiten (GE) pro Kubikmeter reduziert.",
+      "Bei der Erzeugung von Biogas aus Speiseresten entstehen stark riechende und H₂S-haltige Brüden. Durch die Behandlung mit der UV-/Ozon-Anlage können Fette oxidiert und Gerüche reduziert werden. Gleiches gilt für die Sammelhalle mit Speiseren. Hier sollten die Geruchseinheiten der stark riechenden Abluft vermindert werden. Eine thermische Nachverbrennung wegen der hohen Betriebskosten nicht in Betracht. Nach Einbau der UV-/Ozon-Anlage konnten den Auflagen des Gewerbeaufsichtsamtes entsprochen werden.",
+      "Die Einhaltung der behördlichen Emissionsauflagen ist für Schlachthöfe von enormer Wichtigkeit. In einem Schlachthof werden täglich 30.000 Schweine geschlachtet und vollautomatisch zerlegt. In der angeschlossenen Kutteltei entstehen beim Reinigen von Därmen große Mengen organisch verunreinigter, stark riechender Abluft (30.000 m³/h). Trotz des großen Abluftvolumens garantiert die UV-/Ozon-Anlage eine Geruchsreduzierung auf 300 GE ohne Druckverlust.",
+      "Ein neben einem Ärztehaus gelegener Schlachthof führt mit seinem 7.500 m³/h riechender Abluft aus der Schweinverarbeitung zu regelmäßigen Beschwerden. Diese gehören nach dem Einbau einer UV-/Ozon-Anlage der Vergangenheit an. Da der Schlachthof unregelmäßig in Betrieb ist, profitiert er auch von den niedrigen Betriebskosten, die das On-/Off-System der Anlage bietet. Bei der Herstellung von Heparin aus Darmschleim entstehen starke unangenehme Gerüche, die nicht nur organischer Herkunft sind, sondern auch Ammoniak aufweisen. Hier führt die Kombination aus Wäscher und UV-/Ozon-Anlage zu geruchsfreier Abluft. Dank ihres geringen Gewichts konnte die Anlage auf dem Dach installiert werden. Beschwerden gehören jetzt der Vergangenheit an.",
+      "Die bei der Erhitzung, Pressung und Abkühlung von Rapssaat entstehende warme, sehr ölhältige Brüdenabluft bei Ölmühlen kann wirksam bekämpft und von Gerüchen und Organisch C befreit werden.",
+      "Feuchte, fetthaltige und 50 Grad warme Trocknerabluft aus der Bioethanolherstellung wird mit äußerst geringen Energiekosten gereinigt.",
+      "Durch den Einbau von oxytec-Modulen in die Abluftanlagen des Mehlsilos, der Kläranlage und der Fettpressen ist die Abluft aus der Tierkörperverwertung nahezu fett-, keim- und geruchsfrei – und frei von Ammoniak, H₂S und Organisch C.",
+      "Dank der UV-/Ozon-Anlage wird die Kläranlagenabluft aus Rechengebäude, Sandfang und Klärbecken von hohen H₂S-Frachten befreit, 99,9 % aller Keime in der Luft werden inaktiviert.",
+      "In der Textilindustrie werden zur Herstellung technischer Textilien Beschichtungsverfahren eingesetzt, um Gewebe oder Garne mit spezifischen Eigenschaften wie z. B. Hydrophobie auszurüsten. Die Beschichtungsmittel können aus organischen Produkten bestehen, die in wässriger oder lösemittelhaltiger Form aufgetragen werden. Anschließend erfolgt eine thermische Behandlung, bei der alle flüchtigen Bestandteile der Beschichtung in die Abluft gelangen. Zusätzlich enthält die Abluft noch Anteile der Brennstoffe bei direkt beheizten Spannrahmen wie z. B. Methan. Diese Abluft kann mit der UV-/Ozon-Technologie wirkungsvoll aufbereitet werden."
+    ]
+  },
+  "231": {
+    "page_number": 231,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie",
+      "title": "Anwendungsbeispiele Lebensmittelindustrie"
+    },
+    "body": [
+      "Eine Bratstraße für Speckstreifen in in der Innenstadt gelegenen Werk – angrenzend an ein Wohngebiet –, verursacht 3000 m³/h heiße, fettige Abluft. Nach Installation einer CFA-Anlage kann keine Geruchsbelastung mehr wahrgenommen werden. Das olfaktometrische Gutachten ergab eine Geruchsreduktion um 98,2 % und eine Organisch C-Gesamtreduktion auf ca. 30 mg/m³. Rohgaswerte: 18664 GE, Organisch C: 629 mg/m³; Reingaswert: 359 GE, Organisch C: 30 mg/m³. Die Fette und damit die geruchstragenden Partikel in der Abluft werden nahezu vollständig kalt verbrannt. Weder in den Abluftrohren noch in der Umgebung bilden sich Fettablagerungen, das Brandrisiko wird dadurch erheblich gesenkt. Es entstehen sehr geringe Betriebskosten im Vergleich zur Thermischen Nachverbrennung (TNV).",
+      "Anfang 2008 erweiterte der weltweit größte Produzent an Tiefkühlfischprodukten seine Produktionslinie und sah jetzt die Chance, für die Eliminierung der anfallenden Fettdämpfe eine einfachere Methode zu erproben, als die der Thermischen Nachverbrennung. Das Vorfrittieren von Fischstäbchen verursacht pro Stunde ca. 3000 m³ sehr fettige Brüdenabluft. In die Abluftanlage der neuen Bratstraße wurde eine UV-/Ozon-Anlage integriert. Bisher wurde die Thermische Nachverbrennung eingesetzt, die jedoch mit großem Wartungsaufwand verbunden ist und die Probleme mit Gerüchen und Fettablagerungen nur mit sehr hohem Energieaufwand löst, sodass die Betriebskosten der UV-/Ozon-Technologie nur ca. 20 % der Betriebskosten der Thermischen Nachverbrennung betragen. Mit der CFA-Anlage werden Fett und Geruchsstoffe nicht nur an der Fritteuse beseitigt, sondern auch an anderen geruchsintensiven Stellen, wie z. B. der Produktkühlung, was eine deutliche Verbesserung der Arbeitsbedingungen darstellt, da die abgesaugte Sekundärluft aus diesen Bereichen entnommen wird und sich so das Raumklima verbessert. Der Organisch C-Wert konnte so auf unter 27,6 mg/m³ gesenkt werden.",
+      "Bei der Herstellung hochwertiger, frischer Geflügelprodukte (Aufschnitt, Convenience und Steaks) entstehen 7000 m³ pro Stunde Abluft. Die Reinigung mit UV-/Ozon führt zur gewünschten Geruchsreduzierung auf 200 GE und einer Energieeinsparung von 935 Tkw gegenüber einer Thermischen Nachverbrennung.",
+      "Die Abluft von 800 m³/h bei der Gewürzherstellung (Aromen) kann mithilfe der UV-/Ozon-Anlage bis unter die Wahrnehmungsgrenze reduziert werden. Seitdem beschwert sich auch ein benachbartes Unternehmen nicht mehr über die Luftbelastung.",
+      "Bei der Herstellung von Backkäse mussten 3×2000 m³/h Abluft gereinigt werden. oxytec erreichte mit der UV-/Ozon-Anlage außerdem noch eine Energieeinsparung von 50 % – auch aufgrund des eingesetzten On-/Off-Systems.",
+      "Auch bei der Verarbeitung von Kartoffeln zu Pommes frites oder zu Chips sowie bei Burgerbrätern kann die heiße Abluft mittels der UV-/Ozon-Technologie wirksam gereinigt und von Fetten und Gerüchen befreit werden."
+    ]
+  },
+  "232": {
+    "page_number": 232,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – UV/Ozon – CEA, CFA",
+      "title": "Industrielle Abluftreinigung mit der Fotolyseoxidation CEA und CFA"
+    },
+    "body": [
+      "Grundlage der fotolytischen Oxidation ist der radikalisch-chemische Abbau von VOCs (Flüchtige organische Verbindungen) in der Abluft mit der UV-C-Strahlung und Ozon. Diese Technologie ermöglicht zum einen die Reduzierung des Gesamt-Kohlenstoffgehaltes und zum anderen die Geruchsreduzierung in der Abluft. Dazu wird zunächst eine UV-C-Strahlung mit Niederdrucklampen im Wellenlängenbereich λ kleiner als 200 nm erzeugt. In diesem Wellenlängenbereich wird nahezu jedes organische Molekül in organische Radikale (R·) gespalten und Ozon aus dem Luftsauerstoff gebildet. Das Ozon setzt sich spontan in Gegenwart von Wasser aus der Luftfeuchte zu Hydroxylradikalen (HO·) um, die ein deutlich höheres Oxidationspotential haben als Sauerstoffradikale (O·), die sich aus dem Zerfall von Ozon bilden (Tabelle).",
+      "Oxidationspotentiale",
+      "Molekül    Oxidationspotential in Volt",
+      "O₃         2,07",
+      "O·         2,42",
+      "HO·        2,80",
+      "Radikalbildung der VOCs:",
+      "R – R  →  R· + R·                                              (1)",
+      "Hydroxylradikalbildung O₂:",
+      "O₂  + hν  →  O₃  →  O· + O₂                                    (2)",
+      "O·  +  H₂O  →  2HO·                                            (3)",
+      "Zusammenfassend werden mögliche Reaktionen nachstehend aufgeführt:",
+      "1. radikalische Reaktionsmechanismen durch die UV-Strahlung initiiert",
+      "2. Ozonbildung",
+      "3. Bildung von Sauerstoff- und Hydroxylradikalen aus Ozon",
+      "4. Bildung von Singulettsauerstoff und",
+      "5. die Ozonolyse wie von Criegee 1949 formuliert",
+      "Das Zusammenwirken all dieser Reaktionsmöglichkeiten ist sehr komplex. Deshalb wurden in Zusammenarbeit mit anderen Forschungsstellen intensive spektrometrische Untersuchungen durchgeführt, um das Ergebnis des Abbaus organischer Verbindungen mit der fotolytischen Oxidation zu überprüfen. Das Ergebnis dieser Untersuchung ist der Abbau von VOCs und besonders auch der von Formaldehyd mit hohem Wirkungsgrad.",
+      "Auf Basis dieser Untersuchungen und der Ergebnisse mit Referenzanlagen werden die UV/Ozon-Anlagen mit einem speziell von oxytec entwickelten Verfahren ausgelegt und bemessen. Sollten Substanzen enthalten sein, die noch nicht überprüft wurden, kann ein Pilotversuch vor Ort notwendig werden.",
+      "In diesem Zusammenhang soll auch auf die CO₂-Emissionen im Vergleich zu einer thermischen Nachverbrennungsanlage hingewiesen werden. Diese CO₂-Äquivalente können bei einer UV/Ozon-Anlage mit einer Kapazität von ca. 18.000 m³/h ca. 48 t/a und bei der Thermischen Verbrennung 1.135 t/a betragen. Diese Differenz zwischen der Thermischen Nachverbrennung und der Fotolyse ist durch den zusätzlichen Eintrag von z. B. Stadtgas bei der Thermischen Nachverbrennung zu erklären. Bei der Fotolyse hingegen werden nur die kohlenstoffhaltigen Inhaltsstoffe zerstört. Die installierte elektrische Leistung der Fotolyse liegt bei 15 kW. Zusätzlich können diese Anlagen auf das obige Beispiel bezogen rezepturgesteuert betrieben werden, wodurch die Betriebsdauer der UV-C-Lampen deutlich erhöht wird.",
+      "Die Ergebnisse der Vielzahl an Untersuchungen und Analysen machen deutlich, dass mit der UV/Ozon-Technologie die Abluft erfolgreich gereinigt wird. Kernstück der Anlagentechnik ist die Bemessung der Anzahl an UV-C-Lampen, die Länge des Reaktionsrohres sowie die Größe der Oberfläche des Katalysators, um einen technisch optimierten und wirtschaftlichen Abbau der organischen Produkte gewährleisten zu können."
+    ]
+  },
+  "233": {
+    "page_number": 233,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – UV/Ozon – CEA, CFA",
+      "title": "Luftaufbereitungsverfahren auf Basis von UV und Ozon (Fotolyseoxidation, Fotooxidation)"
+    },
+    "sections": {
+      "Technologie & Material": [
+        "Aufbau der Anlage: Bestrahlungskammer mit UV-Strahlern (UV/Ozon Röhren), automatische CIP-Anlage, Steuerung",
+        "Anzahl der UV-Strahler abhängig vom Luftvolumen",
+        "On/Off-System, unempfindlich gegenüber Lastschwankungen",
+        "Alle Bereiche der Anlage werden automatisch gereinigt und bleiben frei von Ablagerungen",
+        "Edelstahl"
+      ],
+      "Installation & Wartung": [
+        "Geringer baulicher Aufwand",
+        "Dachinstallation möglich",
+        "Sehr geringer Wartungsaufwand"
+      ],
+      "Zusätzliche Informationen": [
+        "Geringer CO₂ Ausstoß",
+        "Sehr geringer Energieverbrauch"
+      ]
+    },
+    "tables": [
+      {
+        "caption": "Technische Daten",
+        "columns": [
+          "Produktname",
+          "geeignet für m³/h",
+          "Anschlussleistung in kW",
+          "Abmessungen in mm (L x B x H)",
+          "Gewicht in kg",
+          "Material"
+        ],
+        "rows": [
+          ["CEA 48/48 HO", "2.000 – 5.000", "4/8", "900 x 2558 x 1395", "500", "Edelstahl"],
+          ["CEA 96/96 HO", "4.000 – 10.000", "9/16", "1857 x 2558 x 1395", "1.000", "Edelstahl"],
+          ["CEA 144/144 HO", "6.000 – 10.000", "12/24", "2716 x 2558 x 1395", "1.500", "Edelstahl"],
+          ["CEA 192 L/192 L HO", "8.000 – 10.000", "17/32", "3616 x 2558 x 1395", "2.000", "Edelstahl"],
+          ["CEA 96/96 M HO", "10.000", "9/16", "900 x 2558 x 2502", "1.000", "Edelstahl"],
+          ["CEA 192/192 HO", "10.000 – 20.000", "17/32", "1857 x 2558 x 2502", "2.000", "Edelstahl"],
+          ["CEA 288/288 HO", "15.000 – 20.000", "25/48", "2716 x 2558 x 2502", "2.500", "Edelstahl"],
+          ["CEA 384/384 HO", "20.000 – 30.000", "33/64", "3616 x 2558 x 2502", "3.000", "Edelstahl"]
+        ]
+      }
+    ]
+  },
+  "235": {
+    "page_number": 235,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – UV/Ozon – CEA, CFA",
+      "title": "Luftaufbereitungsverfahren auf Basis von UV und Ozon (Fotolyseoxidation, Fotooxidation)"
+    },
+    "infobox": {
+      "Prinzip": ["Mischluft 45 – 50°C", "Sekundärluft 25 – 30°C", "Heiße Primärluft 100 – 130°C"],
+      "Bauteile": ["UV-/Ozon-Röhren (254 und 185 nm)", "Abscheider, Flammschutz", "Wärmetauscher"],
+      "callout": "Alle Bereiche der Anlage werden täglich automatisch ge­cippt und bleiben frei von Ablagerungen!"
+    },
+    "sections": {
+      "Technologie & Material": [
+        "Luftaufbereitungsverfahren auf Basis von UV und Ozon (Fotolyseoxidation, Fotooxidation)",
+        "On/Off-System, unempfindlich gegenüber Lastschwankungen",
+        "In der Misch- und Kondensationskammer wird die Luft mit Sauerstoff angereichert, um Radikale bilden zu können. Außerdem finden dort ein Druckausgleich und die Abscheidung von Grobpartikeln statt",
+        "Bestrahlungskammer mit UV/Ozon Strahlern (UV/Ozon Röhren)",
+        "Automatische Waschanlage",
+        "Steuerung"
+      ],
+      "Installation & Wartung": [
+        "Reduzierte Wartung- und Betriebskosten, geringer Energieaufwand",
+        "Dachinstallation möglich"
+      ],
+      "Zusätzliche Informationen": [
+        "Sehr geringer CO₂ Ausstoß",
+        "Alle Bereiche der Anlage werden täglich automatisch ge­cippt und bleiben frei von Ablagerungen!",
+        "Keine Verwendung von Chemikalien",
+        "Keine Abwasserbelastung",
+        "Zu 100 % biologisch abbaubare Restprodukte"
+      ]
+    },
+    "tables": [
+      {
+        "caption": "Technische Daten",
+        "columns": [
+          "Produktname",
+          "geeignet für m³/h",
+          "Anschlussleistung in kW",
+          "Abmessungen in mm (H x B x T)",
+          "Gewicht in kg",
+          "Material"
+        ],
+        "rows": [
+          ["CFA mini HO", "500", "2", "3170 x 1000 x 350", "400", "1.4301"],
+          ["CFA 100", "2.500", "9", "3611 x 1817 x 1253", "1.200", "1.4301"],
+          ["CFA 150", "4.000", "13", "3611 x 1817 x 1703", "1.500", "1.4301"],
+          ["CFA 100 HO", "3.500", "17", "3611 x 1817 x 1253", "1.200", "1.4301"],
+          ["CFA 150 HO", "6.000", "25", "3611 x 1817 x 1703", "1.500", "1.4301"]
+        ]
+      }
+    ]
+  },
+  "237": {
+    "page_number": 237,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Wäscher – CSA, CWA",
+      "title": "Wäscher"
+    },
+    "body": [
+      "Ein Gaswäscher oder Nassabscheider ist eine Anlage, in der ein Gasstrom mit einem Flüssigkeitsstrom in Kontakt gebracht wird, um Bestandteile des Gasstroms in der Flüssigkeit aufzunehmen. Bei den übergehenden Bestandteilen des Gasstromes kann es sich um feste, flüssige oder gasförmige Stoffe handeln. Als Waschflüssigkeit können Wasser, aber auch Suspensionen eingesetzt werden. Gaswäscher können zeitgleich zur Entstaubung und zur Abscheidung von Schadgasen verwendet werden. In der Regel wird ein Tropfenabscheider nachgeschaltet.",
+      "Der Wäscherbetrieb zielt darauf ab, für einen möglichst guten Stoffübergang eine möglichst große Flüssigkeitsoberfläche zu erzeugen.",
+      "Die Effizienz der Gaswäscher wird bestimmt durch",
+      "1. die Kontaktzeit,",
+      "2. die Oberfläche der Waschflüssigkeit,",
+      "3. die Diffusionsstrecke in der Gasphase,",
+      "4. die Konzentrationsdifferenz zwischen Gasphase und Flüssigphase bzw.",
+      "5. eine zugemischte Chemikalie, die als Reaktionspartner für den absorbierten Stoff dient.",
+      "Die Effizienz kann daher gesteigert werden durch",
+      "1. eine größere Verweildauer,",
+      "2. eine Maximierung der Oberfläche der Waschlösung durch den Einsatz spezieller Düsen, Einbauten und Füllkörper oder",
+      "3. eine Absenkung der Konzentration in der Flüssigphase durch mehr Waschflüssigkeit oder eine chemische Reaktion.",
+      "So sind bei Wäscher, die mit Tropfenzerzeugung arbeiten, die erzeugten Tropfen in der Regel deutlich größer als die abzuschneidenden Partikel und lassen sich am Apparateaustgang vergleichsweise einfach mittels Tropfenabscheider abscheiden."
+    ]
+  },
+  "238": {
+    "page_number": 238,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Wäscher – CSA, CWA",
+      "title": "CSA Clean Smoke Air Rauchwäscher"
+    },
+    "sections": {
+      "CSA": [
+        "Diese Rauchwäscheranlage reinigt mittels eines automatisierten Abluftwäschers plus nachgeschalteter UV-/Ozonanlage die stark teerhaltige Räucherabluft aus Herstellungsprozessen in der Lebensmittelindustrie (Räucheröfen) und beseitigt die hohen Geruchsemissionen."
+      ],
+      "Funktion": [
+        "Vernichtet effektiv organische und geruchstragende Partikel in der Abluft",
+        "Effektive Abscheidung der Teer-Bestandteile im Wäscher – keine Versottung der nachfolgenden Komponenten"
+      ],
+      "Einsatz": ["Für die Abluftreinigung bei Räucherprozessen"],
+      "Technologie & Material": [
+        "Abluftwäscher (wird häufig kombiniert mit nachgeschalteter UV-/Ozon-Anlage (Fotolyseoxidation))"
+      ],
+      "Installation & Wartung": ["Geringer Wartungsbedarf"],
+      "Zusätzliche Informationen": [
+        "Erfüllung der TA-Luft Anforderungen, belegt durch unabhängige Prüfinstitute in Kombination mit nachfolgenden Komponenten",
+        "Automatisiertes CIP-Reinigungssystem",
+        "Geringer Energieverbrauch"
+      ]
+    },
+    "tables": [
+      {
+        "caption": "Technische Daten",
+        "columns": [
+          "Produktname",
+          "geeignet für m³/h",
+          "Anschlussleistung in kW",
+          "Abmessungen in mm (L x B x H) (ohne Gestell)",
+          "Gewicht in kg*",
+          "Material"
+        ],
+        "rows": [
+          ["CSA 500", "100 – 250", "2", "1000 x 1000 x 3000", "250", "PE"],
+          ["CSA 1000", "250 – 1.000", "3", "3500 x 1500 x 4200", "1.000", "PE"],
+          ["CSA 2000", "1.000 – 2.000", "3", "3500 x 1500 x 5200", "1.600", "PE"],
+          ["CSA 3000", "2.000 – 3.000", "4", "3500 x 1500 x 5700", "2.300", "PE"],
+          ["CSA 5000", "5.000", "5", "3500 x 1500 x 6000", "2.600", "PE"]
+        ],
+        "notes": "* ohne Wasserinhalt"
+      }
+    ]
+  },
+  "239": {
+    "page_number": 239,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Wäscher – CSA, CWA",
+      "title": "CWA Clean Washer Air Gegenstromwäscher"
+    },
+    "sections": {
+      "CWA": [
+        "Diese Abluftwäscheranlage beseitigt effektiv wasserlösliche und geruchstragende Partikel in der Abluft. Insbesondere für die Ammonium belastete Abluft aus Laboren, Tierställen, Schlachthöfen und Tierverwertungen hat sich diese bewährt. Schadstoffe werden effektiv aus der Abluft abgeschieden."
+      ],
+      "Funktion": [
+        "Die Waschflüssigkeit sprüht dem Luftstrom entgegen wodurch die höchsten Auswaschgrade für giftige Gase und Geruchsstoffe erreicht werden",
+        "Die ausgewachsenen Inhaltsstoffe werden über eine Sumpfvorlage aufkonzentriert und abgetrennt",
+        "Chlorgas, Ammoniak und Salzsäuredämpfe werden zu mehr als 99 % entfernt",
+        "Reduzierung der Ablufttemperatur",
+        "Reichert den Abluftstrom mit Feuchtigkeit an"
+      ],
+      "Einsatz": [
+        "Tierställe, Schlachthöfe und Tierverwertungen",
+        "Labore, Beschichtungsverfahren",
+        "Optimiert für schwankende Rohgasbelastung",
+        "In der Textilindustrie oft als Vorreinigungsstufe vor CEA Anlage genutzt, zur Reduzierung der Ablufttemperatur"
+      ],
+      "Technologie & Material": ["Wäscher-Gegenstromprinzip", "Edelstahl 1.4301"],
+      "Installation & Wartung": ["Leichte Installation", "Sehr niedriger Wartungsaufwand"],
+      "Zusätzliche Informationen": [
+        "Geringer Druckverlust",
+        "Bedarfsgerechte Dosierung der Chemikalien"
+      ]
+    },
+    "tables": [
+      {
+        "caption": "Technische Daten",
+        "columns": [
+          "Produktname",
+          "geeignet für m³/h",
+          "Anschlussleistung in kW",
+          "Abmessungen in mm (L x H x B)",
+          "Gewicht in kg*",
+          "Material"
+        ],
+        "rows": [
+          ["CWA 10000", "10.000", "2", "2400 x 1700 x 1800", "1.500", "1.4301"],
+          ["CWA 20000", "20.000", "4", "3400 x 1700 x 1800", "2.000", "1.4301"],
+          ["CWA 30000", "30.000", "6", "3900 x 1700 x 1800", "2.500", "1.4301"],
+          ["CWA 40000", "40.000", "8", "4500 x 1700 x 1800", "3.000", "1.4301"],
+          ["CWA 50000", "50.000", "10", "5500 x 1700 x 1800", "3.500", "1.4301"]
+        ],
+        "notes": "* ohne Wasserinhalt"
+      }
+    ]
+  },
+  "240": {
+    "page_number": 240,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Wäscher",
+      "title": "AAH 3000 Air Air Heatrecovery (Luft-Luft Wärmerückgewinnung für 3000 m³/h)"
+    },
+    "sections": {
+      "AAH 3000 Air Air Heatrecovery": [
+        "Diese Luft-Luft Wärmerückgewinnung ist ein Apparat zur Integration in eine Abluftsystem mit hoher Schmutzbeladung wie z.B. Staub, Aerosole aus industrieller Abluft nach Trocknungsverfahren konzipiert. Zur Abkühlung der Prozessabluft wird die kalte Frischluft im Gegenstromverfahren durch Segmente geführt."
+      ],
+      "Funktion": [
+        "Diese Segmentbauweise stellt während des Betriebs eine große Wärmeübertragungsfläche für eine optimale Ausnutzung zum Wärmeübergang von der heißen Abluft auf die kalte Frischluft bereit",
+        "Saubere Frischluft strömt durch die Segmente",
+        "Keine Abstrahlungsverluste, da die aufgeheizte Frischluft mit optimierter Wärmeübertragung (Segmentbauweise) direkt an die Anlage zurückgeführt wird"
+      ],
+      "Einsatz": ["Keine Änderung der bestehenden Prozesslinien", "Wirtschaftlich ab 1300 m³/h einsetzbar"],
+      "Technologie & Material": ["Edelstahlausführung", "Geringer Druckverlust"],
+      "Installation & Wartung": [
+        "Modulbauweise, fertig montiert und direkt einbaufähig",
+        "Geringer Platzbedarf",
+        "Die Apparatur wird in die vorhandene Abluftleitung ohne Änderung der Abluftführung integriert",
+        "Minimaler Reinigungsaufwand"
+      ]
+    },
+    "tables": [
+      {
+        "caption": "Technische Daten",
+        "columns": ["Produktname", "geeignet für m³/h", "Abmessungen in mm (L x H)", "Gewicht in kg", "Material"],
+        "rows": [["AAH 3000", "3.000", "2066 x 842", "480", "Edelstahl"]]
+      }
+    ]
+  },
+  "241": {
+    "page_number": 241,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Wäscher",
+      "title": "AAH eff CIP (Luft-Luft Wärmerückgewinnung mit höherer Effizienz)"
+    },
+    "sections": {
+      "AAH eff CIP": [
+        "Zur Luft-Luft Wärmerückgewinnung aus einem Abluftsystem werden Rohrbündelwärmetauscher verwendet, die auch bei hoher Schmutzbeladung wie z.B. Staub, Aerosole aus industrieller Abluft nach Trocknungsprozessen einsetzbar sind. Dazu wird die kalte Frischluft im Gegenstromverfahren durch Kühlrohre, die von der heißen Prozessabluft umströmt werden, geführt."
+      ],
+      "Funktion": [
+        "Saubere Frischluft strömt durch die Rohrleitung",
+        "Geringe Abstrahlungsverluste, da die aufgeheizte Frischluft mit optimierter Wärmeübertragung direkt an die Anlage zurückgeführt wird"
+      ],
+      "Einsatz": ["Modulbauweise, fertig montiert und direkt einbaufähig", "Keine Änderung der bestehenden Prozesslinien"],
+      "Technologie & Material": ["Edelstahlausführung", "Dünnwandige Rohre mit hoher Wärmeübertragung", "Geringe Wärmeverluste"],
+      "Installation & Wartung": [
+        "Die Apparatur wird in die vorhandene Abluftleitung ohne Änderung der Abluftführung integriert",
+        "Geringer Platzbedarf",
+        "Minimaler Reinigungsaufwand",
+        "Geringer Druckverlust",
+        "CIP-Reinigung möglich",
+        "Keine Ablagerungen und Inkrustierungen"
+      ]
+    },
+    "tables": [
+      {
+        "caption": "Technische Daten",
+        "columns": ["Hinweis"],
+        "rows": [["Auf Anfrage"]]
+      }
+    ]
+  },
+  "243": {
+    "page_number": 243,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Wäscher",
+      "title": "ESW Elektrostatistische Abscheideanlagen mit automatischem Spülsystem"
+    },
+    "tables": [
+      {
+        "caption": "Technische Daten",
+        "columns": [
+          "Produktname",
+          "geeignet für m³/h",
+          "Abscheidefläche gesamt in m²",
+          "Abmessungen in mm (L x H x B)",
+          "Material"
+        ],
+        "rows": [
+          ["ESW 2,2", "2.000", "33,2", "xxx x xxx x xxxxx", "Edelstahl"],
+          ["ESW 15,1", "15.000", "49,8", "xxx x xxx x xxxxx", "Edelstahl"],
+          ["ESW 15,2", "15.000", "99,6", "xxx x xxx x xxxxx", "Edelstahl"],
+          ["ESW 20,1", "20.000", "74,7", "xxx x xxx x xxxxx", "Edelstahl"],
+          ["ESW 20,2", "20.000", "149,4", "xxx x xxx x xxxxx", "Edelstahl"],
+          ["ESW 25,1", "25.000", "99,6", "xxx x xxx x xxxxx", "Edelstahl"],
+          ["ESW 25,2", "25.000", "199,2", "xxx x xxx x xxxxx", "Edelstahl"],
+          ["ESW 30,1", "30.000", "132,8", "xxx x xxx x xxxxx", "Edelstahl"],
+          ["ESW 30,2", "30.000", "265,6", "xxx x xxx x xxxxx", "Edelstahl"]
+        ]
+      }
+    ]
+  },
+  "244": {
+    "page_number": 244,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – KAT",
+      "title": "KAT Katalysator – Speicherreaktor z.B. nach der UV-/Ozonkammer"
+    },
+    "sections": {
+      "KAT": [
+        "Dieser Speicherreaktor ist für die Luftnachbehandlung nach der UV/Ozon Reinigung (z.B. mit einer CEA mini Anlage) geeignet. Dieses Aktivkohlemodul dient als Reaktionsoberfläche für sehr langkettige Moleküle und für Ozonüberschuss bei Lastschwankungen. Bei Kläranlagen dient der Katalysator zur Abscheidung von Schwefel."
+      ],
+      "Funktion": [
+        "Eine speziell geformte Aktivkohle, die möglichst wenig Druckverlust und Energiekosten verursacht, wird eingesetzt, um der Luftströmung einen möglichst geringen Widerstand entgegenzusetzen.",
+        "Abscheidegrad bis 99 % bei stark belasteter Abluft",
+        "Geringer Druckverlust durch Hochleistungsfüllkörper",
+        "Wartungsfreundliche Bedienfront",
+        "100 %ige betriebsichere Anlage zur Einhaltung behördlicher Vorschriften",
+        "Einhaltung der TA Luft (Gesamt C, Formaldehyd, Aromaten, Mercaptane, Geruchsgrenzen)"
+      ],
+      "Einsatz": [
+        "Reinigung von Luft die mit leicht flüchtigen organischen Lösemitteln belastet ist",
+        "Entfernung von chlorierten Kohlenwasserstoffen (CKW) und aromatischen Kohlenwasserstoffen (BTX)"
+      ],
+      "Technologie & Material": [
+        "Aktivkohle",
+        "Edelstahl Rundbehälter (auf Wunsch lieferbar in 1.4301 und 1.4511)",
+        "In mehreren Abmessungen erhältlich",
+        "Abmessungen gemäß Abluftvolumen",
+        "PVC-U Gehäuse, Trovidur, GFK-Ummantelt",
+        "Anlageteile aus korrosions- und chemikalienbeständigen Kunststoffen"
+      ],
+      "Installation & Wartung": ["Schneller & einfacher Aktivkohlewechsel"]
+    },
+    "tables": [
+      {
+        "caption": "Technische Daten",
+        "columns": [
+          "Produktname",
+          "Beladung in kg",
+          "D in mm",
+          "Zyl. Höhe H in mm",
+          "Stutzen N1 (Austritt Abluft)",
+          "Stutzen N2, N3 & N4 (Revision)",
+          "Stutzen N5 (Eintritt Abluft)",
+          "Stutzen N6 (Kondensat)"
+        ],
+        "subheaders": ["Aktivkohle", "Festflansch", "Mannloch", "Festflansch", "Kugelhahn"],
+        "rows": [
+          ["KAT 1", "1.000", "1.600", "2.500", "DN600", "DN500", "DN600", "DN32"],
+          ["KAT 1,7", "1.700", "2.000", "2.500", "DN700", "DN500", "DN700", "DN32"],
+          ["KAT 2,0", "2.000", "2.000", "2.500", "DN700", "DN500", "DN700", "DN32"]
+        ]
+      }
+    ]
+  },
+  "246": {
+    "page_number": 246,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Verfahrenskombination",
+      "title": "Kombination verschiedener Verfahren"
+    },
+    "intro": "Weitere Anlagenkomponenten runden die Fotolyseoxidation/Fotooxidation ab. Zur Erzielung der jeweils geforderten Reinigungsergebnisse kann die UV-/Ozon-Technologie mit zusätzlichen Anlagen-Komponenten ergänzt werden:",
+    "components": [
+      {
+        "label": "W (Wäscher, CSA, CWA)",
+        "text": "Die oxytec-Abluftwäscher vernichten effektiv wasserlösliche und geruchstragende Partikel in der Abluft. Speziell für die Abluft aus Labors, Tierställen und Räuchereien hat sich die Kombination mit einem Wäscher als wirksam erwiesen. Er entfernt lösliche Bestandteile wie Ammoniak, reduziert die Ablufttemperatur vor der Fotolyseoxidation und reichert den Abluftstrom mit Feuchtigkeit an."
+      },
+      {
+        "label": "R (Reaktionsstrecke nach der UV-/Ozon-Kammer)",
+        "text": "Die Reaktionsstrecke ist so dimensioniert, dass die abzubauenden Stoffe 3 Sekunden lang oxidiert werden, bevor sie über den Ventilator oder Katalysator in die Außenluft abgegeben werden."
+      },
+      {
+        "label": "KAT (Katalysator nach der UV-/Ozon-Kammer)",
+        "text": "Die Aktivkohle dient als Reaktionsoberfläche für sehr langkettige Moleküle und für Ozonüberschuss bei Lastschwankungen. Bei Kläranlagen dient der Katalysator zur Abscheidung des entstehenden Schwefels."
+      },
+      {
+        "label": "UV (UV/Ozon)",
+        "text": "—"
+      }
+    ]
+  },
+  "247": {
+    "page_number": 247,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Verfahrenskombination",
+      "title": "Kombination verschiedener Verfahren"
+    },
+    "table": {
+      "caption": "Kombination von Verfahren",
+      "columns": ["Anwendungen", "Verfahren", "Erzielter Abbau nach TA Luft/Anforderung"],
+      "subcolumns": {
+        "Verfahren": ["CSA, CWA", "CEA", "KAT"]
+      },
+      "rows": [
+        {
+          "Anwendungen": "Fritteusen, Bräter Fleischprodukte",
+          "Verfahren": {"CFA": true, "KAT": true},
+          "Erzielter_Abbau": {"CEA": "VOC und Fett", "KAT": "Hohe Geruchsanforde­rung"}
+        },
+        {
+          "Anwendungen": "Kläranlagen",
+          "Verfahren": {"CEA": true, "KAT": true},
+          "Erzielter_Abbau": {"CEA": "VOC", "KAT": "Hohe Geruchsanforde­rung und/oder Schwefelabscheidung (aus H₂S)"}
+        },
+        {
+          "Anwendungen": "Heparin-Herstellung, Stallungen, Schlachtung",
+          "Verfahren": {"CWA": true, "CEA": true},
+          "Erzielter_Abbau": {"CSA_CWA": "Ammoniak", "CEA": "VOC und Geruchsabbau"}
+        },
+        {
+          "Anwendungen": "Textilindustrie",
+          "Verfahren": {"CWA": true, "CEA": true, "KAT": true},
+          "Erzielter_Abbau": {"CSA_CWA": "Sehr heiße Abluft oder Ammoniak", "CEA": "VOC", "KAT": "Hohe Geruchsanforde­rung"}
+        },
+        {
+          "Anwendungen": "Räucherabluft",
+          "Verfahren": {"CSA": true, "CEA": true, "KAT": true},
+          "Erzielter_Abbau": {"CEA": "VOC", "KAT": "Hohe Geruchsanforde­rung", "CSA_CWA": "Teer, Partikel"}
+        }
+      ]
+    }
+  },
+  "248": {
+    "page_number": 248,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Verfahrenskombination für Räucherabluft",
+      "title": "Räucherabluft: CSA, CEA und KAT"
+    },
+    "intro": [
+      "Am Ende des vorher definierten Zeitraums setzt das automatische Reinigungssystem ein: Der Wäscher entleert und reinigt sich, ohne dass manuelle Nacharbeiten erforderlich sind. Der Zustand des Wäschers kann via Internetverbindung auf der Prozessleitwache visualisiert werden. Nach der Abluftreinigung wird eine dauerhafte Reduktion der Reingaswerte erreicht. Es entsteht kein CO₂ aus dem Verbrennungsprozess (Thermische Nachverbrennung)."
+    ],
+    "bullets_top": [
+      "• Gesamt C < 50 mg",
+      "• Reduzierung von Formaldehyd",
+      "• Geruchsreduzierung um bis 80 %",
+      "• Kein CO₂ aus Verbrennungsprozessen",
+      "• Keine Verwendung von Chemikalien",
+      "• Zu 100 % biologisch abbaubar"
+    ],
+    "left_column": {
+      "heading": "Funktion und Einsatzbereich",
+      "items": [
+        "• Luftaufbereitungsverfahren zur Reduzierung von VOCs, Formaldehyd, Geruch und Gesamt C",
+        "• Mit Abluftwäscher und UV-/Ozon-Technologie",
+        "• Hohe Geruchsemissionen in Verbindung mit einer hohen organischen Teerfracht",
+        "• Stark teerhaltige Räucherabluft",
+        "• < 80 °C",
+        "In der Regel werden verschiedene Räucherkammern zu unterschiedlichen Zeiten betrieben. Abhängig von dem jeweiligen Räucherprogramm der einzelnen Räucherkammern öffnen sich die Ventilationsklappen der einzelnen Kammern zu unterschiedlichen Zeiten. Für den Räucherprozess ist dabei die Einhaltung eines Mindestunterdrucks notwendig. Der Mindestunterdruck wird mittels eines im Wäscher integrierten Ventilators eingehalten. Die Abluft dieses Prozesses wird zunächst mit einem Wäscher behandelt. Die anfallenden organischen Bestandteile des Abluftstroms werden separat abgeführt. Abhängig vom Prozess kann das Waschwasser für einen längeren Zeitraum genutzt werden."
+      ]
+    },
+    "right_column": {
+      "heading": "Eigenschaften",
+      "items": [
+        "• Reinigung von stark teerhaltiger Abluft aus Räucheröfen mittels automatisiertem Abluftwäscher und nachgeschalteter UV-/Ozon-Anlage (Fotolyseoxidation)",
+        "• Effektive Abscheidung der Teer-Bestandteile im Wäscher – keine Versottung der nachfolgenden Komponenten",
+        "• Automatisiertes CIP-Reinigungssystem für Wäscher und UV-/Ozon-Röhren",
+        "• Vernichtet effektiv organische und geruchstragende Partikel in der Abluft",
+        "• Effektivität bzw. Einhaltung TA Luft, belegt durch unabhängige Prüfinstitute"
+      ]
+    }
+  },
+  "249": {
+    "page_number": 249,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Verfahrenskombination für Räucherabluft",
+      "title": "Räucherabluft: CSA, CEA und KAT"
+    },
+    "section": {
+      "heading": "Verfahren in 4 Schritten",
+      "steps": [
+        "1. Wäscher – Zunächst wird die Luft ausgewaschen, wobei Partikel und feste Bestandteile (Teer) abgeschieden werden. Dadurch werden nachfolgende Komponenten vor Versottung geschützt. Die ausgewaschenen Luftbestandteile werden im Abwasser des Wäschers abgeführt, der in regelmäßigen Intervallen gereinigt wird.",
+        "2. UV-/Ozon-Anlage – Hier werden die verbliebenen organischen und geruchstragenden Partikel in der Abluft reduziert. a. Aufspaltung langkettiger Geruchsmoleküle durch das UV-Licht b. Bildung von Ozon und anderer Radikale",
+        "3. Reaktionsstrecke – Oxidation – Reaktion des Ozons mit den aufgespaltenen Verbindungen. Die Reaktionsstrecke ist so dimensioniert, dass die abzubauenden Stoffe 3 Sekunden lang oxidiert werden, bevor sie über den Ventilator oder Katalysator in die Außenluft abgegeben werden.",
+        "4. Speicherreaktor Katalysator (KAT) nach der UV-/Ozon-Kammer – Nachpolieren verbleibender Gerüche und des Restozons. Die Aktivkohle dient als Reaktionsoberfläche für sehr langkettige Moleküle und für Ozonüberschuss bei Lastschwankungen. (Bei Kläranlagen dient der Katalysator hingegen zur Abscheidung des entstehenden Schwefels.)"
+      ]
+    },
+    "product_advantages": [
+      "• 100 %ige betriebsichere Anlagen zur Einhaltung behördlicher Vorschriften",
+      "• Einhaltung behördlicher Auflagen nach TA Luft (Gesamt C, Formaldehyd, Aromaten, Mercaptane, Geruchsgrenzen)",
+      "• Reduzierte Wartungs- und Betriebskosten, geringer Energieaufwand",
+      "• Sehr geringer CO₂-Ausstoß",
+      "• On-/Off-System, unempfindlich gegenüber Lastschwankungen",
+      "• Geringer Platzbedarf, geringer baulicher Aufwand",
+      "• Alle Bereiche der Anlage werden automatisch ge­cippt und bleiben frei von Ablagerungen"
+    ]
+  },
+  "250": {
+    "page_number": 250,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Verfahrenskombination für Abluft aus der Textilindustrie",
+      "title": "Reduzierung von VOCs und Formaldehyd aus der Abluft der Textilindustrie mit CWA, CEA und KAT"
+    },
+    "body": [
+      "In der Textilindustrie sowie auch in anderen Industriebrachen wie der Beschichtungsindustrie werden besonders geruchsintensive aromatische (wie z. B. Phenol, Xylol oder Toluol), ketonische und alkoholische Verbindungen, besonders auch Formaldehyd in die Abluft emittiert.",
+      "Diese Abluftinhaltsstoffe sind toxisch und führen zur Beeinträchtigung der Umwelt zum einen durch die emittierte Fracht, aber auch durch die Gerüche der Abluftinhaltsstoffe. Dies ist von besonderer Bedeutung, wenn der jeweilige Produktionsbetrieb in der Nähe einer nicht gewerblichen Bebauung steht. Die Folge ist die Einschaltung der Behörde, kostspielige Messungen durch ein externes Unternehmen und Auflagen zur Abstellung dieses Mangels. Verschärft wird dieser Umstand zusätzlich durch die Grenzwerte der neuen TA Luft.",
+      "Zur Reduzierung des Gesamtkohlenstoffgehaltes sowie der von Formaldehyd wird seitens oxytec die UV-/Ozon-Technik erfolgreich eingesetzt. Diese Anlagen bestehen im Wesentlichen aus den nacheinander geschalteten Modulen wie der Energie­rückgewinnung, Wäscher (W) mit einem Hochleistungsabscheider, dem UV-Ozon-Lampenraum (UV) mit integrierter vollautomatischer CIP-Reinigung, dem Reaktionsrohr (R), dem Katalysator (KAT) und dem Ventilator (V).",
+      "1. Wäscher – Der Wäscher besteht aus einer Waschkolonne, die entweder mit Sprühkränzen oder mit Füllkörpern im Gegenstrom betrieben wird. Die Funktionen dieses Moduls sind zum einen die Reduzierung der Ablufttemperatur auf ca. 40 bis 50 °C und zum anderen die Abtrennung von Feststoffpartikeln mittels geeigneter Waschflüssigkeiten oder Betriebswasser. Das Waschwasser wird im Kreislauf gefahren und nach der Sättigung mit Abluftinhaltsstoffen entsorgt.",
+      "2. UV-/Ozon-Lampenmodul – Das UV-C-Lampenmodul besteht aus einer oder mehreren UV-C-Lampen, die senkrecht zum Abluftstrom angeordnet sind. Je nach dem VOC-Gehalt können diese Module übereinander und/oder hintereinander geschaltet werden. Der Betrieb des Lampenmoduls erfolgt bei Temperaturen zwischen 40 und 50 °C. In diesen Lampenmodulen werden die organischen Moleküle aus der Abluft zunächst radikalisch gespalten und anschließend mit Hydroxylradikalen oxidativ abgebaut.",
+      "3. Reaktionsrohr – Nach dem UV-C-Lampenmodul befindet sich ein Reaktionsrohr, das mit einer Verweildauer des Abluftstromes im Reaktionsrohr von ca. 3 Sekunden betrieben wird. Grund für die Installation dieses Reaktionsrohres nach dem UV-C-Lampenraum ist, dass die Spaltung der organischen Abluftmoleküle und die Bildung der HO-Radikale spontan erfolgt, der Abbau jedoch die längere Reaktionszeit benötigt."
+    ]
+  },
+  "251": {
+    "page_number": 251,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Verfahrenskombination für Abluft aus der Textilindustrie",
+      "title": "Reduzierung von VOCs und Formaldehyd aus der Abluft der Textilindustrie mit CWA, CEA und KAT"
+    },
+    "section": {
+      "heading": "4. Katalysator",
+      "text": "Einige langkettige und unpolare organische Moleküle benötigen längere Abbauzeiten als diese mit einem Reaktionsrohr unter wirtschaftlichen und technischen Aspekten realisierbar sind. Deshalb wird optional nach dem Reaktionsrohr ein Katalysator mit extrem hoher Oberfläche eingesetzt, um die Verweilzeit nach dem UV-C-Lampenraum zu verlängern. Dies geschieht dadurch, dass sich die Abbauprodukte an der Oberfläche des Katalysators anlagern und dort abgebaut werden. Mit dieser Maßnahme ist ein nahezu vollständiger Abbau der organischen Moleküle aus der Abluft möglich, sodass die Grenzwerte der TA Luft eingehalten werden können."
+    },
+    "note": "Diese einzelnen Module können je nach Applikation und Kundenwunsch miteinander verknüpft und betrieben werden.",
+    "diagram": {
+      "labels": ["UV/Ozon", "Fotozonlampe"],
+      "sequence_numbers": ["1", "2", "3", "4"]
+    },
+    "body": [
+      "In der Textilindustrie werden zur Herstellung technischer Textilien Beschichtungsverfahren eingesetzt, um Gewebe und Garne mit spezifischen Eigenschaften wie z. B. Hydrophobie oder Sonnenschutz auszurüsten. Die Beschichtungsmittel bestehen aus organischen Produkten, die entweder in wässriger oder lösemittelhaltiger Form aufgetragen werden. Anschließend erfolgt im Spannrahmen eine thermische Behandlung, bei der alle flüchtigen Bestandteile und Umsetzungsprodukte aus der Beschichtung in die Abluft gelangen. Zusätzlich zur Abluft aus dem Spannrahmen enthält die Abluft noch die Anteile der Brennstoffe wie z. B. Methan bei direkt beheizten Spannrahmen. Diese Abluft, deren Zusammensetzung im Wesentlichen durch die Betriebstemperatur und die jeweils verwendete Beschichtungsrezeptur bestimmt wird, kann mit der UV-/Ozon-Technologie wirkungsvoll aufbereitet werden.",
+      "Die bei Beschichtungsvorgängen von technischen Textilien auftretenden Geruchsstoffe sind u. a. Formaldehyd und organische Alkohole wie Ethanol und Methanol oder Oxime in der Abluft. Diese Inhaltsstoffe können mit der UV-C-Ozonung erfolgreich abgebaut werden und sorgen somit für die Einhaltung der neuen Grenzwerte aus der TA Luft. Hierzu werden einige Betriebsdaten nach einer Betriebsdauer von einem Jahr in der nachstehenden Tabelle dargestellt."
+    ]
+  },
+  "252": {
+    "page_number": 252,
+    "title_block": {
+      "rubric": "Abluftreinigung Industrie – Verfahrenskombination für Abluft aus der Textilindustrie",
+      "title": "Reduzierung von VOCs und Formaldehyd aus der Abluft der Textilindustrie mit CWA, CEA und KAT"
+    },
+    "table": {
+      "caption": "Reinigung von Abluft aus textilen Beschichtungsverfahren",
+      "columns": [
+        "Substanz",
+        "Rohgaszusammensetzung – Konzentration in [mg/m³]",
+        "Reinigungsgrad mit der UV-/Ozon-Anlage – ohne Katalysator",
+        "Reinigungsgrad mit der UV-/Ozon-Anlage – mit Katalysator"
+      ],
+      "rows": [
+        ["Gesamtkohlenstoff", "10 bis 150", "bis 80 %", "bis 95 %"],
+        ["Formaldehyd", "1 bis 30", "bis 90 %", "bis 95 %"],
+        ["Ammoniak", "3 bis 30", "bis 90 %", "bis 95 %"]
+      ]
+    },
+    "summary": "Mit der UV-/Ozon-Technologie kann die Abluft der Textilbetriebe, der Folien- und Beschichtung­sherstellung aber auch aus anderen Industriebrachen wie der Druckindustrie gereinigt werden. Ziele dieser Reinigung sind stets zum einen die Reduzierung der Gerüche und zum anderen die Reduzierung des Gesamtkohlenstoffgehaltes. Beide Ziele können mit dieser bewährten Technologie unter Einhaltung der Grenzwerte der TA Luft erreicht werden.",
+    "product_advantages": [
+      "• Organische und geruchstragende Partikel in der Abluft werden erfolgreich zerstört",
+      "• Niedrige Investitionskosten",
+      "• Niedriger Energieverbrauch",
+      "• Geringer Platzbedarf und eine mögliche Installation in oder außerhalb der Produktion",
+      "• Kein zusätzlicher CO/CO₂ – Eintrag in die gereinigte Abluft",
+      "• Keine NOx-Entwicklung",
+      "• Automatisch wirkendes CIP-Reinigungssystem im UV-C-Lampenraum, um die Fotozonenröhren ablagerungsfrei betreiben zu können"
+    ]
+  },
+  "260": {
+    "page_number": 260,
+    "title_block": {
+      "rubric": "Galley Abluft – Galley Demand Ventilation",
+      "title": "Reduzierung des Abluftvolumens durch temperaturgeregelte Haubenklappen in der Injektionshaube"
+    },
+    "intro": "Neben der Galley Demand Ventilation durch temperaturgeregelte Haubenklappen kann eine weitere Energieeinsparung über eine Luftrezirkulation in der Haube erfolgen. Hierbei wird ca. 2/3 weniger Abluftvolumen im Vergleich zu herkömmlichen Hauben benötigt. Hierdurch wird die Galley Luftzuführung um das identische Volumen reduziert. Airhandling Systeme, Ventilatoren und Kanäle können deutlich kleiner ausfallen.",
+    "left_column_bullets": [
+      "• Der in der Haube integrierte Ventilator baut einen Luftsog unterhalb des Haubendachs auf, indem er die Abluft aus dem Abluftstutzen über in der Haube integrierte Luftkanäle abzieht und über den Aerosolabscheider zurück in den Abluftstrom injiziert. Der Luftsog unterhalb des Haubendaches wird Coanda Effekt genannt und ist vergleichbar mit der Sogwirkung bei Tragflächen von Flugzeugen.",
+      "• Das Computermodell zeigt die Luftgeschwindigkeit in der Haube. Darin sieht man, dass sich bereits am Rand der Haube ein Unterdruck aufbaut.",
+      "• Das Computermodell zeigt weiterhin, dass die Haube so mit 70 % reduziertem Abluftvolumen den gleichen Effekt wie eine Standard-Haube hat.",
+      "• Reduktion des Abluftvolumens bis zu 70 % im Vergleich zu einer regulär eingesetzten Standardhaube möglich."
+    ],
+    "right_column_bullets": [
+      "• Die reduzierte Abluft im Vergleich zu herkömmlichen Hauben verringert den Zuluftbedarf der Galley, sodass außerdem kleinere Airhandling Systeme, Ventilatoren und Kanäle eingesetzt werden können. Neben der Energieeinsparung durch kleinere Geräte können zusätzlich Platzeinsparungen für andere Geräte in der Zwischendecke, aber auch in den Ventilationsräumen geschaffen werden.",
+      "• Durch die hohe Ozon-Konzentration in der Haube und den in der Haube integrierten Luftkanälen wird die Ansammlung von Bakterien verhindert. Aufgrund des Coanda-Effekts ist der Ozonaustritt aus der Haube in die Galley ausgeschlossen."
+    ],
+    "combination_note": "Die zuvor beschriebene Temperaturregelung kann auch mit dieser Haube kombiniert werden:",
+    "combination_bullets": [
+      "• Temperaturgeregelte Haubenklappe, die dafür sorgt, dass in Zeiten mit wenig Kochbetrieb kein oder nur ein sehr geringes Abluftvolumen erzeugt wird. Die Temperaturregelung erfolgt mit einem im Haubenstutzen integrierten Temperatursensor. Die Temperatur wird auf der Steuerung angezeigt. Der Öffnungswinkel der Haubenklappe kann jederzeit reguliert werden. Die Einstellung individueller Kochprofile – abhängig vom jeweiligen Kochgerät – ist damit möglich, sodass das notwendige Abluftvolumen entsprechend angepasst werden kann.",
+      "• Durch das reduzierte Abluftvolumen kann die kostenintensive Zuluftführung (Kühlen, Trocknen und Entsalzung) minimiert werden."
+    ]
+  }
+}

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Flow - Clean Minimal Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: hsl(0 0% 98%);
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid hsl(0 0% 89.8%);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid hsl(0 0% 89.8%);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: hsl(0 0% 3.9%);
+            margin-bottom: 4px;
+        }
+
+        .card-description {
+            font-size: 0.875rem;
+            color: hsl(0 0% 45.1%);
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* Iteration badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: hsl(0 0% 96.1%);
+            color: hsl(0 0% 3.9%);
+            border: 1px solid hsl(0 0% 89.8%);
+            margin-bottom: 24px;
+        }
+
+        /* Flow container */
+        .flow-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 16px 0;
+        }
+
+        /* Agent node */
+        .agent-node {
+            position: relative;
+            min-width: 140px;
+        }
+
+        .node-content {
+            background: white;
+            border: 2px solid hsl(0 0% 89.8%);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        /* Pending state - muted */
+        .node-pending .node-content {
+            background: hsl(0 0% 98%);
+            border-color: hsl(0 0% 89.8%);
+        }
+
+        .node-pending .node-icon {
+            opacity: 0.4;
+            color: hsl(0 0% 63.9%);
+        }
+
+        .node-pending .node-label {
+            color: hsl(0 0% 63.9%);
+        }
+
+        .node-pending .node-model {
+            opacity: 0.5;
+        }
+
+        /* Running state - primary accent */
+        .node-running .node-content {
+            background: hsl(221.2 83.2% 53.3% / 0.1);
+            border-color: hsl(221.2 83.2% 53.3%);
+            box-shadow: 0 0 0 3px hsl(221.2 83.2% 53.3% / 0.1);
+        }
+
+        .node-running .node-icon {
+            color: hsl(221.2 83.2% 53.3%);
+            animation: spin 2s linear infinite;
+        }
+
+        .node-running .node-label {
+            color: hsl(221.2 83.2% 53.3%);
+            font-weight: 600;
+        }
+
+        /* Completed state - success green */
+        .node-completed .node-content {
+            background: hsl(142.1 76.2% 36.3% / 0.05);
+            border-color: hsl(142.1 76.2% 36.3%);
+        }
+
+        .node-completed .node-icon {
+            color: hsl(142.1 76.2% 36.3%);
+        }
+
+        .node-completed .node-label {
+            color: hsl(0 0% 3.9%);
+        }
+
+        /* Start node - always completed */
+        .node-start .node-content {
+            background: hsl(142.1 76.2% 36.3% / 0.1);
+            border-color: hsl(142.1 76.2% 36.3%);
+        }
+
+        /* Icon container */
+        .node-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.2s ease;
+        }
+
+        /* Label */
+        .node-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: hsl(0 0% 3.9%);
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        /* Model badge */
+        .node-model {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            color: hsl(0 0% 45.1%);
+            padding: 2px 8px;
+            background: hsl(0 0% 96.1%);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        /* Status badge */
+        .status-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid hsl(0 0% 89.8%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+
+        .node-pending .status-badge {
+            opacity: 0;
+        }
+
+        .node-running .status-badge {
+            background: hsl(221.2 83.2% 53.3%);
+            border-color: hsl(221.2 83.2% 53.3%);
+            color: white;
+            animation: spin 2s linear infinite;
+        }
+
+        .node-completed .status-badge {
+            background: hsl(142.1 76.2% 36.3%);
+            border-color: hsl(142.1 76.2% 36.3%);
+            color: white;
+        }
+
+        /* Arrow connector */
+        .arrow {
+            color: hsl(0 0% 89.8%);
+            font-size: 20px;
+            flex-shrink: 0;
+            transition: color 0.3s ease;
+        }
+
+        .arrow.active {
+            color: hsl(221.2 83.2% 53.3%);
+        }
+
+        /* Iteration box */
+        .iteration-box {
+            border: 2px dashed hsl(0 0% 89.8%);
+            border-radius: 8px;
+            padding: 24px 16px 16px;
+            position: relative;
+            background: hsl(0 0% 98%);
+        }
+
+        .iteration-label {
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: white;
+            padding: 0 8px;
+            font-size: 0.75rem;
+            color: hsl(0 0% 45.1%);
+            font-weight: 500;
+        }
+
+        /* Stats panel */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 24px;
+            padding: 20px;
+            background: hsl(0 0% 98%);
+            border-radius: 8px;
+            border: 1px solid hsl(0 0% 89.8%);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: hsl(0 0% 3.9%);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: hsl(0 0% 45.1%);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Progress indicators */
+        .progress-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: hsl(0 0% 89.8%);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.completed {
+            background: hsl(142.1 76.2% 36.3%);
+        }
+
+        .progress-dot.active {
+            background: hsl(221.2 83.2% 53.3%);
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.8; }
+        }
+
+        /* SVG Icons */
+        .icon-svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        /* Hover states */
+        .node-content:hover {
+            border-color: hsl(0 0% 70%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .node-running .node-content:hover {
+            border-color: hsl(221.2 83.2% 53.3%);
+        }
+
+        .node-completed .node-content:hover {
+            border-color: hsl(142.1 76.2% 36.3%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Agent Processing Pipeline</div>
+                <div class="card-description">Real-time workflow execution</div>
+            </div>
+
+            <div class="card-content">
+                <div class="badge">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                    <span>Iteration 0</span>
+                </div>
+
+                <div class="flow-container">
+                    <!-- Start -->
+                    <div class="agent-node node-start node-completed" data-agent="start">
+                        <div class="node-content">
+                            <div class="node-icon">
+                                <svg class="icon-svg" viewBox="0 0 24 24">
+                                    <polygon points="5 3 19 12 5 21 5 3"/>
+                                </svg>
+                            </div>
+                            <div class="node-label">Start</div>
+                        </div>
+                        <div class="status-badge">✓</div>
+                    </div>
+
+                    <div class="arrow">→</div>
+
+                    <!-- Extractor -->
+                    <div class="agent-node node-completed" data-agent="extractor">
+                        <div class="node-content">
+                            <div class="node-icon">
+                                <svg class="icon-svg" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                            </div>
+                            <div class="node-label">Extractor</div>
+                            <div class="node-model">
+                                <span>gpt-5</span>
+                            </div>
+                        </div>
+                        <div class="status-badge">✓</div>
+                    </div>
+
+                    <div class="arrow active">→</div>
+
+                    <!-- Planner -->
+                    <div class="agent-node node-completed" data-agent="planner">
+                        <div class="node-content">
+                            <div class="node-icon">
+                                <svg class="icon-svg" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </div>
+                            <div class="node-label">Planner</div>
+                            <div class="node-model">
+                                <span>gpt-5-mini</span>
+                            </div>
+                        </div>
+                        <div class="status-badge">✓</div>
+                    </div>
+
+                    <div class="arrow active">→</div>
+
+                    <!-- Subagent in iteration box -->
+                    <div class="iteration-box">
+                        <div class="iteration-label">Iteration 0</div>
+                        <div class="agent-node node-running" data-agent="subagent">
+                            <div class="node-content">
+                                <div class="node-icon">
+                                    <svg class="icon-svg" viewBox="0 0 24 24">
+                                        <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
+                                    </svg>
+                                </div>
+                                <div class="node-label">Subagent</div>
+                                <div class="node-model">
+                                    <span>gpt-5-nano</span>
+                                </div>
+                            </div>
+                            <div class="status-badge">⟳</div>
+                        </div>
+                    </div>
+
+                    <div class="arrow">→</div>
+
+                    <!-- Risk Assessor -->
+                    <div class="agent-node node-pending" data-agent="risk">
+                        <div class="node-content">
+                            <div class="node-icon">
+                                <svg class="icon-svg" viewBox="0 0 24 24">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                            </div>
+                            <div class="node-label">Risk Assessor</div>
+                            <div class="node-model">
+                                <span>gpt-5</span>
+                            </div>
+                        </div>
+                        <div class="status-badge">○</div>
+                    </div>
+
+                    <div class="arrow">→</div>
+
+                    <!-- Writer -->
+                    <div class="agent-node node-pending" data-agent="writer">
+                        <div class="node-content">
+                            <div class="node-icon">
+                                <svg class="icon-svg" viewBox="0 0 24 24">
+                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                                </svg>
+                            </div>
+                            <div class="node-label">Writer</div>
+                            <div class="node-model">
+                                <span>claude-sonnet-4</span>
+                            </div>
+                        </div>
+                        <div class="status-badge">○</div>
+                    </div>
+                </div>
+
+                <!-- Progress dots -->
+                <div class="progress-row">
+                    <div class="progress-dot completed"></div>
+                    <div class="progress-dot completed"></div>
+                    <div class="progress-dot completed"></div>
+                    <div class="progress-dot active"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="completed">3</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="running">1</div>
+                        <div class="stat-label">Running</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="pending">2</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="total">6</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const agents = ['start', 'extractor', 'planner', 'subagent', 'risk', 'writer'];
+        let currentIndex = 3;
+
+        function updateAgent(agentName, status) {
+            const node = document.querySelector(`[data-agent="${agentName}"]`);
+            if (!node) return;
+
+            node.classList.remove('node-pending', 'node-running', 'node-completed');
+            node.classList.add(`node-${status}`);
+
+            const nextArrow = node.nextElementSibling;
+            if (nextArrow && nextArrow.classList.contains('arrow')) {
+                if (status === 'completed') {
+                    nextArrow.classList.add('active');
+                } else {
+                    nextArrow.classList.remove('active');
+                }
+            }
+
+            updateProgressDots();
+            updateStats();
+        }
+
+        function updateProgressDots() {
+            const dots = document.querySelectorAll('.progress-dot');
+            const completedCount = document.querySelectorAll('.node-completed').length - 1;
+            
+            dots.forEach((dot, index) => {
+                dot.classList.remove('completed', 'active');
+                if (index < completedCount) {
+                    dot.classList.add('completed');
+                } else if (index === completedCount) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        function updateStats() {
+            const completed = document.querySelectorAll('.node-completed').length - 1;
+            const running = document.querySelectorAll('.node-running').length;
+            const pending = document.querySelectorAll('.node-pending').length;
+
+            document.getElementById('completed').textContent = completed;
+            document.getElementById('running').textContent = running;
+            document.getElementById('pending').textContent = pending;
+        }
+
+        setInterval(() => {
+            if (currentIndex < agents.length) {
+                updateAgent(agents[currentIndex], 'completed');
+                currentIndex++;
+
+                if (currentIndex < agents.length) {
+                    updateAgent(agents[currentIndex], 'running');
+                }
+            } else {
+                currentIndex = 3;
+                updateAgent('subagent', 'running');
+                updateAgent('risk', 'pending');
+                updateAgent('writer', 'pending');
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

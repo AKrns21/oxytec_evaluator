@@ -1,0 +1,180 @@
+{
+  "test_case_id": "case_001",
+  "description": "Standard VOC measurement report with flow rate and pollutant data",
+  "difficulty": "easy",
+  "format": "pdf",
+  "focus_areas": [
+    "unit_parsing",
+    "pollutant_extraction",
+    "customer_questions"
+  ],
+  "expected_extraction": {
+    "pollutant_characterization": {
+      "pollutant_list": [
+        {
+          "name": "Toluene",
+          "cas_number": "108-88-3",
+          "concentration": 850.5,
+          "concentration_unit": "mg/Nm3",
+          "category": "VOC"
+        },
+        {
+          "name": "Ethyl acetate",
+          "cas_number": "141-78-6",
+          "concentration": 420.0,
+          "concentration_unit": "mg/Nm3",
+          "category": "VOC"
+        }
+      ],
+      "total_load": {
+        "tvoc": 1270.5,
+        "tvoc_unit": "mg/Nm3",
+        "total_carbon": null,
+        "odor_units": null
+      },
+      "measurement_tables": "| Substance      | CAS Number | Concentration | Unit    | Category |\n|----------------|------------|---------------|---------|----------|\n| Toluene        | 108-88-3   | 850.5         | mg/Nm3  | VOC      |\n| Ethyl acetate  | 141-78-6   | 420.0         | mg/Nm3  | VOC      |"
+    },
+    "process_parameters": {
+      "flow_rate": {
+        "value": 5000,
+        "unit": "m3/h",
+        "min_value": null,
+        "max_value": null
+      },
+      "temperature": {
+        "value": 45,
+        "unit": "degC"
+      },
+      "pressure": {
+        "value": -5,
+        "unit": "mbar",
+        "type": "negative"
+      },
+      "humidity": {
+        "value": 60,
+        "unit": "%",
+        "type": "relative"
+      },
+      "oxygen_content_percent": null,
+      "particulate_load": {
+        "value": null,
+        "unit": null
+      },
+      "operating_schedule": "continuous"
+    },
+    "current_abatement_systems": {
+      "technologies_in_place": [],
+      "removal_efficiencies": null,
+      "problems_reported": null,
+      "maintenance_costs": null
+    },
+    "industry_and_process": {
+      "industry_sector": "chemical",
+      "specific_processes": "Solvent-based coating line",
+      "production_volumes": null,
+      "raw_materials": null
+    },
+    "requirements_and_constraints": {
+      "target_removal_efficiency_percent": null,
+      "outlet_concentration_limit": {
+        "value": null,
+        "unit": null
+      },
+      "regulatory_requirements": "",
+      "space_constraints": "",
+      "energy_consumption_limits": null,
+      "budget_constraints": {
+        "capex": null,
+        "opex": null
+      },
+      "atex_classification": null,
+      "safety_requirements": ""
+    },
+    "site_conditions": {
+      "utilities_available": {
+        "electricity": null,
+        "water": null,
+        "compressed_air": null,
+        "steam": null
+      },
+      "installation_location": "",
+      "ambient_conditions": {
+        "temperature_range": null,
+        "humidity": null,
+        "corrosive_environment": null
+      },
+      "access_constraints": null
+    },
+    "customer_knowledge_and_expectations": {
+      "technologies_mentioned": ["oxytec", "NTP"],
+      "technologies_currently_considering": [],
+      "previous_experience": null,
+      "technology_preferences": null,
+      "technical_sophistication": "medium"
+    },
+    "customer_specific_questions": [
+      {
+        "question_text": "Can Oxytec NTP technology handle these VOC concentrations?",
+        "question_type": "feasibility_check",
+        "context": "Customer is inquiring about NTP technology capability for treating 1270.5 mg/Nm3 total VOC (Toluene 850.5 mg/Nm3 + Ethyl acetate 420.0 mg/Nm3)",
+        "priority": "HIGH",
+        "source_document": "VOC Measurement Report"
+      },
+      {
+        "question_text": "What is the expected energy consumption?",
+        "question_type": "performance_inquiry",
+        "context": "Customer wants to know energy requirements for treating 5000 m3/h exhaust air flow",
+        "priority": "HIGH",
+        "source_document": "VOC Measurement Report"
+      }
+    ],
+    "timeline_and_project_phase": {
+      "timeline": null,
+      "project_phase": "inquiry"
+    },
+    "data_quality_issues": [
+      {
+        "issue": "Missing regulatory emission limits",
+        "severity": "HIGH",
+        "impact_description": "Cannot assess compliance requirements without knowing target outlet concentrations",
+        "examples": ["No outlet concentration limit specified"]
+      },
+      {
+        "issue": "No utility specifications provided",
+        "severity": "MEDIUM",
+        "impact_description": "Cannot verify if site has adequate electrical supply for NTP system",
+        "examples": ["Electricity voltage/phases not specified"]
+      }
+    ]
+  },
+  "critical_fields": [
+    "pollutant_characterization.pollutant_list[0].name",
+    "pollutant_characterization.pollutant_list[0].concentration",
+    "pollutant_characterization.pollutant_list[0].concentration_unit",
+    "pollutant_characterization.total_load.tvoc",
+    "process_parameters.flow_rate.value",
+    "process_parameters.flow_rate.unit",
+    "process_parameters.temperature.value",
+    "process_parameters.temperature.unit",
+    "customer_specific_questions[0].question_text",
+    "customer_specific_questions[0].priority"
+  ],
+  "acceptable_variations": {
+    "pollutant_characterization.pollutant_list[0].cas_number": [
+      "108-88-3",
+      "108883",
+      null
+    ],
+    "pollutant_characterization.pollutant_list[1].cas_number": [
+      "141-78-6",
+      "141786",
+      null
+    ],
+    "process_parameters.operating_schedule": [
+      "continuous",
+      "continuous (24/7)",
+      "24/7",
+      "Continuous (24/7)"
+    ]
+  }
+}

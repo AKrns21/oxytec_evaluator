@@ -362,7 +362,34 @@ class DocumentService:
                 }]
             )
 
-            extracted_text = response.content[0].text
+            # Safely extract text from response with proper error handling
+            if not response.content:
+                logger.warning(
+                    "vision_response_empty",
+                    page=page_identifier
+                )
+                return f"[No content in vision response for {page_identifier}]"
+
+            if len(response.content) == 0:
+                logger.warning(
+                    "vision_response_no_blocks",
+                    page=page_identifier
+                )
+                return f"[Empty content blocks in vision response for {page_identifier}]"
+
+            # Get the first content block
+            content_block = response.content[0]
+
+            # Check if it has a text attribute
+            if not hasattr(content_block, 'text'):
+                logger.error(
+                    "vision_response_no_text",
+                    page=page_identifier,
+                    content_type=type(content_block).__name__
+                )
+                return f"[Vision response has no text attribute for {page_identifier}]"
+
+            extracted_text = content_block.text
 
             logger.info(
                 "vision_extraction_success",
