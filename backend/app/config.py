@@ -79,10 +79,6 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     log_format: str = "json"
 
-    # Redis (optional, for caching)
-    redis_url: Optional[str] = None
-    cache_ttl_seconds: int = 3600
-
     # LangSmith Tracing (optional)
     langchain_tracing_v2: bool = False
     langchain_api_key: Optional[str] = None

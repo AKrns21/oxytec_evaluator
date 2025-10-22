@@ -8,6 +8,7 @@ import fitz  # PyMuPDF
 import docx
 import pandas as pd
 from app.utils.logger import get_logger
+from app.utils.error_handler import handle_service_errors
 
 logger = get_logger(__name__)
 
@@ -15,6 +16,7 @@ logger = get_logger(__name__)
 class DocumentService:
     """Service for extracting text from documents."""
 
+    @handle_service_errors("document_extraction")
     async def extract_text(self, file_path: str, mime_type: Optional[str] = None) -> str:
         """
         Extract text from a document.
@@ -36,129 +38,118 @@ class DocumentService:
 
         extension = path.suffix.lower()
 
-        try:
-            if extension == ".pdf":
-                return await self._extract_pdf(file_path)
-            elif extension in [".docx", ".doc"]:
-                return await self._extract_docx(file_path)
-            elif extension == ".txt":
-                return await self._extract_txt(file_path)
-            elif extension in [".csv", ".xlsx", ".xls"]:
-                return await self._extract_spreadsheet(file_path)
-            elif extension in [".png", ".jpg", ".jpeg"]:
-                return await self._extract_image(file_path)
-            else:
-                logger.warning("unsupported_file_type", extension=extension)
-                return f"[Unsupported file type: {extension}]"
+        if extension == ".pdf":
+            return await self._extract_pdf(file_path)
+        elif extension in [".docx", ".doc"]:
+            return await self._extract_docx(file_path)
+        elif extension == ".txt":
+            return await self._extract_txt(file_path)
+        elif extension in [".csv", ".xlsx", ".xls"]:
+            return await self._extract_spreadsheet(file_path)
+        elif extension in [".png", ".jpg", ".jpeg"]:
+            return await self._extract_image(file_path)
+        else:
+            logger.warning("unsupported_file_type", extension=extension)
+            return f"[Unsupported file type: {extension}]"
 
-        except Exception as e:
-            logger.error("text_extraction_failed", file_path=file_path, error=str(e))
-            raise
-
+    @handle_service_errors("pdf_extraction")
     async def _extract_pdf(self, file_path: str) -> str:
         """Extract text from PDF using PyMuPDF, fallback to vision for image-based PDFs."""
-        try:
-            doc = fitz.open(file_path)
-            text_parts = []
-            image_based_pages = []
+        doc = fitz.open(file_path)
+        text_parts = []
+        image_based_pages = []
 
-            # First, try regular text extraction
-            for page_num, page in enumerate(doc, 1):
-                text = page.get_text()
-                if text.strip():
-                    text_parts.append(f"--- Page {page_num} ---\n{text}")
-                else:
-                    # No text found, this might be an image-based page
-                    image_based_pages.append((page_num, page))
-
-            # If we got text from regular extraction, use it
-            if text_parts:
-                doc.close()
-                return "\n\n".join(text_parts)
-
-            # If no text was extracted, use vision to extract from images
-            logger.info("pdf_is_image_based", file_path=file_path, pages=len(doc))
-
-            # Extract using vision for image-based PDFs (in parallel)
-            import asyncio
-
-            # Convert all pages to images first
-            page_images = []
-            for page_num in range(len(doc)):
-                page = doc[page_num]
-                pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # 2x zoom for better quality
-                img_bytes = pix.tobytes("png")
-                page_images.append((page_num + 1, img_bytes))
-
-            # Extract text from all pages in parallel
-            vision_tasks = [
-                self._extract_text_from_image_with_vision(
-                    img_bytes,
-                    f"page_{page_num}"
-                )
-                for page_num, img_bytes in page_images
-            ]
-
-            vision_results = await asyncio.gather(*vision_tasks, return_exceptions=True)
-
-            # Collect results
-            vision_text_parts = []
-            for idx, (page_num, _) in enumerate(page_images):
-                result = vision_results[idx]
-                if isinstance(result, Exception):
-                    logger.error("vision_page_failed", page=page_num, error=str(result))
-                    vision_text_parts.append(f"--- Page {page_num} ---\n[Vision extraction failed: {str(result)}]")
-                elif result.strip():
-                    vision_text_parts.append(f"--- Page {page_num} ---\n{result}")
-
-            doc.close()
-
-            if vision_text_parts:
-                logger.info("pdf_extracted_with_vision", pages=len(vision_text_parts))
-                return "\n\n".join(vision_text_parts)
+        # First, try regular text extraction
+        for page_num, page in enumerate(doc, 1):
+            text = page.get_text()
+            if text.strip():
+                text_parts.append(f"--- Page {page_num} ---\n{text}")
             else:
-                logger.warning("pdf_no_content_extracted", file_path=file_path)
-                return "[No text content could be extracted from this PDF]"
+                # No text found, this might be an image-based page
+                image_based_pages.append((page_num, page))
 
-        except Exception as e:
-            logger.error("pdf_extraction_failed", error=str(e))
-            raise
+        # If we got text from regular extraction, use it
+        if text_parts:
+            doc.close()
+            return "\n\n".join(text_parts)
 
+        # If no text was extracted, use vision to extract from images
+        logger.info("pdf_is_image_based", file_path=file_path, pages=len(doc))
+
+        # Extract using vision for image-based PDFs (in parallel)
+        import asyncio
+
+        # Convert all pages to images first
+        page_images = []
+        for page_num in range(len(doc)):
+            page = doc[page_num]
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # 2x zoom for better quality
+            img_bytes = pix.tobytes("png")
+            page_images.append((page_num + 1, img_bytes))
+
+        # Extract text from all pages in parallel
+        vision_tasks = [
+            self._extract_text_from_image_with_vision(
+                img_bytes,
+                f"page_{page_num}"
+            )
+            for page_num, img_bytes in page_images
+        ]
+
+        vision_results = await asyncio.gather(*vision_tasks, return_exceptions=True)
+
+        # Collect results
+        vision_text_parts = []
+        for idx, (page_num, _) in enumerate(page_images):
+            result = vision_results[idx]
+            if isinstance(result, Exception):
+                logger.error("vision_page_failed", page=page_num, error=str(result))
+                vision_text_parts.append(f"--- Page {page_num} ---\n[Vision extraction failed: {str(result)}]")
+            elif result.strip():
+                vision_text_parts.append(f"--- Page {page_num} ---\n{result}")
+
+        doc.close()
+
+        if vision_text_parts:
+            logger.info("pdf_extracted_with_vision", pages=len(vision_text_parts))
+            return "\n\n".join(vision_text_parts)
+        else:
+            logger.warning("pdf_no_content_extracted", file_path=file_path)
+            return "[No text content could be extracted from this PDF]"
+
+    @handle_service_errors("docx_extraction")
     async def _extract_docx(self, file_path: str) -> str:
         """Extract text from DOCX."""
-        try:
-            doc = docx.Document(file_path)
-            paragraphs = [para.text for para in doc.paragraphs if para.text.strip()]
+        doc = docx.Document(file_path)
+        paragraphs = [para.text for para in doc.paragraphs if para.text.strip()]
 
-            # Also extract text from tables
-            tables_text = []
-            for table in doc.tables:
-                for row in table.rows:
-                    row_text = " | ".join(cell.text.strip() for cell in row.cells)
-                    if row_text.strip():
-                        tables_text.append(row_text)
+        # Also extract text from tables
+        tables_text = []
+        for table in doc.tables:
+            for row in table.rows:
+                row_text = " | ".join(cell.text.strip() for cell in row.cells)
+                if row_text.strip():
+                    tables_text.append(row_text)
 
-            all_text = paragraphs
-            if tables_text:
-                all_text.append("\n--- Tables ---\n")
-                all_text.extend(tables_text)
+        all_text = paragraphs
+        if tables_text:
+            all_text.append("\n--- Tables ---\n")
+            all_text.extend(tables_text)
 
-            return "\n".join(all_text)
+        return "\n".join(all_text)
 
-        except Exception as e:
-            logger.error("docx_extraction_failed", error=str(e))
-            raise
-
+    @handle_service_errors("txt_extraction")
     async def _extract_txt(self, file_path: str) -> str:
         """Extract text from TXT file."""
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 return f.read()
         except UnicodeDecodeError:
-            # Try with different encoding
+            # Try with different encoding - this is a special case we want to handle
             with open(file_path, "r", encoding="latin-1") as f:
                 return f.read()
 
+    @handle_service_errors("image_extraction")
     async def _extract_image(self, file_path: str) -> str:
         """
         Extract text from image file (PNG, JPG, JPEG) using Claude's vision API.
@@ -169,50 +160,49 @@ class DocumentService:
         Returns:
             Extracted text content from the image
         """
-        try:
-            logger.info("image_extraction_started", file_path=file_path)
+        logger.info("image_extraction_started", file_path=file_path)
 
-            # Read image file as bytes
-            with open(file_path, "rb") as f:
-                image_bytes = f.read()
+        # Read image file as bytes
+        with open(file_path, "rb") as f:
+            image_bytes = f.read()
 
-            # Determine image format from extension
-            extension = Path(file_path).suffix.lower()
-            if extension == ".png":
-                media_type = "image/png"
-            elif extension in [".jpg", ".jpeg"]:
-                media_type = "image/jpeg"
-            else:
-                logger.warning("unsupported_image_format", extension=extension)
-                return f"[Unsupported image format: {extension}]"
+        # Determine image format from extension
+        extension = Path(file_path).suffix.lower()
+        if extension == ".png":
+            media_type = "image/png"
+        elif extension in [".jpg", ".jpeg"]:
+            media_type = "image/jpeg"
+        else:
+            logger.warning("unsupported_image_format", extension=extension)
+            return f"[Unsupported image format: {extension}]"
 
-            # Extract text using vision API
-            from anthropic import AsyncAnthropic
-            from app.config import settings
+        # Extract text using vision API
+        from anthropic import AsyncAnthropic
+        from app.config import settings
 
-            # Encode image to base64
-            image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+        # Encode image to base64
+        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
 
-            # Use Claude with vision
-            client = AsyncAnthropic(api_key=settings.anthropic_api_key)
+        # Use Claude with vision
+        client = AsyncAnthropic(api_key=settings.anthropic_api_key)
 
-            response = await client.messages.create(
-                model=settings.anthropic_model,
-                max_tokens=4096,
-                messages=[{
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "image",
-                            "source": {
-                                "type": "base64",
-                                "media_type": media_type,
-                                "data": image_base64
-                            }
-                        },
-                        {
-                            "type": "text",
-                            "text": """You are a document digitization specialist. Your task is to convert this document image into a comprehensive, structured JSON format that captures ALL content.
+        response = await client.messages.create(
+            model=settings.anthropic_model,
+            max_tokens=4096,
+            messages=[{
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": media_type,
+                            "data": image_base64
+                        }
+                    },
+                    {
+                        "type": "text",
+                        "text": """You are a document digitization specialist. Your task is to convert this document image into a comprehensive, structured JSON format that captures ALL content.
 
 CRITICAL: Extract EVERYTHING visible - miss nothing. This is the only chance to capture this data.
 
@@ -305,62 +295,54 @@ EXTRACTION RULES:
    - Email headers, sender/recipient info
 
 Return ONLY valid JSON. No markdown, no commentary."""
-                        }
-                    ]
-                }]
-            )
+                    }
+                ]
+            }]
+        )
 
-            # Extract text from response
-            if not response.content or len(response.content) == 0:
-                logger.warning("vision_response_empty", file_path=file_path)
-                return "[No content extracted from image]"
+        # Extract text from response
+        if not response.content or len(response.content) == 0:
+            logger.warning("vision_response_empty", file_path=file_path)
+            return "[No content extracted from image]"
 
-            content_block = response.content[0]
-            if not hasattr(content_block, 'text'):
-                logger.error("vision_response_no_text", file_path=file_path)
-                return "[Vision response has no text content]"
+        content_block = response.content[0]
+        if not hasattr(content_block, 'text'):
+            logger.error("vision_response_no_text", file_path=file_path)
+            return "[Vision response has no text content]"
 
-            extracted_text = content_block.text
+        extracted_text = content_block.text
 
-            logger.info(
-                "image_extraction_success",
-                file_path=file_path,
-                length=len(extracted_text)
-            )
+        logger.info(
+            "image_extraction_success",
+            file_path=file_path,
+            length=len(extracted_text)
+        )
 
-            return extracted_text
+        return extracted_text
 
-        except Exception as e:
-            logger.error("image_extraction_failed", file_path=file_path, error=str(e))
-            raise
-
+    @handle_service_errors("spreadsheet_extraction")
     async def _extract_spreadsheet(self, file_path: str) -> str:
         """Extract and intelligently summarize spreadsheet data."""
-        try:
-            from app.config import settings
+        from app.config import settings
 
-            extension = Path(file_path).suffix.lower()
-            filename = Path(file_path).name
+        extension = Path(file_path).suffix.lower()
+        filename = Path(file_path).name
 
-            if extension == ".csv":
-                df = pd.read_csv(file_path)
-                return await self._summarize_dataframe(df, filename)
+        if extension == ".csv":
+            df = pd.read_csv(file_path)
+            return await self._summarize_dataframe(df, filename)
+        else:
+            # Read all sheets from Excel file
+            sheets_dict = pd.read_excel(file_path, sheet_name=None)
+
+            # Handle single vs multi-sheet Excel
+            if len(sheets_dict) == 1:
+                # Single sheet - extract it directly
+                sheet_name, df = list(sheets_dict.items())[0]
+                return await self._summarize_dataframe(df, filename, sheet_name)
             else:
-                # Read all sheets from Excel file
-                sheets_dict = pd.read_excel(file_path, sheet_name=None)
-
-                # Handle single vs multi-sheet Excel
-                if len(sheets_dict) == 1:
-                    # Single sheet - extract it directly
-                    sheet_name, df = list(sheets_dict.items())[0]
-                    return await self._summarize_dataframe(df, filename, sheet_name)
-                else:
-                    # Multiple sheets - summarize each
-                    return await self._extract_multi_sheet_excel(sheets_dict, filename)
-
-        except Exception as e:
-            logger.error("spreadsheet_extraction_failed", error=str(e), file_path=file_path)
-            raise
+                # Multiple sheets - summarize each
+                return await self._extract_multi_sheet_excel(sheets_dict, filename)
 
     async def _summarize_dataframe(
         self,

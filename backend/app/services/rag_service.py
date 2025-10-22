@@ -5,6 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.embedding_service import EmbeddingService
 from app.utils.logger import get_logger
+from app.utils.error_handler import handle_service_errors
 
 logger = get_logger(__name__)
 
@@ -22,6 +23,7 @@ class ProductRAGService:
         self.db = db_session
         self.embedding_service = EmbeddingService()
 
+    @handle_service_errors("product_search")
     async def search_products(
         self,
         query: str,
@@ -42,71 +44,67 @@ class ProductRAGService:
 
         logger.info("product_search_started", query=query[:100])
 
-        try:
-            # Generate query embedding
-            query_embedding = await self.embedding_service.embed(query)
+        # Generate query embedding
+        query_embedding = await self.embedding_service.embed(query)
 
-            # Build SQL query with vector similarity search
-            # Handle category filter dynamically to avoid NULL type issues
-            if category_filter:
-                category_clause = "AND p.category = :category_filter"
-            else:
-                category_clause = ""
+        # Build SQL query with vector similarity search
+        # Handle category filter dynamically to avoid NULL type issues
+        if category_filter:
+            category_clause = "AND p.category = :category_filter"
+        else:
+            category_clause = ""
 
-            sql_query = text(f"""
-                SELECT
-                    p.id,
-                    p.name,
-                    p.category,
-                    p.technical_specs,
-                    pe.chunk_text,
-                    pe.chunk_metadata,
-                    1 - (pe.embedding <=> CAST(:query_embedding AS vector)) as similarity
-                FROM product_embeddings pe
-                JOIN products p ON pe.product_id = p.id
-                WHERE 1=1
-                    {category_clause}
-                ORDER BY pe.embedding <=> CAST(:query_embedding AS vector)
-                LIMIT :top_k
-            """)
+        sql_query = text(f"""
+            SELECT
+                p.id,
+                p.name,
+                p.category,
+                p.technical_specs,
+                pe.chunk_text,
+                pe.chunk_metadata,
+                1 - (pe.embedding <=> CAST(:query_embedding AS vector)) as similarity
+            FROM product_embeddings pe
+            JOIN products p ON pe.product_id = p.id
+            WHERE 1=1
+                {category_clause}
+            ORDER BY pe.embedding <=> CAST(:query_embedding AS vector)
+            LIMIT :top_k
+        """)
 
-            # Execute query
-            params = {
-                "query_embedding": str(query_embedding),
-                "top_k": top_k
-            }
-            if category_filter:
-                params["category_filter"] = category_filter
+        # Execute query
+        params = {
+            "query_embedding": str(query_embedding),
+            "top_k": top_k
+        }
+        if category_filter:
+            params["category_filter"] = category_filter
 
-            result = await self.db.execute(sql_query, params)
+        result = await self.db.execute(sql_query, params)
 
-            rows = result.fetchall()
+        rows = result.fetchall()
 
-            # Format results
-            products = []
-            for row in rows:
-                products.append({
-                    "product_id": str(row.id),
-                    "product_name": row.name,
-                    "category": row.category,
-                    "technical_specs": row.technical_specs,
-                    "relevant_chunk": row.chunk_text,
-                    "metadata": row.chunk_metadata,
-                    "similarity": float(row.similarity)
-                })
+        # Format results
+        products = []
+        for row in rows:
+            products.append({
+                "product_id": str(row.id),
+                "product_name": row.name,
+                "category": row.category,
+                "technical_specs": row.technical_specs,
+                "relevant_chunk": row.chunk_text,
+                "metadata": row.chunk_metadata,
+                "similarity": float(row.similarity)
+            })
 
-            logger.info(
-                "product_search_completed",
-                query=query[:100],
-                results_count=len(products)
-            )
+        logger.info(
+            "product_search_completed",
+            query=query[:100],
+            results_count=len(products)
+        )
 
-            return products
+        return products
 
-        except Exception as e:
-            logger.error("product_search_failed", query=query, error=str(e))
-            raise
-
+    @handle_service_errors("product_details_retrieval")
     async def get_product_details(self, product_id: str) -> Optional[Dict[str, Any]]:
         """
         Get complete product information by ID.
@@ -118,27 +116,22 @@ class ProductRAGService:
             Product details or None if not found
         """
 
-        try:
-            sql_query = text("""
-                SELECT id, name, category, technical_specs, description
-                FROM products
-                WHERE id = :product_id
-            """)
+        sql_query = text("""
+            SELECT id, name, category, technical_specs, description
+            FROM products
+            WHERE id = :product_id
+        """)
 
-            result = await self.db.execute(sql_query, {"product_id": product_id})
-            row = result.fetchone()
+        result = await self.db.execute(sql_query, {"product_id": product_id})
+        row = result.fetchone()
 
-            if not row:
-                return None
+        if not row:
+            return None
 
-            return {
-                "id": str(row.id),
-                "name": row.name,
-                "category": row.category,
-                "technical_specs": row.technical_specs,
-                "description": row.description
-            }
-
-        except Exception as e:
-            logger.error("product_details_failed", product_id=product_id, error=str(e))
-            raise
+        return {
+            "id": str(row.id),
+            "name": row.name,
+            "category": row.category,
+            "technical_specs": row.technical_specs,
+            "description": row.description
+        }

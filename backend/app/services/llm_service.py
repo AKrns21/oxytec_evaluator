@@ -7,6 +7,7 @@ from anthropic import Anthropic, AsyncAnthropic
 from openai import AsyncOpenAI
 from app.config import settings
 from app.utils.logger import get_logger
+from app.utils.error_handler import handle_service_errors
 
 logger = get_logger(__name__)
 
@@ -50,6 +51,7 @@ class LLMService:
         self.model = settings.anthropic_model
         self.model_haiku = settings.anthropic_model_haiku
 
+    @handle_service_errors("llm_structured_execution")
     async def execute_structured(
         self,
         prompt: str,
@@ -83,66 +85,62 @@ class LLMService:
 
         model = self.model_haiku if use_haiku else self.model
 
-        try:
-            # Don't use prefill - it breaks markdown cleanup
-            messages = [{"role": "user", "content": prompt}]
+        # Don't use prefill - it breaks markdown cleanup
+        messages = [{"role": "user", "content": prompt}]
 
-            # Build kwargs, only include system if provided
-            kwargs = {
-                "model": model,
-                "max_tokens": 4096,
-                "temperature": temperature,
-                "messages": messages
+        # Build kwargs, only include system if provided
+        kwargs = {
+            "model": model,
+            "max_tokens": 4096,
+            "temperature": temperature,
+            "messages": messages
+        }
+
+        if system_prompt:
+            kwargs["system"] = system_prompt
+
+        # Enable extended thinking if requested
+        if use_extended_thinking:
+            kwargs["thinking"] = {
+                "type": "enabled",
+                "budget_tokens": 2000
             }
+            # Extended thinking requires temperature=1.0
+            kwargs["temperature"] = 1.0
 
-            if system_prompt:
-                kwargs["system"] = system_prompt
+        response = await self.client.messages.create(**kwargs)
 
-            # Enable extended thinking if requested
-            if use_extended_thinking:
-                kwargs["thinking"] = {
-                    "type": "enabled",
-                    "budget_tokens": 2000
-                }
-                # Extended thinking requires temperature=1.0
-                kwargs["temperature"] = 1.0
+        # Simple content extraction - just get the text
+        content = response.content[0].text
 
-            response = await self.client.messages.create(**kwargs)
+        # Parse JSON if requested
+        if response_format == "json":
+            # Strip whitespace
+            content = content.strip()
 
-            # Simple content extraction - just get the text
-            content = response.content[0].text
+            # Remove markdown code blocks if present
+            if content.startswith("```json"):
+                content = content[7:]  # Remove ```json
+            elif content.startswith("```"):
+                content = content[3:]  # Remove ```
 
-            # Parse JSON if requested
-            if response_format == "json":
-                # Strip whitespace
-                content = content.strip()
+            if content.endswith("```"):
+                content = content[:-3]  # Remove trailing ```
 
-                # Remove markdown code blocks if present
-                if content.startswith("```json"):
-                    content = content[7:]  # Remove ```json
-                elif content.startswith("```"):
-                    content = content[3:]  # Remove ```
+            content = content.strip()
 
-                if content.endswith("```"):
-                    content = content[:-3]  # Remove trailing ```
+            try:
+                return json.loads(content)
+            except json.JSONDecodeError as e:
+                logger.error("json_parse_failed",
+                           error=str(e),
+                           content_length=len(content),
+                           content_preview=content[:500])
+                raise
 
-                content = content.strip()
+        return content
 
-                try:
-                    return json.loads(content)
-                except json.JSONDecodeError as e:
-                    logger.error("json_parse_failed",
-                               error=str(e),
-                               content_length=len(content),
-                               content_preview=content[:500])
-                    raise
-
-            return content
-
-        except Exception as e:
-            logger.error("llm_execution_failed", error=str(e))
-            raise
-
+    @handle_service_errors("llm_long_form_execution")
     async def execute_long_form(
         self,
         prompt: str,
@@ -163,28 +161,24 @@ class LLMService:
             Generated text
         """
 
-        try:
-            messages = [{"role": "user", "content": prompt}]
+        messages = [{"role": "user", "content": prompt}]
 
-            # Build kwargs, only include system if provided
-            kwargs = {
-                "model": model or self.model,
-                "max_tokens": 8192,
-                "temperature": temperature,
-                "messages": messages
-            }
+        # Build kwargs, only include system if provided
+        kwargs = {
+            "model": model or self.model,
+            "max_tokens": 8192,
+            "temperature": temperature,
+            "messages": messages
+        }
 
-            if system_prompt:
-                kwargs["system"] = system_prompt
+        if system_prompt:
+            kwargs["system"] = system_prompt
 
-            response = await self.client.messages.create(**kwargs)
+        response = await self.client.messages.create(**kwargs)
 
-            return response.content[0].text
+        return response.content[0].text
 
-        except Exception as e:
-            logger.error("llm_long_form_failed", error=str(e))
-            raise
-
+    @handle_service_errors("llm_tool_execution")
     async def execute_with_tools(
         self,
         prompt: str,
@@ -225,68 +219,64 @@ class LLMService:
                 openai_model=openai_model
             )
 
-        try:
-            messages = [{"role": "user", "content": prompt}]
+        messages = [{"role": "user", "content": prompt}]
 
-            for iteration in range(max_iterations):
-                # Build kwargs, only include system if provided
-                kwargs = {
-                    "model": model or self.model,
-                    "max_tokens": 4096,
-                    "temperature": temperature,
-                    "messages": messages,
-                    "tools": tools
-                }
+        for iteration in range(max_iterations):
+            # Build kwargs, only include system if provided
+            kwargs = {
+                "model": model or self.model,
+                "max_tokens": 4096,
+                "temperature": temperature,
+                "messages": messages,
+                "tools": tools
+            }
 
-                if system_prompt:
-                    kwargs["system"] = system_prompt
+            if system_prompt:
+                kwargs["system"] = system_prompt
 
-                response = await self.client.messages.create(**kwargs)
+            response = await self.client.messages.create(**kwargs)
 
-                # Check if model wants to use tools
-                if response.stop_reason == "tool_use":
-                    # Extract tool calls
-                    tool_uses = [
-                        block for block in response.content
-                        if block.type == "tool_use"
-                    ]
+            # Check if model wants to use tools
+            if response.stop_reason == "tool_use":
+                # Extract tool calls
+                tool_uses = [
+                    block for block in response.content
+                    if block.type == "tool_use"
+                ]
 
-                    # Add assistant message
-                    messages.append({
-                        "role": "assistant",
-                        "content": response.content
+                # Add assistant message
+                messages.append({
+                    "role": "assistant",
+                    "content": response.content
+                })
+
+                # Execute tools and add results
+                tool_results = []
+                for tool_use in tool_uses:
+                    result = await self._execute_tool(
+                        tool_use.name,
+                        tool_use.input
+                    )
+                    tool_results.append({
+                        "type": "tool_result",
+                        "tool_use_id": tool_use.id,
+                        "content": json.dumps(result)
                     })
 
-                    # Execute tools and add results
-                    tool_results = []
-                    for tool_use in tool_uses:
-                        result = await self._execute_tool(
-                            tool_use.name,
-                            tool_use.input
-                        )
-                        tool_results.append({
-                            "type": "tool_result",
-                            "tool_use_id": tool_use.id,
-                            "content": json.dumps(result)
-                        })
+                messages.append({
+                    "role": "user",
+                    "content": tool_results
+                })
 
-                    messages.append({
-                        "role": "user",
-                        "content": tool_results
-                    })
+            else:
+                # No more tool calls, return final response
+                return response.content[0].text
 
-                else:
-                    # No more tool calls, return final response
-                    return response.content[0].text
+        # Max iterations reached
+        logger.warning("max_tool_iterations_reached")
+        return "Maximum tool iterations reached. Partial result returned."
 
-            # Max iterations reached
-            logger.warning("max_tool_iterations_reached")
-            return "Maximum tool iterations reached. Partial result returned."
-
-        except Exception as e:
-            logger.error("llm_tool_execution_failed", error=str(e))
-            raise
-
+    @handle_service_errors("openai_structured_execution")
     async def _execute_openai_structured(
         self,
         prompt: str,
@@ -296,46 +286,41 @@ class LLMService:
         openai_model: str = None
     ) -> Any:
         """Execute structured output with OpenAI (better JSON handling)."""
-        try:
-            messages = [{"role": "user", "content": prompt}]
-            if system_prompt:
-                messages.insert(0, {"role": "system", "content": system_prompt})
+        messages = [{"role": "user", "content": prompt}]
+        if system_prompt:
+            messages.insert(0, {"role": "system", "content": system_prompt})
 
-            # Use specified model or fallback to gpt-4o
-            model = openai_model or "gpt-4o"
+        # Use specified model or fallback to gpt-4o
+        model = openai_model or "gpt-4o"
 
-            # Use configured OpenAI model (gpt-5, gpt-5-mini, gpt-5-nano, etc.) with JSON mode
-            # GPT-5 models don't support temperature, they use reasoning_effort instead
-            create_params = {
-                "model": model,
-                "messages": messages,
-                "response_format": {"type": "json_object"} if response_format == "json" else {"type": "text"}
-            }
+        # Use configured OpenAI model (gpt-5, gpt-5-mini, gpt-5-nano, etc.) with JSON mode
+        # GPT-5 models don't support temperature, they use reasoning_effort instead
+        create_params = {
+            "model": model,
+            "messages": messages,
+            "response_format": {"type": "json_object"} if response_format == "json" else {"type": "text"}
+        }
 
-            # Only add temperature for non-GPT-5 models
-            if not model.startswith("gpt-5"):
-                create_params["temperature"] = temperature
+        # Only add temperature for non-GPT-5 models
+        if not model.startswith("gpt-5"):
+            create_params["temperature"] = temperature
+        else:
+            # Map temperature to reasoning_effort for GPT-5 models
+            # Low temp (0.0-0.3) -> minimal, Medium (0.4-0.7) -> low, High (0.8-1.0) -> medium
+            if temperature <= 0.3:
+                create_params["reasoning_effort"] = "minimal"
+            elif temperature <= 0.7:
+                create_params["reasoning_effort"] = "low"
             else:
-                # Map temperature to reasoning_effort for GPT-5 models
-                # Low temp (0.0-0.3) -> minimal, Medium (0.4-0.7) -> low, High (0.8-1.0) -> medium
-                if temperature <= 0.3:
-                    create_params["reasoning_effort"] = "minimal"
-                elif temperature <= 0.7:
-                    create_params["reasoning_effort"] = "low"
-                else:
-                    create_params["reasoning_effort"] = "medium"
+                create_params["reasoning_effort"] = "medium"
 
-            response = await self.openai_client.chat.completions.create(**create_params)
+        response = await self.openai_client.chat.completions.create(**create_params)
 
-            content = response.choices[0].message.content
+        content = response.choices[0].message.content
 
-            if response_format == "json":
-                return json.loads(content)
-            return content
-
-        except Exception as e:
-            logger.error("openai_execution_failed", error=str(e))
-            raise
+        if response_format == "json":
+            return json.loads(content)
+        return content
 
     async def _execute_tool(self, tool_name: str, tool_input: dict) -> Any:
         """
