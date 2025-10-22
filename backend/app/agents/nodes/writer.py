@@ -39,6 +39,18 @@ async def writer_node(state: GraphState) -> dict[str, Any]:
         customer_questions = extracted_facts.get("customer_specific_questions", [])
         has_customer_questions = len(customer_questions) > 0
 
+        # Check if positive factors exist (look for LOW risk level factors in risk assessment)
+        # We'll instruct the LLM to skip the section if no genuine advantages exist
+        has_positive_factors = False
+        if risk_assessment:
+            technical_risks = risk_assessment.get("technical_risks", [])
+            # Check if there are any LOW severity risks that could be positive factors
+            # Note: This is a heuristic - the LLM will make the final decision
+            has_positive_factors = any(
+                risk.get("severity", "").upper() == "LOW"
+                for risk in technical_risks
+            )
+
         # Create conditional section instructions
         customer_questions_section_instructions = ""
         if has_customer_questions:
@@ -163,7 +175,9 @@ Before submitting your report, verify:
 - [ ] All technical claims in VOC-Zusammensetzung can be traced to risk_assessment content
 - [ ] IF customer_specific_questions exists: "Beantwortung Ihrer spezifischen Fragen" section MUST be present after VOC section
 - [ ] IF customer_specific_questions exists: Each question MUST have a direct answer with verbatim question text
-- [ ] Positive Faktoren and Kritische Herausforderungen are direct translations of risk items
+- [ ] "Positive Faktoren" section ONLY included if genuine advantages with quantified benefits (€X or Y%) exist
+- [ ] IF no genuine positive factors: Section completely omitted (no heading, no placeholder text)
+- [ ] Kritische Herausforderungen are direct translations of risk items
 - [ ] Handlungsempfehlungen are TOP 4-6 items from mitigation_priorities (not expanded or added to)
 - [ ] No calculations, assumptions, or external knowledge added
 - [ ] No cost estimates (CAPEX/OPEX/€X) included unless sourced from product database with attribution
@@ -245,7 +259,19 @@ See detailed instructions in "MANDATORY SECTION: Beantwortung Ihrer spezifischen
 
 ---
 
+**[CONDITIONAL SECTION - ONLY IF genuine positive factors exist]**
+
 ## Positive Faktoren
+
+**CRITICAL: This section should ONLY be included if you identify genuine, exceptional advantages with quantified benefits (€X savings or Y% measurable advantage).**
+
+**MANDATORY PRE-CHECK:** Before including this section, verify that you have AT LEAST ONE advantage that meets BOTH criteria:
+1. "Would an expert say 'ja sonst würden wir das ja auch nicht machen'?" → If YES, DO NOT INCLUDE THIS SECTION
+2. "Does this include a quantified cost/performance benefit (€X, Y%, Z advantage)?" → If NO, DO NOT INCLUDE THIS SECTION
+
+**IF NO GENUINE ADVANTAGES EXIST:** Skip this entire section (do not write "## Positive Faktoren" heading at all). Move directly from "## VOC-Zusammensetzung und Eignung" (or "## Beantwortung Ihrer spezifischen Fragen" if present) to "## Kritische Herausforderungen".
+
+**IF 1-2 GENUINE ADVANTAGES EXIST:** Include the section with the advantages listed as bullet points with specific cost/benefit quantification.
 
 {POSITIVE_FACTORS_FILTER}
 
@@ -286,9 +312,9 @@ Look ONLY for LOW-severity risks in risk_assessment.technical_risks that mention
 - ❌ Normal customer capabilities (utilities available, maintenance team)
 
 **OUTPUT FORMAT:**
-- **PREFERRED:** List 0 factors if no genuine advantages found with specific cost savings
-- If 1-2 genuine advantages found → List them with exact €X or Y% quantification
-- If you find 3+ factors → You're including basics, delete all and list 0
+- **MOST COMMON (90% of cases):** Omit the entire "## Positive Faktoren" section (no heading, no content)
+- **RARE (10% of cases):** Include section with 1-2 genuine advantages with exact €X or Y% quantification
+- If you find 3+ factors → You're including basics, omit the entire section instead
 
 **ACCEPTABLE EXAMPLES (rare - only with specific cost savings):**
 - ✅ "Bestehende alkalische Wäsche kann integriert werden (Einsparung €150k CAPEX gegenüber Neuinstallation)"
@@ -303,11 +329,13 @@ Look ONLY for LOW-severity risks in risk_assessment.technical_risks that mention
 - ❌ "Bestehende Betriebserfahrung seit 2013 reduziert Schulungsaufwand um 30%"
 - ❌ "Kunde verfügt über qualifiziertes Personal"
 
-**CRITICAL INSTRUCTION:** When in doubt, list 0 positive factors. It is BETTER to list NONE than to list a questionable factor. Most projects have 0 genuine positive factors - this is normal and acceptable.
+**CRITICAL INSTRUCTION:** When in doubt, OMIT THE ENTIRE SECTION. It is BETTER to omit the section completely than to list a questionable factor. Most projects have 0 genuine positive factors - omitting the section is normal and acceptable.
 
-**QUALITY GATE:** If you list ANY positive factor, ask yourself: "Does this save the customer €X or provide Y% measurable advantage compared to a typical project?" If the answer is unclear or "maybe" → DELETE IT.
+**QUALITY GATE:** If you list ANY positive factor, ask yourself: "Does this save the customer €X or provide Y% measurable advantage compared to a typical project?" If the answer is unclear or "maybe" → OMIT THE ENTIRE SECTION.
 
-**FORMAT:** Bullet list with "-" markers, 0-2 factors maximum. If 0 factors, write: "(Keine außergewöhnlichen projektspezifischen Vorteile identifiziert)"
+**FORMAT:**
+- **If 0 genuine factors:** OMIT the entire section (no "## Positive Faktoren" heading)
+- **If 1-2 genuine factors with quantified benefits:** Include section with bullet list ("-" markers)
 
 ## Kritische Herausforderungen
 
@@ -351,7 +379,7 @@ Include only Critical and High priority actions. Be specific and actionable. Foc
 
 {UNIT_FORMATTING_INSTRUCTIONS}
 
-**FORMATTING EXAMPLE:**
+**FORMATTING EXAMPLE (Case 1: No genuine positive factors - section omitted):**
 ```markdown
 ## Zusammenfassung
 
@@ -370,13 +398,6 @@ Die VOC-Behandlung ist mit NTP-Technologie technisch machbar, erfordert jedoch e
 NTP-Technologie ist für die vorliegenden VOCs grundsätzlich geeignet. Die Mischung aus Alkoholen und Aromaten lässt sich mit 90-95% Wirkungsgrad behandeln.
 Die kritische Herausforderung liegt in der Schwefelsäurebildung durch SO₂-Oxidation. Ein alkalischer Vorwäscher ist technisch zwingend erforderlich. Die erwartete Gesamteffizienz des Hybridsystems liegt bei ≥99% TVOC-Abscheidung. Eine detaillierte Kostenabschätzung (CAPEX/OPEX) erfordert die Auswahl konkreter Produktkomponenten aus dem Oxytec-Katalog und eine detaillierte Angebotserstellung.
 
-## Positive Faktoren
-
-- Hohe VOC-Konzentrationen günstig für NTP-Behandlung ohne zusätzliche Energiekosten
-- Kontinuierlicher Betrieb ermöglicht stabile Prozessführung und optimale Auslastung
-- Keine halogenierten VOCs vorhanden, was Korrosionsrisiko reduziert
-- Volumenstrom liegt im Standardbereich für industrielle NTP-Anlagen
-
 ## Kritische Herausforderungen
 
 - Schwefelsäurebildung aus SO₂/SO₃ erfordert alkalischen Vorwäscher zur Korrosionsvermeidung (CRITICAL, 90% Wahrscheinlichkeit)
@@ -391,6 +412,24 @@ Die kritische Herausforderung liegt in der Schwefelsäurebildung durch SO₂-Oxi
 - Pilotversuch zur Validierung der Aldehydbildung und Katalysator-Wirksamkeit durchführen
 - Wartungsvertrag mit vierteljährlicher Elektrodeninspektion und pH-Überwachung etablieren
 ```
+
+**FORMATTING EXAMPLE (Case 2: WITH genuine positive factors - section included):**
+```markdown
+## VOC-Zusammensetzung und Eignung
+
+[... same as above ...]
+
+## Positive Faktoren
+
+- Bestehende alkalische Wäsche kann integriert werden (Einsparung €150k CAPEX gegenüber Neuinstallation)
+- Hohe VOC-Konzentration (1800 mg/Nm3) ermöglicht autotherme Betriebsweise mit geschätzten €25k/Jahr OPEX-Einsparung
+
+## Kritische Herausforderungen
+
+[... continues ...]
+```
+
+**KEY POINT:** In Case 1 (most common), the "## Positive Faktoren" heading and section are COMPLETELY OMITTED. The report flows directly from "## VOC-Zusammensetzung und Eignung" to "## Kritische Herausforderungen". Only include the section when quantified benefits exist.
 
 Generate the complete German feasibility report now following this exact structure and formatting.
 """
