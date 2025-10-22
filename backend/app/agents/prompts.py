@@ -194,18 +194,27 @@ OXYTEC_EXPERIENCE_CHECK = """**OXYTEC TECHNOLOGY EXPERIENCE VALIDATION:**
 Comment: "Mit SO3 demistern hat oxytec keine Erfahrungen" (Oxytec has no experience with SO₃ demisters)
 → Don't recommend technologies Oxytec hasn't deployed! Be honest about experience gaps."""
 
-# Unit formatting instructions (avoid encoding issues)
-UNIT_FORMATTING_INSTRUCTIONS = """**UNIT FORMATTING (avoid encoding issues):**
-Use plain ASCII characters for all units:
-- Exponents: Write "m^3" or "m3" (not m³), "h^-1" or "h-1" (not h⁻¹)
-- Temperature: Write "degC" or just "C" (not °C)
-- Degrees: Write "deg" (not °)
-- Micro: Write "ug" or "micro-g" (not μg)
-- Subscripts: Write CO2, H2O, SO2 (not CO₂, H₂O, SO₂)
+# Unit formatting instructions (use proper Unicode for readability)
+UNIT_FORMATTING_INSTRUCTIONS = """**UNIT FORMATTING (use proper Unicode for readability):**
+Use proper Unicode characters for scientific notation:
+- Superscripts for exponents: m³ (not m3 or m^3), h⁻¹ (not h-1 or h^-1)
+- Temperature: °C (not degC or C)
+- Degrees: ° (not deg)
+- Micro: μg (not ug or micro-g)
+- Subscripts for chemical formulas: CO₂, H₂O, SO₂, Nm³ (not CO2, H2O, SO2, Nm3)
 
 **Examples:**
-✅ CORRECT: 5000 m3/h, 45 degC, 3.5 h-1, 850 mg/Nm3
-❌ WRONG: 5000 m³/h, 45 °C, 3.5 h⁻¹, 850 mg/Nm³ (Unicode chars cause encoding errors)"""
+✅ CORRECT: 5000 m³/h, 45 °C, 3.5 h⁻¹, 850 mg/Nm³, CO₂, SO₂
+❌ WRONG: 5000 m3/h, 45 degC, 3.5 h-1, 850 mg/Nm3, CO2, SO2 (hard to read without proper notation)
+
+**Common units to use:**
+- Volume flow: m³/h, Nm³/h (normalized cubic meters)
+- Temperature: °C
+- Concentration: mg/m³, mg/Nm³, ppm, ppb
+- Pressure: mbar, hPa, Pa
+- Chemical formulas: CO₂, H₂O, SO₂, SO₃, H₂SO₄, NH₃, NOₓ
+- Time: h⁻¹ (per hour), s⁻¹ (per second)
+- Percentage: % (with space before: 90 %)"""
 
 
 # Confidence level criteria
