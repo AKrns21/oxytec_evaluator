@@ -195,26 +195,24 @@ Comment: "Mit SO3 demistern hat oxytec keine Erfahrungen" (Oxytec has no experie
 → Don't recommend technologies Oxytec hasn't deployed! Be honest about experience gaps."""
 
 # Unit formatting instructions (use proper Unicode for readability)
-UNIT_FORMATTING_INSTRUCTIONS = """**UNIT FORMATTING (use proper Unicode for readability):**
-Use proper Unicode characters for scientific notation:
-- Superscripts for exponents: m³ (not m3 or m^3), h⁻¹ (not h-1 or h^-1)
-- Temperature: °C (not degC or C)
-- Degrees: ° (not deg)
-- Micro: μg (not ug or micro-g)
-- Subscripts for chemical formulas: CO₂, H₂O, SO₂, Nm³ (not CO2, H2O, SO2, Nm3)
+UNIT_FORMATTING_INSTRUCTIONS = """**UNIT FORMATTING (use proper scientific notation):**
 
-**Examples:**
-✅ CORRECT: 5000 m³/h, 45 °C, 3.5 h⁻¹, 850 mg/Nm³, CO₂, SO₂
-❌ WRONG: 5000 m3/h, 45 degC, 3.5 h-1, 850 mg/Nm3, CO2, SO2 (hard to read without proper notation)
+Use proper Unicode characters throughout the report for professional scientific communication:
 
-**Common units to use:**
-- Volume flow: m³/h, Nm³/h (normalized cubic meters)
-- Temperature: °C
-- Concentration: mg/m³, mg/Nm³, ppm, ppb
-- Pressure: mbar, hPa, Pa
-- Chemical formulas: CO₂, H₂O, SO₂, SO₃, H₂SO₄, NH₃, NOₓ
-- Time: h⁻¹ (per hour), s⁻¹ (per second)
-- Percentage: % (with space before: 90 %)"""
+1. **Superscripts for exponents**: Use Unicode superscript characters (¹²³⁴⁵⁶⁷⁸⁹⁰⁻)
+   - Example: m³ (not m3 or m^3), h⁻¹ (not h-1), 10⁶ (not 10^6)
+
+2. **Subscripts for chemical formulas**: Use Unicode subscript characters (₀₁₂₃₄₅₆₇₈₉)
+   - Example: CO₂, H₂O, SO₂, NO₃ (not CO2, H2O, SO2, NO3)
+
+3. **Temperature and degree symbols**: Use ° (degree symbol)
+   - Example: 45 °C, 30 °F (not degC, deg C, C)
+
+4. **Greek letters and special symbols**: Use proper Unicode characters when appropriate
+   - μ (micro), Ω (ohm), ≤ (less than or equal), ≥ (greater than or equal), ± (plus-minus)
+   - Example: 50 μg/m³, ≤100 ppm, 25 ± 5 % (not ug/m3, <=100 ppm, 25 +/- 5%)
+
+**Principle**: Write units and formulas as they would appear in a published scientific paper, using proper mathematical and chemical notation. The system supports full Unicode, so use the correct symbols rather than ASCII approximations."""
 
 
 # Confidence level criteria
