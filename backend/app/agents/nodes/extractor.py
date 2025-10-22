@@ -5,6 +5,8 @@ from app.agents.state import GraphState
 from app.services.llm_service import LLMService
 from app.services.document_service import DocumentService
 from app.utils.logger import get_logger
+from app.utils.extraction_quality_validator import validate_extracted_facts
+from app.utils.substance_corrections import apply_substance_corrections
 from app.agents.prompts import CARCINOGEN_DATABASE
 
 logger = get_logger(__name__)
@@ -41,6 +43,59 @@ def normalize_units(data: dict) -> dict:
             return s
 
     return normalize_string(data)
+
+
+def clean_extracted_data(data: dict) -> dict:
+    """
+    Clean and normalize extracted data for consistency.
+
+    - Adds % suffix to formulation_percentage values that lack it
+    - Converts empty strings "" to null for optional fields
+    - Ensures unit fields are present where appropriate
+
+    Args:
+        data: Extracted facts dictionary
+
+    Returns:
+        Cleaned data
+    """
+    # Clean pollutant list
+    pollutant_char = data.get("pollutant_characterization", {})
+    pollutant_list = pollutant_char.get("pollutant_list", [])
+
+    for pollutant in pollutant_list:
+        # Add % suffix to formulation_percentage if missing
+        fp = pollutant.get("formulation_percentage")
+        if fp and isinstance(fp, str) and fp.strip():
+            # Check if it has %, if not add it
+            if not fp.strip().endswith("%") and not fp.strip().endswith(" %"):
+                pollutant["formulation_percentage"] = fp.strip() + " %"
+
+    # Clean utilities - empty strings to null
+    utilities = data.get("utilities_available", {})
+    if utilities:
+        for key in list(utilities.keys()):
+            if utilities[key] == "":
+                utilities[key] = None
+
+    # Ensure unit fields exist where values exist
+    proc_params = data.get("process_parameters", {})
+
+    flow_rate = proc_params.get("flow_rate", {})
+    if flow_rate and flow_rate.get("value") is not None and not flow_rate.get("unit"):
+        flow_rate["unit"] = "m3/h"  # Default unit
+
+    pressure = proc_params.get("pressure", {})
+    if pressure and pressure.get("value") is not None and not pressure.get("unit"):
+        pressure["unit"] = "hPa"  # Default unit
+
+    # Particulate load
+    particulate_load = proc_params.get("particulate_load")
+    if isinstance(particulate_load, dict):
+        if particulate_load.get("value") is not None and not particulate_load.get("unit"):
+            particulate_load["unit"] = "mg/m3"
+
+    return data
 
 
 async def extractor_node(state: GraphState) -> dict[str, Any]:
@@ -93,6 +148,50 @@ async def extractor_node(state: GraphState) -> dict[str, Any]:
         # Create extraction prompt
         extraction_prompt = f"""You are an agent responsible for extracting all explicit facts from industrial exhaust air treatment inquiry documents. These may include questionnaires, measurement reports, safety documents, permits, or process descriptions.
 
+IMPORTANT: Some documents may be provided as structured JSON (from vision-based extraction) with format:
+{{
+  "document_type": "...",
+  "metadata": {{"has_tables": true/false, ...}},
+  "content": {{
+    "headers": [...],
+    "body_text": "...",
+    "tables": [{{ "headers": [...], "rows": [[...]] }}],
+    "key_value_pairs": [{{"key": "...", "value": "..."}}],
+    ...
+  }}
+}}
+
+When you encounter this structured format:
+- Extract data from ALL sections: body_text, tables, key_value_pairs, headers, lists
+- **CRITICAL**: Pay special attention to tables.rows - this contains critical data (concentrations, percentages, specifications)
+- Process key_value_pairs for parameters like "Temperature: 45°C", "Flow Rate: 5000 m³/h"
+- **For Safety Data Sheets**: tables in content.tables will contain composition data with percentages
+
+**EXAMPLE - Extracting from structured JSON tables:**
+If you see:
+{{
+  "content": {{
+    "tables": [{{
+      "title": "3.2 Gemische",
+      "headers": ["Name", "Identifikatoren", "%", "Einstufung"],
+      "rows": [
+        [
+          "Poly(oxy-1,2-ethandiyl)...",
+          "CAS: 28961-43-5",
+          "≥10 - <25",
+          "Eye Irrit. 2, H319"
+        ]
+      ]
+    }}]
+  }}
+}}
+
+YOU MUST extract:
+- name: "Poly(oxy-1,2-ethandiyl)..." (from rows[0][0])
+- cas_number: "28961-43-5" (from rows[0][1])
+- formulation_percentage: "≥10 - <25" (from rows[0][2])
+- category: "VOC" or "SVOC"
+
 {CARCINOGEN_DATABASE}
 
 Documents:
@@ -108,6 +207,7 @@ Extract the following information into this EXACT JSON structure:
         "cas_number": "string or null",
         "concentration": "number or null",
         "concentration_unit": "string (e.g., mg/Nm3, ppm)",
+        "formulation_percentage": "string or null (e.g., '25-50%', '≤3%', '<0.1%' from SDS Section 3)",
         "category": "string (VOC, odor, inorganic, particulate, bioaerosol)"
       }}
     ],
@@ -262,7 +362,13 @@ VOC concentration: Toluene 850 mg/Nm3, Ethyl acetate 420 mg/Nm3
 Temperature: 45°C
 Pressure: -5 mbar (negative)
 Humidity: 60% RH
-Note: Oxygen content not measured"
+Note: Oxygen content not measured
+
+Document: Product_SDS.pdf
+SECTION 3: Composition/information on ingredients
+| Product/ingredient name | % | Classification |
+| Toluene | 40-60 | Flam. Liq. 2, H225 |
+| Ethyl acetate | ≤25 | Flam. Liq. 2, H225 |"
 
 OUTPUT JSON:
 {{
@@ -273,6 +379,7 @@ OUTPUT JSON:
         "cas_number": null,
         "concentration": 850,
         "concentration_unit": "mg/Nm3",
+        "formulation_percentage": "40-60%",
         "category": "VOC"
       }},
       {{
@@ -280,6 +387,7 @@ OUTPUT JSON:
         "cas_number": null,
         "concentration": 420,
         "concentration_unit": "mg/Nm3",
+        "formulation_percentage": "≤25%",
         "category": "VOC"
       }}
     ],
@@ -528,6 +636,15 @@ Return ONLY the valid JSON object. Preserve all original wording, numbers, and u
 
         # Post-process: Normalize units (safety net for LLM)
         extracted_facts = normalize_units(extracted_facts)
+
+        # Clean and normalize data (% suffix, null instead of "", unit defaults)
+        extracted_facts = clean_extracted_data(extracted_facts)
+
+        # Apply known substance CAS corrections (before validation)
+        extracted_facts = apply_substance_corrections(extracted_facts)
+
+        # Run data quality validation checks
+        extracted_facts = validate_extracted_facts(extracted_facts)
 
         logger.info(
             "extractor_completed",

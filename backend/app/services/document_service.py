@@ -212,7 +212,99 @@ class DocumentService:
                         },
                         {
                             "type": "text",
-                            "text": "Extract all text content from this document image. Preserve the structure, tables, and formatting as much as possible. Return only the extracted text, without any commentary or explanation."
+                            "text": """You are a document digitization specialist. Your task is to convert this document image into a comprehensive, structured JSON format that captures ALL content.
+
+CRITICAL: Extract EVERYTHING visible - miss nothing. This is the only chance to capture this data.
+
+Return a JSON object with this structure:
+
+{
+  "document_type": "string (email, technical_drawing, table, form, safety_data_sheet, measurement_report, process_flow_diagram, questionnaire, mixed)",
+  "metadata": {
+    "has_tables": boolean,
+    "has_diagrams": boolean,
+    "has_handwriting": boolean,
+    "language": "string (de, en, mixed)",
+    "page_number": "string or null if visible"
+  },
+  "content": {
+    "headers": ["array of all headers/titles found"],
+    "body_text": "string (all paragraphs and text blocks, preserve line breaks with \\n)",
+    "tables": [
+      {
+        "title": "string or null",
+        "headers": ["column1", "column2", ...],
+        "rows": [
+          ["cell1", "cell2", ...],
+          ["cell1", "cell2", ...]
+        ]
+      }
+    ],
+    "lists": [
+      {
+        "type": "bulleted or numbered",
+        "items": ["item1", "item2", ...]
+      }
+    ],
+    "key_value_pairs": [
+      {"key": "string", "value": "string"}
+    ],
+    "diagrams_and_images": [
+      {
+        "type": "flow_diagram, chart, logo, signature, stamp, photo, technical_drawing",
+        "description": "detailed description of what is shown",
+        "labels_and_text": ["any text visible in/on the diagram"]
+      }
+    ],
+    "signatures_and_stamps": [
+      {
+        "type": "signature or stamp",
+        "text": "any readable text",
+        "location": "top_right, bottom_left, etc."
+      }
+    ]
+  },
+  "quality_notes": "string (mention any unclear text, cut-off content, poor quality areas)"
+}
+
+EXTRACTION RULES:
+
+1. **Tables**:
+   - Extract EVERY row and column
+   - Preserve exact values, units, symbols (%, ≤, ≥, -, ~)
+   - If cells span multiple rows/columns, note this
+   - Include table headers AND all data rows
+
+2. **Text**:
+   - Extract ALL paragraphs verbatim
+   - Preserve line breaks between sections
+   - Include page numbers, headers, footers
+   - Capture email signatures, contact info
+
+3. **Key-Value Pairs**:
+   - Extract form fields: "Field Name: Value"
+   - Extract measurement data: "Temperature: 45°C"
+   - Extract parameters: "Flow Rate: 5000 m³/h"
+
+4. **Preserve Formatting**:
+   - Keep units exactly: m³/h, °C, mg/Nm³, %
+   - Keep special characters: ≤, ≥, ±, ~, -, /, ×
+   - Keep German umlauts: ä, ö, ü, ß
+
+5. **Diagrams/Images**:
+   - Describe what is shown (process flow, equipment layout, etc.)
+   - Extract ALL labels, annotations, arrows, text from diagrams
+   - Note connections between elements
+
+6. **Don't Miss**:
+   - Small print, footnotes, references
+   - Handwritten notes or annotations
+   - Stamps, signatures, logos with text
+   - Section numbers, page numbers
+   - CAS numbers, chemical formulas
+   - Email headers, sender/recipient info
+
+Return ONLY valid JSON. No markdown, no commentary."""
                         }
                     ]
                 }]
@@ -441,7 +533,99 @@ class DocumentService:
                         },
                         {
                             "type": "text",
-                            "text": "Extract all text content from this document image. Preserve the structure, tables, and formatting as much as possible. Return only the extracted text, without any commentary or explanation."
+                            "text": """You are a document digitization specialist. Your task is to convert this document page image into a comprehensive, structured JSON format that captures ALL content.
+
+CRITICAL: Extract EVERYTHING visible - miss nothing. This is the only chance to capture this data.
+
+Return a JSON object with this structure:
+
+{
+  "document_type": "string (email, technical_drawing, table, form, safety_data_sheet, measurement_report, process_flow_diagram, questionnaire, mixed)",
+  "metadata": {
+    "has_tables": boolean,
+    "has_diagrams": boolean,
+    "has_handwriting": boolean,
+    "language": "string (de, en, mixed)",
+    "page_number": "string or null if visible"
+  },
+  "content": {
+    "headers": ["array of all headers/titles found"],
+    "body_text": "string (all paragraphs and text blocks, preserve line breaks with \\n)",
+    "tables": [
+      {
+        "title": "string or null",
+        "headers": ["column1", "column2", ...],
+        "rows": [
+          ["cell1", "cell2", ...],
+          ["cell1", "cell2", ...]
+        ]
+      }
+    ],
+    "lists": [
+      {
+        "type": "bulleted or numbered",
+        "items": ["item1", "item2", ...]
+      }
+    ],
+    "key_value_pairs": [
+      {"key": "string", "value": "string"}
+    ],
+    "diagrams_and_images": [
+      {
+        "type": "flow_diagram, chart, logo, signature, stamp, photo, technical_drawing",
+        "description": "detailed description of what is shown",
+        "labels_and_text": ["any text visible in/on the diagram"]
+      }
+    ],
+    "signatures_and_stamps": [
+      {
+        "type": "signature or stamp",
+        "text": "any readable text",
+        "location": "top_right, bottom_left, etc."
+      }
+    ]
+  },
+  "quality_notes": "string (mention any unclear text, cut-off content, poor quality areas)"
+}
+
+EXTRACTION RULES:
+
+1. **Tables**:
+   - Extract EVERY row and column
+   - Preserve exact values, units, symbols (%, ≤, ≥, -, ~)
+   - If cells span multiple rows/columns, note this
+   - Include table headers AND all data rows
+
+2. **Text**:
+   - Extract ALL paragraphs verbatim
+   - Preserve line breaks between sections
+   - Include page numbers, headers, footers
+   - Capture email signatures, contact info
+
+3. **Key-Value Pairs**:
+   - Extract form fields: "Field Name: Value"
+   - Extract measurement data: "Temperature: 45°C"
+   - Extract parameters: "Flow Rate: 5000 m³/h"
+
+4. **Preserve Formatting**:
+   - Keep units exactly: m³/h, °C, mg/Nm³, %
+   - Keep special characters: ≤, ≥, ±, ~, -, /, ×
+   - Keep German umlauts: ä, ö, ü, ß
+
+5. **Diagrams/Images**:
+   - Describe what is shown (process flow, equipment layout, etc.)
+   - Extract ALL labels, annotations, arrows, text from diagrams
+   - Note connections between elements
+
+6. **Don't Miss**:
+   - Small print, footnotes, references
+   - Handwritten notes or annotations
+   - Stamps, signatures, logos with text
+   - Section numbers, page numbers
+   - CAS numbers, chemical formulas
+   - Email headers, sender/recipient info
+
+Return ONLY valid JSON. No markdown, no commentary."""
                         }
                     ]
                 }]
