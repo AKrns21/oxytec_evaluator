@@ -89,6 +89,12 @@ class Settings(BaseSettings):
     langchain_endpoint: Optional[str] = None  # Use https://eu.api.smith.langchain.com for EU region
     langchain_project: str = "oxytec-feasibility-platform"
 
+    # Excel Extraction Configuration
+    excel_max_preview_rows: int = 50  # For non-measurement data
+    excel_statistical_threshold: float = 0.5  # >50% numeric columns → use statistical summary
+    excel_max_rows_full: int = 100  # Show full data if less than this many rows
+    excel_sample_rows: int = 3  # Number of first/last rows to show as samples
+
 
 # Global settings instance
 settings = Settings()

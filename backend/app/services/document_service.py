@@ -158,28 +158,162 @@ class DocumentService:
                 return f.read()
 
     async def _extract_spreadsheet(self, file_path: str) -> str:
-        """Extract text from CSV/Excel."""
+        """Extract and intelligently summarize spreadsheet data."""
         try:
+            from app.config import settings
+
             extension = Path(file_path).suffix.lower()
+            filename = Path(file_path).name
 
             if extension == ".csv":
                 df = pd.read_csv(file_path)
+                return await self._summarize_dataframe(df, filename)
             else:
-                df = pd.read_excel(file_path)
+                # Read all sheets from Excel file
+                sheets_dict = pd.read_excel(file_path, sheet_name=None)
 
-            # Convert DataFrame to readable text
-            text_parts = [
-                f"Spreadsheet with {len(df)} rows and {len(df.columns)} columns",
-                f"\nColumns: {', '.join(df.columns.tolist())}",
-                "\n--- Data Preview (first 50 rows) ---",
-                df.head(50).to_string(index=False)
-            ]
-
-            return "\n".join(text_parts)
+                # Handle single vs multi-sheet Excel
+                if len(sheets_dict) == 1:
+                    # Single sheet - extract it directly
+                    sheet_name, df = list(sheets_dict.items())[0]
+                    return await self._summarize_dataframe(df, filename, sheet_name)
+                else:
+                    # Multiple sheets - summarize each
+                    return await self._extract_multi_sheet_excel(sheets_dict, filename)
 
         except Exception as e:
-            logger.error("spreadsheet_extraction_failed", error=str(e))
+            logger.error("spreadsheet_extraction_failed", error=str(e), file_path=file_path)
             raise
+
+    async def _summarize_dataframe(
+        self,
+        df: pd.DataFrame,
+        filename: str,
+        sheet_name: Optional[str] = None
+    ) -> str:
+        """
+        Intelligently summarize DataFrame based on content type.
+
+        For measurement/numerical data (>50% numeric columns):
+        - Provides statistical summary (min, max, mean, median, std)
+        - Shows representative samples (first and last few rows)
+
+        For text/categorical data:
+        - Shows first N rows as preview
+
+        This dramatically reduces token count for LLM processing while
+        preserving critical information for feasibility analysis.
+        """
+        from app.config import settings
+
+        # Build header
+        summary_parts = []
+
+        if sheet_name:
+            summary_parts.append(f"Sheet: {sheet_name}")
+        else:
+            summary_parts.append(f"File: {filename}")
+
+        summary_parts.extend([
+            f"Dimensions: {len(df)} rows × {len(df.columns)} columns",
+            f"Columns: {', '.join(str(col) for col in df.columns.tolist())}",
+            ""
+        ])
+
+        # Detect if this is measurement/numerical data
+        numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+        numeric_ratio = len(numeric_cols) / len(df.columns) if len(df.columns) > 0 else 0
+
+        # For very small datasets, just show the full data
+        if len(df) <= 10:
+            summary_parts.append("--- Complete Data ---")
+            summary_parts.append(df.to_string(index=False))
+            return "\n".join(summary_parts)
+
+        # Strategy 1: Statistical summary for measurement data
+        if numeric_ratio > settings.excel_statistical_threshold:
+            logger.info(
+                "using_statistical_summary",
+                filename=filename,
+                rows=len(df),
+                numeric_cols=len(numeric_cols),
+                total_cols=len(df.columns)
+            )
+
+            summary_parts.append("--- MEASUREMENT DATA - Statistical Summary ---")
+            summary_parts.append(f"(Detected {len(numeric_cols)}/{len(df.columns)} numeric columns)")
+            summary_parts.append("")
+
+            # Statistical summary for each numeric column
+            for col in numeric_cols:
+                valid_data = df[col].dropna()
+
+                if len(valid_data) == 0:
+                    summary_parts.append(f"\n{col}: [No valid data]")
+                    continue
+
+                stats = {
+                    'count': len(valid_data),
+                    'min': valid_data.min(),
+                    'max': valid_data.max(),
+                    'mean': valid_data.mean(),
+                    'median': valid_data.median(),
+                    'std': valid_data.std() if len(valid_data) > 1 else 0
+                }
+
+                summary_parts.append(f"\n{col}:")
+                summary_parts.append(f"  Range: {stats['min']:.6g} to {stats['max']:.6g}")
+                summary_parts.append(f"  Mean: {stats['mean']:.6g} (±{stats['std']:.6g} std dev)")
+                summary_parts.append(f"  Median: {stats['median']:.6g}")
+                summary_parts.append(f"  Valid samples: {stats['count']}/{len(df)}")
+
+            # Add representative samples
+            n_samples = min(settings.excel_sample_rows, len(df) // 2)
+            if n_samples > 0:
+                summary_parts.append("\n--- Representative Samples ---")
+                summary_parts.append(f"\nFirst {n_samples} rows:")
+                summary_parts.append(df.head(n_samples).to_string(index=False))
+
+                summary_parts.append(f"\nLast {n_samples} rows:")
+                summary_parts.append(df.tail(n_samples).to_string(index=False))
+
+        # Strategy 2: Preview for text/categorical data
+        else:
+            logger.info(
+                "using_row_preview",
+                filename=filename,
+                rows=len(df),
+                numeric_cols=len(numeric_cols),
+                total_cols=len(df.columns)
+            )
+
+            max_rows = min(settings.excel_max_preview_rows, len(df))
+            summary_parts.append(f"--- Data Preview (first {max_rows} rows) ---")
+            summary_parts.append(df.head(max_rows).to_string(index=False))
+
+            if len(df) > max_rows:
+                summary_parts.append(f"\n... ({len(df) - max_rows} more rows not shown)")
+
+        return "\n".join(summary_parts)
+
+    async def _extract_multi_sheet_excel(
+        self,
+        sheets_dict: dict[str, pd.DataFrame],
+        filename: str
+    ) -> str:
+        """Extract and summarize multi-sheet Excel file."""
+        summary_parts = [
+            f"Excel file: {filename}",
+            f"Total sheets: {len(sheets_dict)}",
+            ""
+        ]
+
+        for sheet_name, df in sheets_dict.items():
+            summary_parts.append(f"\n{'='*70}")
+            summary_parts.append(await self._summarize_dataframe(df, filename, sheet_name))
+            summary_parts.append('='*70)
+
+        return "\n".join(summary_parts)
 
     async def _extract_text_from_image_with_vision(
         self,

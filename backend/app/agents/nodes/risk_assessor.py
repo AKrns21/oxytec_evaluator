@@ -28,11 +28,40 @@ async def risk_assessor_node(state: GraphState) -> dict[str, Any]:
 
     session_id = state["session_id"]
     subagent_results = state["subagent_results"]
+    extracted_facts = state.get("extracted_facts", {})
 
     logger.info("risk_assessor_started", session_id=session_id)
 
     try:
         llm_service = LLMService()
+
+        # Import json for serialization
+        import json
+
+        # Check if customer questions exist
+        customer_questions = extracted_facts.get("customer_specific_questions", [])
+        has_customer_questions = len(customer_questions) > 0
+
+        # Create customer questions context string if applicable
+        customer_questions_context = ""
+        if has_customer_questions:
+            questions_list = "\n".join([
+                f"{i+1}. {q.get('question_text', 'N/A')}"
+                for i, q in enumerate(customer_questions)
+            ])
+            customer_questions_context = f"""
+
+**CUSTOMER-SPECIFIC QUESTIONS DETECTED:**
+
+The customer asked the following explicit questions in their inquiry documents:
+
+{questions_list}
+
+These questions MUST be addressed in your risk synthesis:
+- Include in critical_success_factors: "Provide direct answers to customer's specific questions about [main topic from questions above]"
+- In mitigation_priorities: Reference how recommended actions address the customer's questions
+- Look for subagent findings from "Customer Question Response Specialist" if present
+"""
 
         # Consolidate all subagent findings into one continuous analysis (Flowise pattern)
         # Just concatenate the actual findings with section breaks, no agent names/metadata
@@ -43,6 +72,7 @@ async def risk_assessor_node(state: GraphState) -> dict[str, Any]:
         # Create risk assessment prompt - ONLY sees all subagent outputs (exception to chain rule)
         # Matches Flowise pattern: consolidated findings in <new_findings> tags
         risk_prompt = f"""You are the Risk Assessor, a specialized risk synthesis and strategic planning agent for oxytec AG feasibility studies.
+{customer_questions_context}
 
 {POSITIVE_FACTORS_FILTER}
 
@@ -223,7 +253,9 @@ Return a JSON object with the following structure:
   - CONDITIONAL_GO: No CRITICAL risks, 2-3 HIGH risks with feasible mitigation, proceed with action plan
   - NO_GO: ≥1 CRITICAL risk OR ≥4 HIGH risks without clear mitigation paths
 - **critical_success_factors**: Top 3-5 factors that MUST be addressed for project success
+  - **IMPORTANT**: If extracted_facts contains "customer_specific_questions" with ≥1 question, MUST include: "Provide direct answers to customer's specific questions about [main topic from questions]"
 - **mitigation_priorities**: Ordered list of 5-8 priority actions synthesized from subagent recommendations
+  - **IMPORTANT**: If customer_specific_questions exists, reference how recommendations address customer questions
 
 **ALIGNMENT WITH SUBAGENT FINDINGS:**
 - Extract risk severity from subagent analyses (they classify as CRITICAL/HIGH/MEDIUM/LOW)

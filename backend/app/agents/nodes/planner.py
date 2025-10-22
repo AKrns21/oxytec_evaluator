@@ -94,14 +94,61 @@ Tools needed: [list tools or "none"]
 
 **CRITICAL MANDATES:**
 
-**A. TECHNOLOGY SCREENING (REQUIRED)**
+**A. CUSTOMER-SPECIFIC QUESTIONS (CONDITIONAL - HIGH PRIORITY)**
+IF extracted_facts contains "customer_specific_questions" array with ≥1 question:
+- **MANDATORY**: Create a "Customer Question Response Specialist" subagent FIRST in the list
+- This subagent MUST:
+  • Quote each customer question verbatim in the task description
+  • Provide direct, numbered answers to each question
+  • Reference customer's existing test/operational experience
+  • Cross-reference findings from other subagents (VOC analysis, technology screening)
+  • Use tools: ["oxytec_knowledge_search", "web_search"] for research
+  • Deliverable format: Numbered responses (1-2 paragraphs each) with YES/NO/PARTIALLY stance
+- Task structure:
+  ```
+  Subagent: Customer-Specific Question Response Specialist
+
+  Objective: Provide direct, evidence-based answers to the customer's explicit questions about their system and testing experience.
+
+  Customer Questions (verbatim):
+  1. "[Question 1 text from customer_specific_questions[0].question_text]"
+  2. "[Question 2 text from customer_specific_questions[1].question_text]"
+  [... etc for all questions]
+
+  Context: [Summarize context from customer_specific_questions[].context]
+
+  Questions to answer:
+  - For Question 1: [Specific analysis required - root cause, comparison, recommendation]
+  - For Question 2: [Specific analysis required]
+  [... etc]
+
+  Method hints:
+  - Use oxytec_knowledge_search for technology performance comparisons
+  - Use web_search for chemical mechanism literature (e.g., ozone oxidation by-products)
+  - Reference VOC Analysis subagent findings for compound-specific behavior
+  - Reference Technology Screening subagent for technology pros/cons
+  - Provide clear YES/NO/PARTIALLY answers with technical justification
+  - Quantify recommendations with cost ranges and feasibility ratings
+
+  Deliverables:
+  - Numbered response to each customer question (1-2 paragraphs each)
+  - For root_cause questions: Root cause analysis table with Factor | Likelihood (%) | Evidence | Mitigation
+  - For recommendation_request questions: Recommendation table with Option | Pros | Cons | Cost Range | Feasibility
+  - For technical_comparison questions: Comparison table with Technology | Performance | Cost | Complexity | Recommendation
+
+  Dependencies: INDEPENDENT (but findings will be referenced by RISK ASSESSOR)
+
+  Tools needed: oxytec_knowledge_search, web_search
+  ```
+
+**B. TECHNOLOGY SCREENING (REQUIRED)**
 ALWAYS create a "Technology Screening" subagent that MUST:
 - Use **oxytec_knowledge_search** to query technology knowledge base
 - Compare NTP, UV/ozone, scrubbers, and hybrids quantitatively
 - Provide ranked shortlist with efficiency, energy, CAPEX, footprint comparisons
 - Task MUST include: "Tools needed: oxytec_knowledge_search" or "Tools needed: oxytec_knowledge_search, web_search"
 
-**B. RISK CLASSIFICATION**
+**C. RISK CLASSIFICATION**
 All subagents MUST classify risks as:
 - CRITICAL (>80%): Project-killing factors (carcinogens, technical impossibilities)
 - HIGH (30-80%): Significant challenges requiring mitigation

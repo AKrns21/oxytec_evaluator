@@ -164,6 +164,15 @@ Extract the following information into this EXACT JSON structure:
     "technology_preferences": "string or null",
     "technical_sophistication": "string (high/medium/low/unknown based on document style)"
   }},
+  "customer_specific_questions": [
+    {{
+      "question_text": "string (original question verbatim, including German wording)",
+      "question_type": "technical_comparison | root_cause | recommendation_request | feasibility_check | performance_inquiry",
+      "context": "string (paragraph/sentence before and after question for context)",
+      "priority": "HIGH | MEDIUM | LOW",
+      "source_document": "string (filename where question appears)"
+    }}
+  ],
   "timeline_and_project_phase": {{
     "timeline": "string or null (urgency, deadlines)",
     "project_phase": "string (inquiry, feasibility, detailed design, tender, or null)"
@@ -343,6 +352,84 @@ OUTPUT JSON:
 }}
 
 This example shows: correct nesting, null for missing numbers, severity classification for data quality issues.
+
+**CUSTOMER-SPECIFIC QUESTIONS DETECTION:**
+
+You MUST scan all documents for explicit customer questions and capture them in the "customer_specific_questions" array. These questions require direct answers in the final feasibility report.
+
+**DETECTION PATTERNS:**
+
+1. **Explicit Question Markers (HIGH priority):**
+   - German: "Frage:", "Fragen:", "?", "Kann Oxytec...", "Ist es möglich...", "Wäre es sinnvoll...", "Wie würde...", "Welche Technologie..."
+   - English: "Question:", "Can you...", "Is it possible...", "Would it be...", "How would...", "Which technology..."
+   - Numbered questions: "1.", "2.", "3." with question marks or explicit alternatives
+
+2. **Comparative Questions (MEDIUM/HIGH priority):**
+   - "oder" / "or" with alternatives: "Liegt es an X oder Y?"
+   - "versus", "im Vergleich zu", "compared to"
+   - Technology comparisons: "UV oder Ozon?", "NTP vs. thermal oxidizer"
+
+3. **Implicit Questions from Uncertainty (MEDIUM priority):**
+   - "Vermutung", "unklar", "nicht sicher", "suspicion", "unclear", "uncertain"
+   - "Wir wissen nicht ob...", "We don't know if..."
+
+4. **Request for Recommendations (HIGH priority):**
+   - "Was empfehlen Sie...", "What do you recommend..."
+   - "Sollten wir...", "Should we..."
+   - "Brauchen wir...", "Do we need..."
+
+**QUESTION CLASSIFICATION:**
+
+- **technical_comparison**: Comparing technologies, approaches, or solutions ("UV oder Ozon?", "NTP vs. scrubber")
+- **root_cause**: Diagnosing problems or failures ("Liegt es an X oder Y?", "Why is there odor?")
+- **recommendation_request**: Seeking advice on approach ("Sollten wir Wäscher einsetzen?", "What do you recommend?")
+- **feasibility_check**: Can something be done ("Ist NTP geeignet?", "Can this be treated?")
+- **performance_inquiry**: Questions about efficiency, costs, or performance ("Wie hoch ist der Wirkungsgrad?")
+
+**PRIORITY CLASSIFICATION:**
+
+- **HIGH**: Explicit numbered questions, questions with "Frage:" label, multiple alternatives presented, questions directly impacting GO/NO-GO decision
+- **MEDIUM**: Comparative questions, technology selection questions, questions about secondary concerns
+- **LOW**: Clarification questions, questions about minor details
+
+**EXAMPLE DETECTION (from ACO_input1.txt):**
+
+INPUT TEXT:
+"Im Rahmen der Tests wurden keine UV- sondern Ozonröhren eingesetzt und die Vermutung ist dass sich Aktivkohle-Ablagerungen und/oder benzoaldehyde bilden und dass es Geruch und rauch gibt. Frage: Liegt liegt es an den zusätzlichen Stoffen neben Styron oder an dass Ozonröhren eingesetzt wurden oder 3. wäre es sinnvoll einen Wäscher nach der UV-Anlage zu schalten oder ist NTP für die anderen Stoffe notwendig."
+
+OUTPUT JSON:
+{{
+  "customer_specific_questions": [
+    {{
+      "question_text": "Liegt es an den zusätzlichen Stoffen neben Styron oder daran dass Ozonröhren eingesetzt wurden?",
+      "question_type": "root_cause",
+      "context": "Im Rahmen der Tests wurden keine UV- sondern Ozonröhren eingesetzt und die Vermutung ist dass sich Aktivkohle-Ablagerungen und/oder benzoaldehyde bilden und dass es Geruch und Rauch gibt.",
+      "priority": "HIGH",
+      "source_document": "ACO_input1.txt"
+    }},
+    {{
+      "question_text": "Wäre es sinnvoll einen Wäscher nach der UV-Anlage zu schalten?",
+      "question_type": "recommendation_request",
+      "context": "Tests mit Ozonröhren zeigten Aktivkohle-Ablagerungen, Benzaldehydbildung, Geruch und Rauch. Kunde evaluiert zusätzliche Behandlungsstufen.",
+      "priority": "HIGH",
+      "source_document": "ACO_input1.txt"
+    }},
+    {{
+      "question_text": "Ist NTP für die anderen Stoffe notwendig?",
+      "question_type": "feasibility_check",
+      "context": "Kunde testet aktuell Ozonröhren für Styron-Behandlung und fragt sich ob zusätzliche Stoffe neben Styron eine andere Technologie erfordern.",
+      "priority": "HIGH",
+      "source_document": "ACO_input1.txt"
+    }}
+  ]
+}}
+
+**IMPORTANT:**
+- Capture questions VERBATIM in original language (German/English as written)
+- If document contains NO explicit questions, use empty array: "customer_specific_questions": []
+- DO NOT invent questions - only extract what customer explicitly asked
+- Split multi-part questions into separate entries (as shown in example above)
+- Context should provide 1-2 sentences of surrounding information
 
 **CRITICAL CARCINOGEN & TOXICITY DETECTION:**
 

@@ -35,8 +35,81 @@ async def writer_node(state: GraphState) -> dict[str, Any]:
         # Import json for serialization
         import json
 
+        # Check if customer questions exist
+        customer_questions = extracted_facts.get("customer_specific_questions", [])
+        has_customer_questions = len(customer_questions) > 0
+
+        # Create conditional section instructions
+        customer_questions_section_instructions = ""
+        if has_customer_questions:
+            questions_list = "\n".join([
+                f"{i+1}. {q.get('question_text', 'N/A')}"
+                for i, q in enumerate(customer_questions)
+            ])
+            customer_questions_section_instructions = f"""
+
+**MANDATORY SECTION: Beantwortung Ihrer spezifischen Fragen**
+
+The customer asked the following explicit questions:
+
+{questions_list}
+
+You MUST include a dedicated section titled "## Beantwortung Ihrer spezifischen Fragen" IMMEDIATELY AFTER "## VOC-Zusammensetzung und Eignung" and BEFORE "## Positive Faktoren".
+
+**Section Requirements:**
+1. Brief intro (1-2 sentences) acknowledging customer's test experience/context
+2. For EACH question above, create a subsection:
+   **Frage [N]: [Original question text verbatim]**
+
+   [Direct answer starting with clear position: "Ja, ...", "Nein, ...", "Teilweise, ...", "Es hängt davon ab, ..."]
+
+   [Technical reasoning with 2-3 paragraphs]
+
+3. Extract answers from risk_assessment findings (look for "Customer Question Response Specialist" in subagent findings or relevant technical_risks)
+4. Connect each answer to broader recommendations in Handlungsempfehlungen section
+5. Use professional but direct tone - customer wants clear answers
+
+**Example Format:**
+```markdown
+## Beantwortung Ihrer spezifischen Fragen
+
+Sie haben in Ihren Tests mit Ozonröhren (anstelle von UV-Lampen) Aktivkohle-Ablagerungen, Benzaldehydbildung sowie Geruchs- und Rauchentwicklung beobachtet. Hierzu ergeben sich folgende Antworten:
+
+**Frage 1: Liegt es an den zusätzlichen Stoffen neben Styrol oder daran, dass Ozonröhren eingesetzt wurden?**
+
+Die Ursache liegt höchstwahrscheinlich an **beiden Faktoren**, wobei die Ozonröhren der Hauptfaktor sind. Ozon oxidiert Styrol zu Benzaldehyd (nachgewiesen in Ihrer Messung bei 0,8 mg/Nm³), was den charakteristischen Geruch erklärt. Die "zusätzlichen Stoffe" verstärken die Nebenproduktbildung...
+
+[Continue with detailed technical explanation referencing risk_assessment findings]
+
+**Frage 2: Wäre es sinnvoll, einen Wäscher nach der UV-Anlage zu schalten?**
+
+Ja, ein alkalischer Wäscher nach der Oxidationsstufe ist **dringend empfohlen**. Er würde:
+1. Benzaldehyd zu ~70-85% abscheiden (wasserlöslich bei pH >8)
+2. Organische Säuren neutralisieren
+
+[Continue with technical justification]
+
+**Frage 3: Ist NTP für die anderen Stoffe notwendig?**
+
+NTP ist für die nicht-Styrol-VOCs **nicht zwingend notwendig**, aber **vorteilhaft**...
+
+[Continue with technical comparison]
+```
+
+**VALIDATION CHECKLIST FOR THIS SECTION:**
+- [ ] Section appears AFTER "## VOC-Zusammensetzung und Eignung"
+- [ ] Section appears BEFORE "## Positive Faktoren"
+- [ ] Each customer question is quoted verbatim with **Frage [N]:** header
+- [ ] Each answer starts with clear position (Ja/Nein/Teilweise/Es hängt davon ab)
+- [ ] Answers reference specific findings from risk_assessment
+- [ ] Technical depth is appropriate (2-3 paragraphs per question)
+- [ ] Answers connect to Handlungsempfehlungen section
+```
+"""
+
         # Create report writing prompt - sees RISK ASSESSOR output + EXTRACTED FACTS for Ausgangslage
         writer_prompt = f"""You are the Writer Agent responsible for producing the final feasibility report in German for oxytec AG. Oxytec specialized in non-thermal plasma (NTP), UV/ozone and air scrubbing technologies for industrial exhaust-air purification. The purpose of the feasibility study is to determine whether it is worthwhile for oxytec to proceed with deeper engagement with a prospective customer and whether NTP, UV/ozone, exhaust air scrubbers, or a combination of these technologies can augment or replace the customer's current abatement setup.
+{customer_questions_section_instructions}
 
 Your role is to compile and synthesize the risk assessment into a structured, management-ready document that provides both realistic evaluation AND actionable recommendations. **Do not add your own analysis, do not invent information, and rely strictly on the provided data.**
 
@@ -88,6 +161,8 @@ Before submitting your report, verify:
 - [ ] Ausgangslage contains ONLY facts from extracted_facts (no analysis)
 - [ ] Bewertung directly maps from risk_assessment.go_no_go_recommendation (no new judgment)
 - [ ] All technical claims in VOC-Zusammensetzung can be traced to risk_assessment content
+- [ ] IF customer_specific_questions exists: "Beantwortung Ihrer spezifischen Fragen" section MUST be present after VOC section
+- [ ] IF customer_specific_questions exists: Each question MUST have a direct answer with verbatim question text
 - [ ] Positive Faktoren and Kritische Herausforderungen are direct translations of risk items
 - [ ] Handlungsempfehlungen are TOP 4-6 items from mitigation_priorities (not expanded or added to)
 - [ ] No calculations, assumptions, or external knowledge added
@@ -156,52 +231,19 @@ Write as 2-3 continuous paragraphs (NO separators between paragraphs):
 - Second paragraph: Key chemical/physical considerations, expected treatment efficiency ranges, and any technology-specific advantages
 - Third paragraph (if no database-sourced costs found): Add cost disclaimer: "Eine detaillierte Kostenabschätzung (CAPEX/OPEX) erfordert die Auswahl konkreter Produktkomponenten aus dem Oxytec-Katalog und eine detaillierte Angebotserstellung. Grobe Richtwerte können nach Produktspezifikation bereitgestellt werden."
 
-**HOW TO EXTRACT TECHNOLOGY SELECTION:**
+---
 
-The risk_assessment may contain technology recommendations in several places:
-1. In technical_risks → Look for LOW-severity risks with mitigation strategies mentioning specific technologies
-2. In mitigation_priorities → Look for recommendations specifying equipment types (CEA, CFA, CWA, etc.)
-3. In critical_success_factors → May mention required technology approach
+**[CONDITIONAL SECTION - ONLY IF customer_specific_questions exists]**
 
-**EXTRACTION PATTERN:**
+## Beantwortung Ihrer spezifischen Fragen
 
-Look for statements like:
-- "UV/ozone technology suitable for aromatic VOCs" → Extract technology type (UV/ozone) and reasoning (aromatic VOCs)
-- "Use Oxytec CEA system for >95% removal" → Extract product family (CEA) and performance (>95%)
-- "Scrubber pre-treatment required to remove inorganics before NTP" → Extract hybrid system logic
+**This section is MANDATORY if customer_specific_questions array contains ≥1 question.**
 
-If NO explicit technology recommendation found:
-- Check which Oxytec product families (CEA/CFA/CWA/CSA/KAT) appear most in mitigation strategies
-- Default to "Ein Oxytec-Abluftreinigungssystem ist grundsätzlich geeignet" (generic) and list product families mentioned
+See detailed instructions in "MANDATORY SECTION: Beantwortung Ihrer spezifischen Fragen" above for format and requirements.
 
-**EXAMPLE 1: Clear UV/Ozone Recommendation**
-INPUT (risk_assessment.technical_risks):
-```json
-{{
-  "category": "Chemical",
-  "description": "Aromatic VOCs react rapidly with UV-ozone, making CEA systems ideal for this application",
-  "severity": "LOW",
-  "mitigation": "Deploy Oxytec CEA UV/ozone system with 18 kW ozone generation capacity"
-}}
-```
-OUTPUT (VOC-Zusammensetzung section, German):
-"Für die vorliegenden aromatischen VOCs ist die UV/Ozon-Technologie besonders geeignet. Die Oxytec CEA-Serie bietet durch die schnelle Reaktion mit Ozon eine hohe Abscheideleistung. Ein System mit ca. 18 kW Ozonerzeugungsleistung wird für diesen Volumenstrom als geeignet eingeschätzt. Eine detaillierte Kostenabschätzung (CAPEX/OPEX) erfordert die Auswahl konkreter Produktkomponenten aus dem Oxytec-Katalog und eine detaillierte Angebotserstellung."
+**Position:** IMMEDIATELY AFTER "## VOC-Zusammensetzung und Eignung" and BEFORE "## Positive Faktoren"
 
-**EXAMPLE 2: Hybrid System Recommendation**
-INPUT (risk_assessment.mitigation_priorities):
-```json
-[
-  "1. CRITICAL: Install CWA alkaline scrubber upstream to remove SO2 before NTP treatment",
-  "2. HIGH: Use CEA NTP reactor for VOC destruction after scrubber pre-treatment"
-]
-```
-OUTPUT (VOC-Zusammensetzung section, German):
-"Aufgrund der Schwefelverbindungen im Abgas ist ein zweistufiges Hybridsystem erforderlich: Ein alkalischer CWA-Vorwäscher entfernt zunächst SO2 und verhindert Schwefelsäurebildung. Im Anschluss erfolgt die VOC-Behandlung mit einem CEA-NTP-Reaktor. Dieses Systemkonzept kombiniert die Vorteile beider Technologien und erreicht die erforderlichen Abscheidegrade."
-
-**EXAMPLE 3: No Clear Recommendation (fallback)**
-INPUT (risk_assessment - no explicit technology mention):
-OUTPUT (VOC-Zusammensetzung section, German):
-"Ein Oxytec-Abluftreinigungssystem ist für die vorliegende VOC-Zusammensetzung grundsätzlich geeignet. Je nach detaillierter Anlagenauslegung kommen NTP-Reaktoren (CEA-Serie), UV/Ozon-Systeme (CFA-Serie) oder eine Kombination mit Wäschern (CWA-Serie) in Frage. Die finale Technologiewahl sollte nach Erhebung der noch fehlenden Betriebsparameter erfolgen. Eine detaillierte Kostenabschätzung (CAPEX/OPEX) erfordert die Auswahl konkreter Produktkomponenten aus dem Oxytec-Katalog und eine detaillierte Angebotserstellung."
+---
 
 ## Positive Faktoren
 
