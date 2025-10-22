@@ -65,7 +65,7 @@ class Settings(BaseSettings):
     # File Storage
     upload_dir: str = "./uploads"
     max_upload_size_mb: int = 50
-    allowed_extensions: list[str] = [".pdf", ".docx", ".xlsx", ".csv", ".txt"]
+    allowed_extensions: list[str] = [".pdf", ".docx", ".xlsx", ".csv", ".txt", ".png", ".jpg", ".jpeg"]
 
     # Agent Configuration
     max_subagents: int = 10

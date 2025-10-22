@@ -142,7 +142,7 @@ Upload → EXTRACTOR → PLANNER → SUBAGENTS (parallel) → RISK ASSESSOR → 
          (10s)       (5s)       (15-30s)              (5-10s)          (10-15s)
 ```
 
-1. **EXTRACTOR** (`app/agents/nodes/extractor.py`): Extracts structured facts from uploaded documents (PDF, Word, Excel) using **OpenAI GPT-5** (temperature: 0.2) with JSON mode for reliable structured output
+1. **EXTRACTOR** (`app/agents/nodes/extractor.py`): Extracts structured facts from uploaded documents (PDF, Word, Excel, PNG/JPG images) using **OpenAI GPT-5** (temperature: 0.2) with JSON mode for reliable structured output. **Image support**: PNG/JPG files and image-based PDFs are processed using Claude's vision API for OCR and text extraction
 2. **PLANNER** (`app/agents/nodes/planner.py`): Analyzes extracted facts and dynamically creates 3-8 specialized subagent definitions using **OpenAI GPT-mini** (temperature: 0.9) with JSON mode for creative planning
 3. **SUBAGENTS** (`app/agents/nodes/subagent.py`): Execute in parallel via `asyncio.gather()`, each investigating specific aspects (VOC analysis, product selection, energy calculations, etc.) using **OpenAI GPT-nano** (temperature: 0.4) for efficient text analysis
 4. **RISK ASSESSOR** (`app/agents/nodes/risk_assessor.py`): Synthesizes all findings and evaluates technical/commercial risks using **OpenAI GPT-5** (temperature: 0.4) with JSON mode for structured risk data
@@ -254,7 +254,10 @@ Background task execution uses FastAPI's `BackgroundTasks` to avoid blocking the
   - `execute_long_form()`: For report generation (higher token limit)
   - `execute_with_tools()`: For tool-calling agents with iteration loop
 
-- **DocumentService** (`app/services/document_service.py`): Extracts text from PDF/DOCX/Excel/CSV
+- **DocumentService** (`app/services/document_service.py`): Extracts text from PDF/DOCX/Excel/CSV/PNG/JPG
+  - Supports vision-based OCR for image files and image-based PDFs via Claude API
+  - Handles multi-sheet Excel files with intelligent statistical summarization
+  - Parallel processing for multi-page image-based PDFs
 
 - **EmbeddingService** (`app/services/embedding_service.py`): OpenAI embedding generation
 

@@ -19,7 +19,7 @@ class DocumentService:
         """
         Extract text from a document.
 
-        Supports: PDF, DOCX, TXT, CSV, XLSX
+        Supports: PDF, DOCX, TXT, CSV, XLSX, PNG, JPG/JPEG (via vision)
 
         Args:
             file_path: Path to the file
@@ -45,6 +45,8 @@ class DocumentService:
                 return await self._extract_txt(file_path)
             elif extension in [".csv", ".xlsx", ".xls"]:
                 return await self._extract_spreadsheet(file_path)
+            elif extension in [".png", ".jpg", ".jpeg"]:
+                return await self._extract_image(file_path)
             else:
                 logger.warning("unsupported_file_type", extension=extension)
                 return f"[Unsupported file type: {extension}]"
@@ -156,6 +158,89 @@ class DocumentService:
             # Try with different encoding
             with open(file_path, "r", encoding="latin-1") as f:
                 return f.read()
+
+    async def _extract_image(self, file_path: str) -> str:
+        """
+        Extract text from image file (PNG, JPG, JPEG) using Claude's vision API.
+
+        Args:
+            file_path: Path to the image file
+
+        Returns:
+            Extracted text content from the image
+        """
+        try:
+            logger.info("image_extraction_started", file_path=file_path)
+
+            # Read image file as bytes
+            with open(file_path, "rb") as f:
+                image_bytes = f.read()
+
+            # Determine image format from extension
+            extension = Path(file_path).suffix.lower()
+            if extension == ".png":
+                media_type = "image/png"
+            elif extension in [".jpg", ".jpeg"]:
+                media_type = "image/jpeg"
+            else:
+                logger.warning("unsupported_image_format", extension=extension)
+                return f"[Unsupported image format: {extension}]"
+
+            # Extract text using vision API
+            from anthropic import AsyncAnthropic
+            from app.config import settings
+
+            # Encode image to base64
+            image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+
+            # Use Claude with vision
+            client = AsyncAnthropic(api_key=settings.anthropic_api_key)
+
+            response = await client.messages.create(
+                model=settings.anthropic_model,
+                max_tokens=4096,
+                messages=[{
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": media_type,
+                                "data": image_base64
+                            }
+                        },
+                        {
+                            "type": "text",
+                            "text": "Extract all text content from this document image. Preserve the structure, tables, and formatting as much as possible. Return only the extracted text, without any commentary or explanation."
+                        }
+                    ]
+                }]
+            )
+
+            # Extract text from response
+            if not response.content or len(response.content) == 0:
+                logger.warning("vision_response_empty", file_path=file_path)
+                return "[No content extracted from image]"
+
+            content_block = response.content[0]
+            if not hasattr(content_block, 'text'):
+                logger.error("vision_response_no_text", file_path=file_path)
+                return "[Vision response has no text content]"
+
+            extracted_text = content_block.text
+
+            logger.info(
+                "image_extraction_success",
+                file_path=file_path,
+                length=len(extracted_text)
+            )
+
+            return extracted_text
+
+        except Exception as e:
+            logger.error("image_extraction_failed", file_path=file_path, error=str(e))
+            raise
 
     async def _extract_spreadsheet(self, file_path: str) -> str:
         """Extract and intelligently summarize spreadsheet data."""
