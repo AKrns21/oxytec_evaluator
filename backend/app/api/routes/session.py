@@ -6,12 +6,15 @@ from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from datetime import datetime
+from typing import Dict, Any
 
 from app.api.dependencies import get_database
 from app.models.database import Session as DBSession, SessionLog, AgentOutput
 from app.models.schemas import SessionResponse, DebugInfoResponse
 from app.services.pdf_service import PDFService
 from app.utils.logger import get_logger
+from app.agents.prompts.versions import get_prompt_version, list_available_versions
+from app.config import settings
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -166,4 +169,131 @@ async def download_pdf(
         raise
     except Exception as e:
         logger.error("pdf_download_failed", session_id=str(session_id), error=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/sessions/{session_id}/prompts")
+async def get_prompt_metadata(
+    session_id: UUID,
+    db: AsyncSession = Depends(get_database)
+) -> Dict[str, Any]:
+    """
+    Get prompt version metadata for all agents used in this session.
+
+    Returns information about which prompt versions were used by each agent,
+    including version numbers, changelogs, and full prompt text.
+
+    Args:
+        session_id: Session UUID
+        db: Database session
+
+    Returns:
+        Dictionary mapping agent types to their prompt metadata
+    """
+
+    try:
+        # Get agent outputs to determine which agents were used and their versions
+        outputs_stmt = select(AgentOutput).where(
+            AgentOutput.session_id == session_id
+        ).order_by(AgentOutput.created_at)
+        outputs_result = await db.execute(outputs_stmt)
+        outputs = outputs_result.scalars().all()
+
+        if not outputs:
+            raise HTTPException(
+                status_code=404,
+                detail="No agent outputs found for this session"
+            )
+
+        # Build response with prompt metadata for each agent
+        prompt_data: Dict[str, Any] = {}
+
+        # Map of agent types to their config version attribute
+        agent_version_map = {
+            "extractor": settings.extractor_prompt_version,
+            "planner": settings.planner_prompt_version,
+            "subagent": settings.subagent_prompt_version,
+            "risk_assessor": settings.risk_assessor_prompt_version,
+            "writer": settings.writer_prompt_version,
+        }
+
+        # Get unique agent types from outputs
+        agent_types = set(output.agent_type for output in outputs)
+
+        for agent_type in agent_types:
+            # Get the version used (from agent_output or config)
+            agent_output = next((o for o in outputs if o.agent_type == agent_type), None)
+            version = (
+                agent_output.prompt_version
+                if agent_output and agent_output.prompt_version
+                else agent_version_map.get(agent_type.lower(), "v1.0.0")
+            )
+
+            try:
+                # Get prompt data for this version
+                prompt_info = get_prompt_version(agent_type.lower(), version)
+
+                # Get list of available versions for comparison
+                available_versions = list_available_versions(agent_type.lower())
+
+                # Find previous version for diff comparison
+                previous_version = None
+                if len(available_versions) > 1:
+                    current_idx = available_versions.index(version)
+                    if current_idx < len(available_versions) - 1:
+                        previous_version = available_versions[current_idx + 1]
+
+                # Check if agent output contains rendered prompt (actual prompt sent to LLM)
+                rendered_prompt = None
+                rendered_system_prompt = None
+                if agent_output and agent_output.content:
+                    rendered_prompt = agent_output.content.get("rendered_prompt")
+                    rendered_system_prompt = agent_output.content.get("system_prompt")
+
+                # Use rendered prompt if available, otherwise fall back to template
+                prompt_text = rendered_prompt if rendered_prompt else prompt_info["PROMPT_TEMPLATE"]
+                system_prompt_text = rendered_system_prompt if rendered_system_prompt else prompt_info["SYSTEM_PROMPT"]
+
+                prompt_data[agent_type.lower()] = {
+                    "version": version,
+                    "changelog": prompt_info["CHANGELOG"],
+                    "prompt_text": prompt_text,
+                    "system_prompt": system_prompt_text,
+                    "available_versions": available_versions,
+                    "previous_version": previous_version,
+                    "tokens_used": agent_output.tokens_used if agent_output else None,
+                    "duration_ms": agent_output.duration_ms if agent_output else None,
+                    "is_rendered": rendered_prompt is not None,  # Flag to indicate if this is the actual rendered prompt
+                }
+
+            except ImportError as e:
+                logger.warning(
+                    "prompt_version_not_found",
+                    agent_type=agent_type,
+                    version=version,
+                    error=str(e)
+                )
+                # Return minimal data if prompt version not found
+                prompt_data[agent_type.lower()] = {
+                    "version": version,
+                    "changelog": "Version not found",
+                    "prompt_text": "",
+                    "system_prompt": "",
+                    "available_versions": [],
+                    "previous_version": None,
+                    "error": f"Prompt version {version} not found"
+                }
+
+        logger.info(
+            "prompt_metadata_retrieved",
+            session_id=str(session_id),
+            agent_count=len(prompt_data)
+        )
+
+        return prompt_data
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("get_prompt_metadata_failed", session_id=str(session_id), error=str(e))
         raise HTTPException(status_code=500, detail=str(e))

@@ -66,6 +66,7 @@ class AgentOutputResponse(BaseModel):
     content: dict[str, Any]
     tokens_used: Optional[int] = None
     duration_ms: Optional[int] = None
+    prompt_version: Optional[str] = None
     created_at: datetime
 
 

@@ -1,18 +1,63 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { useSSE } from "@/hooks/useSSE";
+import { usePromptData } from "@/hooks/usePromptData";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AgentVisualization from "@/components/AgentVisualization";
 import ResultsViewer from "@/components/ResultsViewer";
+import PromptVersionCard from "@/components/PromptVersionCard";
 import { CheckCircle2, Circle, Loader2, XCircle, AlertCircle } from "lucide-react";
 
 export default function SessionPage() {
   const params = useParams();
   const sessionId = params.id as string;
   const { status, result, error } = useSSE(sessionId);
+  const { data: promptData, loading: promptLoading, error: promptError } = usePromptData(sessionId);
+  const [agentProgress, setAgentProgress] = useState(0);
+
+  // Calculate progress based on completed agents (20% per agent for 5 agents)
+  useEffect(() => {
+    const fetchAgentProgress = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const response = await fetch(`${apiUrl}/api/sessions/${sessionId}/debug`);
+        if (!response.ok) return;
+
+        const data = await response.json();
+        const outputs = data.agent_outputs || [];
+
+        // Count unique agents that have completed (have duration_ms > 0)
+        const agentOrder = ["extractor", "planner", "subagent", "risk_assessor", "writer"];
+        const completedAgents = new Set<string>();
+
+        outputs.forEach((output: any) => {
+          if (output.duration_ms && output.duration_ms > 0) {
+            completedAgents.add(output.agent_type);
+          }
+        });
+
+        // Count how many agents from our ordered list have completed
+        const numCompleted = agentOrder.filter(type => completedAgents.has(type)).length;
+
+        // Calculate progress: 20% per completed agent
+        // 0% = no agents started, 20% = 1 completed, 40% = 2 completed, etc.
+        const progress = numCompleted * 20;
+        setAgentProgress(progress);
+      } catch (error) {
+        console.error("Failed to fetch agent progress:", error);
+      }
+    };
+
+    if (status === "processing" || status === "pending") {
+      fetchAgentProgress();
+      const interval = setInterval(fetchAgentProgress, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [sessionId, status]);
 
   const getStatusInfo = () => {
     switch (status) {
@@ -22,21 +67,21 @@ export default function SessionPage() {
           icon: <Loader2 className="h-6 w-6 animate-spin text-blue-500" />,
           title: "Connecting...",
           description: "Establishing connection to agent system",
-          progress: 5,
+          progress: 0,
         };
       case "pending":
         return {
           icon: <Circle className="h-6 w-6 text-gray-400" />,
           title: "Pending",
           description: "Waiting to start processing",
-          progress: 10,
+          progress: 0,
         };
       case "processing":
         return {
           icon: <Loader2 className="h-6 w-6 animate-spin text-blue-500" />,
           title: "Processing",
           description: "AI agents are analyzing your documents",
-          progress: 50,
+          progress: agentProgress,
         };
       case "completed":
         return {
@@ -102,7 +147,7 @@ export default function SessionPage() {
         <Tabs defaultValue="report" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="report">Final Report</TabsTrigger>
-            <TabsTrigger value="analysis">Agent Analysis</TabsTrigger>
+            <TabsTrigger value="prompts">Prompt Versions</TabsTrigger>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
           </TabsList>
 
@@ -110,78 +155,60 @@ export default function SessionPage() {
             <ResultsViewer result={result} sessionId={sessionId} />
           </TabsContent>
 
-          <TabsContent value="analysis" className="mt-6">
+          <TabsContent value="prompts" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Agent Analysis Details</CardTitle>
+                <CardTitle>Prompt Versions Used</CardTitle>
                 <CardDescription>
-                  Detailed findings from each specialized agent
+                  View the exact prompt versions used by each agent for this analysis
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  {result.extracted_facts && (
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">1. Extracted Facts</h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Structured information extracted from uploaded documents
-                      </p>
-                      <pre className="bg-muted p-4 rounded-md overflow-x-auto text-xs">
-                        {JSON.stringify(result.extracted_facts, null, 2)}
-                      </pre>
-                    </div>
-                  )}
-                  {result.planner_plan && (
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">2. Planner Strategy</h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Dynamic execution plan with {result.planner_plan.subagents?.length || 0} specialized subagents
-                      </p>
-                      <pre className="bg-muted p-4 rounded-md overflow-x-auto text-xs">
-                        {JSON.stringify(result.planner_plan, null, 2)}
-                      </pre>
-                    </div>
-                  )}
-                  {result.subagent_results && result.subagent_results.length > 0 && (
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">3. Subagent Analysis Results</h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Detailed findings from {result.subagent_results.length} parallel agent executions
-                      </p>
-                      <div className="space-y-4">
-                        {result.subagent_results.map((subagent: any, index: number) => (
-                          <div key={index} className="border rounded-md p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-medium">{subagent.agent_name || `Subagent ${index + 1}`}</h4>
-                              <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                                {subagent.priority || 'medium'}
-                              </span>
-                            </div>
-                            {subagent.objective && (
-                              <p className="text-sm text-muted-foreground mb-3">{subagent.objective}</p>
-                            )}
-                            <pre className="bg-muted p-3 rounded-md overflow-x-auto text-xs max-h-96">
-                              {typeof subagent.result === 'string'
-                                ? subagent.result
-                                : JSON.stringify(subagent.result, null, 2)}
-                            </pre>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {result.risk_assessment && (
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">4. Risk Assessment</h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Critical risk evaluation with veto power over technical recommendations
-                      </p>
-                      <pre className="bg-muted p-4 rounded-md overflow-x-auto text-xs">
-                        {JSON.stringify(result.risk_assessment, null, 2)}
-                      </pre>
-                    </div>
-                  )}
-                </div>
+                {promptLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <span className="ml-3 text-muted-foreground">Loading prompt data...</span>
+                  </div>
+                ) : promptError ? (
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-red-900 font-medium">Failed to load prompt data</p>
+                    <p className="text-red-700 text-sm mt-1">{promptError}</p>
+                  </div>
+                ) : promptData ? (
+                  <div className="space-y-4">
+                    {/* Display agents in execution order */}
+                    {Object.keys(promptData)
+                      .filter(key => ["extractor", "planner", "subagent", "risk_assessor", "writer"].includes(key))
+                      .sort((a, b) => {
+                        // Define execution order
+                        const order = ["extractor", "planner", "subagent", "risk_assessor", "writer"];
+                        return order.indexOf(a) - order.indexOf(b);
+                      })
+                      .map((agentType) => {
+                        const agentData = promptData[agentType];
+                        if (!agentData) return null;
+
+                        return (
+                          <PromptVersionCard
+                            key={agentType}
+                            agentName={agentType}
+                            agentType={agentType}
+                            version={agentData.version}
+                            changelog={agentData.changelog}
+                            promptText={agentData.prompt_text}
+                            systemPrompt={agentData.system_prompt}
+                            previousVersion={agentData.previous_version}
+                            tokensUsed={agentData.tokens_used}
+                            durationMs={agentData.duration_ms}
+                          />
+                        );
+                      })}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-muted-foreground">
+                    No prompt data available for this session
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -191,39 +218,7 @@ export default function SessionPage() {
           </TabsContent>
         </Tabs>
       ) : status === "processing" || status === "pending" ? (
-        <div className="space-y-6">
-          {/* Agent Visualization */}
-          <AgentVisualization sessionId={sessionId} />
-
-          {/* Agent Stages */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Processing Stages</CardTitle>
-              <CardDescription>
-                Multi-agent workflow progress
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {[
-                  { name: "EXTRACTOR", desc: "Extracting facts from documents" },
-                  { name: "PLANNER", desc: "Creating specialized analysis agents" },
-                  { name: "SUBAGENTS", desc: "Parallel analysis execution" },
-                  { name: "RISK ASSESSOR", desc: "Evaluating technical and commercial risks" },
-                  { name: "WRITER", desc: "Generating final report" },
-                ].map((stage, index) => (
-                  <div key={index} className="flex items-center space-x-3 p-3 bg-muted/50 rounded-md">
-                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                    <div>
-                      <p className="font-medium text-sm">{stage.name}</p>
-                      <p className="text-xs text-muted-foreground">{stage.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <AgentVisualization sessionId={sessionId} />
       ) : null}
 
       {/* Error Display */}

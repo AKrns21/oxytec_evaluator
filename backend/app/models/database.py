@@ -146,6 +146,7 @@ class AgentOutput(Base):
     content: Mapped[dict] = mapped_column(JSONB, nullable=False)
     tokens_used: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     duration_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    prompt_version: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # e.g., "v1.2.3"
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP,
         nullable=False,

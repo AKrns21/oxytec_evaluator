@@ -67,15 +67,17 @@ def track_agent_timing(agent_name: str):
                         # Save to session_logs table
                         log_start = SessionLog(
                             session_id=session_id,
-                            event=f"{agent_name}_started",
-                            level="info",
-                            details={"agent": agent_name}
+                            agent_type=agent_name,
+                            log_level="info",
+                            message=f"{agent_name}_started",
+                            data={"agent": agent_name}
                         )
                         log_completed = SessionLog(
                             session_id=session_id,
-                            event=f"{agent_name}_completed",
-                            level="info",
-                            details={
+                            agent_type=agent_name,
+                            log_level="info",
+                            message=f"{agent_name}_completed",
+                            data={
                                 "agent": agent_name,
                                 "duration_ms": duration_ms,
                                 "duration_sec": duration_sec
@@ -126,9 +128,10 @@ def track_agent_timing(agent_name: str):
 
                         log_failed = SessionLog(
                             session_id=session_id,
-                            event=f"{agent_name}_failed",
-                            level="error",
-                            details={
+                            agent_type=agent_name,
+                            log_level="error",
+                            message=f"{agent_name}_failed",
+                            data={
                                 "agent": agent_name,
                                 "duration_ms": duration_ms,
                                 "error": str(e)

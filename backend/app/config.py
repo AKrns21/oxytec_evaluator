@@ -62,6 +62,13 @@ class Settings(BaseSettings):
     writer_model: str = "claude-sonnet-4-5"
     writer_temperature: float = 0.4
 
+    # Prompt versioning configuration
+    extractor_prompt_version: str = "v1.0.0"
+    planner_prompt_version: str = "v1.0.0"
+    subagent_prompt_version: str = "v1.0.0"
+    risk_assessor_prompt_version: str = "v1.0.0"
+    writer_prompt_version: str = "v1.0.0"
+
     # File Storage
     upload_dir: str = "./uploads"
     max_upload_size_mb: int = 50

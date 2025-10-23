@@ -80,15 +80,15 @@ def create_agent_graph():
     # Add nodes with timing tracking
     workflow.add_node("extractor", track_agent_timing("extractor")(extractor_node))
     workflow.add_node("planner", track_agent_timing("planner")(planner_node))
-    workflow.add_node("execute_subagents", track_agent_timing("execute_subagents")(execute_subagents_parallel))
+    workflow.add_node("subagent", track_agent_timing("subagent")(execute_subagents_parallel))
     workflow.add_node("risk_assessor", track_agent_timing("risk_assessor")(risk_assessor_node))
     workflow.add_node("writer", track_agent_timing("writer")(writer_node))
 
     # Define edges (workflow sequence)
     workflow.set_entry_point("extractor")
     workflow.add_edge("extractor", "planner")
-    workflow.add_edge("planner", "execute_subagents")
-    workflow.add_edge("execute_subagents", "risk_assessor")
+    workflow.add_edge("planner", "subagent")
+    workflow.add_edge("subagent", "risk_assessor")
     workflow.add_edge("risk_assessor", "writer")
     workflow.add_edge("writer", END)
 
