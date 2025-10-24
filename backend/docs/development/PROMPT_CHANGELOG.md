@@ -142,10 +142,60 @@ Initial version before refactoring project
 
 ## PLANNER Agent
 
+### PLANNER v2.1.0 (2025-10-24)
+
+**Type:** MINOR (Breaking Change for EXTRACTOR integration)
+**Status:** ✅ Ready for testing
+**Token Impact:** -500 tokens (-10%) - More efficient content routing
+**Breaking Changes:** YES - Requires EXTRACTOR v3.0.0 output format
+
+**Changes:**
+- **ADDED:** `pages[]` parsing logic with `interpretation_hint` filtering
+- **ADDED:** `content_categories`-based page filtering
+- **ADDED:** `quick_facts` fast-access layer usage (check VOC/CAS without parsing pages)
+- **ADDED:** Content extraction examples for 6 common subagent types
+- **ADDED:** Step-by-step workflow for filtering content by hint/category
+- **MODIFIED:** `relevant_content` now contains filtered pages/tables instead of v2.0.0 schema fields
+- **REMOVED:** References to v2.0.0 schema fields (pollutant_characterization, process_parameters, etc.)
+
+**Philosophy Change:**
+- **v1.0.0 (Schema-First):** Access predefined fields directly → Relies on EXTRACTOR interpretation
+- **v2.1.0 (Content-First):** Parse `pages[]` → Filter by hints → Extract relevant content → Delegate to subagents
+
+**Rationale:**
+Support EXTRACTOR v3.0.0 content-first architecture. PLANNER now acts as the **interpreter** while EXTRACTOR focuses on **preservation**. This eliminates the 40% data loss from v2.0.0 schema-first forcing.
+
+**Migration Notes:**
+- **Requires EXTRACTOR v3.0.0** - Will not work with v2.0.0 output
+- Subagents now receive filtered content instead of full extracted_facts
+- `relevant_content` format changed from schema fields to filtered pages/tables
+- New access patterns:
+  ```python
+  # OLD (v1.0.0): Direct field access
+  voc_list = extracted_facts["pollutant_characterization"]["voc_list"]
+
+  # NEW (v2.1.0): Filter by interpretation_hint
+  voc_tables = [
+      table for page in pages
+      for table in page["tables"]
+      if table["interpretation_hint"] == "voc_measurements"
+  ]
+  ```
+
+**Testing:**
+- ⏳ Integration test: EXTRACTOR v3.0.0 → PLANNER v2.1.0 → SUBAGENTS
+- ⏳ Validation: Subagents receive correct filtered content
+- ⏳ E2E test: Full pipeline with Datenblatt_test.pdf
+
+**File:** `backend/app/agents/prompts/versions/planner_v2_1_0.py`
+**Config:** `backend/app/config.py:67` - `planner_prompt_version = "v2.1.0"`
+
+---
+
 ### PLANNER v1.0.0 (2025-10-23)
 
 **Type:** BASELINE
-**Status:** 🟢 Active
+**Status:** 🟡 Deprecated (superseded by v2.1.0)
 **Token Impact:** ~5,000 tokens (baseline)
 **Breaking Changes:** N/A (initial version)
 
@@ -160,8 +210,6 @@ Initial version before refactoring project
 Baseline version extracted from monolithic prompt during initial versioning
 
 **File:** `backend/app/agents/prompts/versions/planner_v1_0_0.py`
-
-**Next Version:** v2.1.0 (planned) - Will consume EXTRACTOR v3.0.0 `pages[]` format
 
 ---
 

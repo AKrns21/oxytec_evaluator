@@ -64,7 +64,7 @@ class Settings(BaseSettings):
 
     # Prompt versioning configuration
     extractor_prompt_version: str = "v3.0.0"  # Updated 2025-10-24: Content-first architecture
-    planner_prompt_version: str = "v1.0.0"
+    planner_prompt_version: str = "v2.1.0"  # Updated 2025-10-24: Consumes EXTRACTOR v3.0.0 pages[] format
     subagent_prompt_version: str = "v1.0.0"
     risk_assessor_prompt_version: str = "v1.0.0"
     writer_prompt_version: str = "v1.0.0"
