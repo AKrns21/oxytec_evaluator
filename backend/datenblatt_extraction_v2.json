@@ -1,0 +1,339 @@
+{
+  "pollutant_characterization": {
+    "pollutant_list": [
+      {
+        "name": "Poly(oxy-1,2-ethandiyl), alpha-hydro-omega-[(1-oxo-2-propen-1-yl)oxy]-, Ether mit 2-Ethyl-2-(hydroxymethyl) -1,3-propandiol (3:1)",
+        "cas_number": "28961-43-5",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": "≥10 - <25 %",
+        "category": "SVOC"
+      },
+      {
+        "name": "Styren",
+        "cas_number": "100-42-5",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "2,2,4,6,6-Pentamethylheptan",
+        "cas_number": "13475-82-6",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "Dicumylperoxid (Härter f. ungesättigte PE-Harze)",
+        "cas_number": "80-43-3",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "Hydroxydicyclopentadien",
+        "cas_number": "37275-49-3",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "Ethylendimethacrylat (Vernetzer)",
+        "cas_number": "97-90-5",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "Diethylenglycol Dimethacrylat",
+        "cas_number": "2358-84-1",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "SVOC"
+      },
+      {
+        "name": "Triethylenglycol Dimethacrylat",
+        "cas_number": "109-16-0",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "SVOC"
+      },
+      {
+        "name": "Tetraethylenglycol Dimethacrylat",
+        "cas_number": "109-17-1",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "SVOC"
+      },
+      {
+        "name": "Ethylbenzen",
+        "cas_number": "100-41-4",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "p-Xylen",
+        "cas_number": "106-42-3",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "o-Xylen",
+        "cas_number": "95-47-6",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "Propylencarbonat",
+        "cas_number": "108-32-7",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "Mesitylen",
+        "cas_number": "108-67-8",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "Triethylphosphat (Katalysator)",
+        "cas_number": "78-40-4",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "Pentadecan, 2-methyl-2-phenyl-",
+        "cas_number": "29138-94-1",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "Benzophenon (Photoinitiator)",
+        "cas_number": "119-61-9",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "SVOC"
+      },
+      {
+        "name": "1,2,3,6-Tetrahydro-Phthalimid",
+        "cas_number": "15458-48-7",
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "SVOC"
+      },
+      {
+        "name": "Propylencarbonat und 2,2,4,6,6-Pentamethylheptan (Überlagerung)",
+        "cas_number": null,
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "VOC"
+      },
+      {
+        "name": "?? Keine sichere qual. Analyse (kleiner 60%)",
+        "cas_number": null,
+        "concentration": null,
+        "concentration_unit": "",
+        "formulation_percentage": null,
+        "category": "SVOC"
+      }
+    ],
+    "total_load": {
+      "tvoc": null,
+      "tvoc_unit": null,
+      "total_carbon": null,
+      "odor_units": null
+    },
+    "measurement_tables": "Tabelle 2: 250438-P1, flüchtige Verbindungen (VOC und SVOC)\nCAS-Nr.\tBezeichnung der flüchtigen Verbindungen\tEinstufung VOC / SVOC\t250438-P1; <Voltabas 0302 „Anlage\"> Flüchtige Bestandteile: Masse-[%] 1)\n100-42-5\tStyren\tVOC\t1,0 ± 0,07\n13475-82-6\t2,2,4,6,6-Pentamethylheptan\tVOC\t0,3 ± 0,02\n80-43-3\tDicumylperoxid (Härter f. ungesättigte PE-Harze)\tVOC\t0,4 ± 0,01\n37275-49-3\tHydroxydicyclopentadien\tVOC\t1,2 ± 0,07\n97-90-5\tEthylendimethacrylat (Vernetzer)\tVOC\t0,6 ± 0,03\n2358-84-1\tDiethylenglycol Dimethacrylat\tSVOC\t1,6 ± 0,40\n109-16-0\tTriethylenglycol Dimethacrylat\tSVOC\t3,1 ± 1,23\n109-17-1\tTetraethylenglycol Dimethacrylat\tSVOC\t2,6 ± 1,53\n\nTabelle 3: 250438-P1: Einstufung und Kennzeichnung der flüchtigen Verbindungen\nCAS\tSubstanzname\tGefahrenklassen- und Gefahrenkategoriecode\tGefahrenhinweiscode\n100-42-5\tStyren\tFlam. Liq. 3\tH226\n100-42-5\tStyren\tSkin Irrit. 2\tH315\n100-42-5\tStyren\tEye Irrit. 2\tH319\n100-42-5\tStyren\tAcute Tox. 4 *\tH332\n100-42-5\tStyren\tSTOT RE 1\tH372 (Hörorgan)\n100-42-5\tStyren\tRepr. 2\tH361d\n13475-82-6\t2,2,4,6,6-Pentamethylheptan\tFlam. Liq. 3\tH226\n13475-82-6\t2,2,4,6,6-Pentamethylheptan\tAsp. Tox. 1\tH304\n13475-82-6\t2,2,4,6,6-Pentamethylheptan\tAquatic Chronic 4\tH413\n80-43-3\tDicumylperoxid (Härter f. ungesättigte PE-Harze)\tOrg. Perox. F\tH242\n80-43-3\tDicumylperoxid (Härter f. ungesättigte PE-Harze)\tSkin Irrit. 2\tH315\n80-43-3\tDicumylperoxid (Härter f. ungesättigte PE-Harze)\tEye Irrit. 2\tH319\n80-43-3\tDicumylperoxid (Härter f. ungesättigte PE-Harze)\tAquatic Chronic 2\tH411\n80-43-3\tDicumylperoxid (Härter f. ungesättigte PE-Harze)\tRepr. 1B\tH360D\n37275-49-3\tHydroxydicyclopentadien\tSkin Irrit. 2\tH315\n37275-49-3\tHydroxydicyclopentadien\tEye Irrit. 2\tH319\n37275-49-3\tHydroxydicyclopentadien\tSTOT SE 3\tH335, (Atmungssystem, Inhalation)\n97-90-5\tEthylendimethacrylat (Vernetzer)\tSkin Sens. 1\tH317\n97-90-5\tEthylendimethacrylat (Vernetzer)\tSTOT SE 3\tH335\n\nSeite 4 von 7 Tabelle (Fortsetzung Einstufung)\nCAS\tSubstanzname\tGefahrenklassen- und Gefahrenkategoriecode\tGefahrenhinweiscode\n2358-84-1\tDiethylenglycol Dimethacrylat\tSkin Sens. 1; Aquatic Chronic 3\tH317; H412\n109-16-0\tTriethylenglycol Dimethacrylat\tSkin Sens. 1B\tH317\n109-17-1\tTetraethylenglycol Dimethacrylat\tkeine Klassifizierung\t\n\nTabelle 4: 250438-P2, flüchtige Verbindungen (VOC und SVOC)\nCAS-Nr.\tBezeichnung der flüchtigen Verbindungen\tEinstufung VOC / SVOC\t250438-P2; <Voltatex> Flüchtige Bestandteile; Masse-[%] 1)\n100-61-4\tEthylbenzen\tVOC\t0,05 ± 0,001\n106-42-3\tp-Xylen\tVOC\t0,21 ± 0,007\n95-47-6\to-Xylen\tVOC\t0,09 ± 0,009\n108-32-7; 13475-82-6\tPropylencarbonat und 2,2,4,6,6-Pentamethylheptan (Überlagerung)\tVOC\t0,30 ± 0,018\n108-67-8\tMesitylen\tVOC\t0,07 ± 0,004\n78-40-0\tTriethylphosphat (Katalysator)\tVOC\t0,12 ± 0,007\n29138-94-1\tPentadecan, 2-methyl-2-phenyl-\tVOC\t0,15 ± 0,003\n119-61-9\tBenzophenon (Photoinitiator)\tSVOC\t0,24 ± 0,004\n15458-48-7\t1,2,3,6-Tetrahydro-Phthalimid\tSVOC\t1,13 ± 0,099\n??\t?? Keine sichere qual. Analyse (kleiner 60%)\tSVOC\t0,09 ± 0,005\n??\t?? Keine sichere qual. Analyse (kleiner 60%)\tSVOC\t0,07 ± 0,009\n??\t?? Keine sichere qual. Analyse (kleiner 60%)\tSVOC\t0,68 ± 0,055\n??\t?? Keine sichere qual. Analyse (kleiner 60%)\tSVOC\t0,06 ± 0,004\n??\t?? Keine sichere qual. Analyse (kleiner 60%)\tSVOC\t0,06 ± 0,003\n\nTabelle 5: 250438-P2: Einstufung und Kennzeichnung der flüchtigen Verbindungen\nCAS\tSubstanzname\tGefahrenklassen- und Gefahrenkategoriecode\tGefahrenhinweiscode\n100-41-4\tEthylbenzen\tFlam. Liq. 2\tH225\n100-41-4\tEthylbenzen\tAcute Tox. 4 *\tH332\n100-41-4\tEthylbenzen\tAsp. Tox. 1\tH304\n100-41-4\tEthylbenzen\tSTOT RE 2\tH373 (Hörorgan)\n106-42-3\tp-Xylen\tFlam. Liq. 3\tH226\n106-42-3\tp-Xylen\tAcute Tox. 4 *\tH312\n106-42-3\tp-Xylen\tSkin Irrit. 2\tH315\n95-47-6\to-Xylen\tAcute Tox. 4 *\tH332\n95-47-6\to-Xylen\tFlam. Liq. 3\tH226\n95-47-6\to-Xylen\tAcute Tox. 4 *\tH312\n95-47-6\to-Xylen\tSkin Irrit. 2\tH315\n108-32-7\tPropylencarbonat\tAcute Tox. 4 *\tH332\n108-32-7\tPropylencarbonat\tEye Irrit. 2\tH319\n13475-82-6\t2,2,4,6,6-Pentamethyl-heptan\tFlam. Liq. 3\tH226\n13475-82-6\t2,2,4,6,6-Pentamethyl-heptan\tAsp. Tox. 1\tH304\n13475-82-6\t2,2,4,6,6-Pentamethyl-heptan\tAquatic Chronic 4\tH413\n108-67-8\tMesitylen (1,3,5-Trimethylbenzen)\tFlam. Liq. 3\tH226\n108-67-8\tMesitylen (1,3,5-Trimethylbenzen)\tSTOT SE 3\tH335\n108-67-8\tMesitylen (1,3,5-Trimethylbenzen)\tAquatic Chronic 2\tH411\n78-40-4\tTriethylphosphat, (Katalysator)\tkeine Klassifizierung\t\n29138-94-1\tPentadecan, 2-methyl-2-phenyl-\tkeine Klassifizierung\t\n119-61-9\tBenzophenon, (Photoinitiator)\tCarc. 1B\tH350\n15458-48-7\t1,2,3,6-Tetrahydro-Phthalimid\tkeine Klassifizierung\t"
+  },
+  "process_parameters": {
+    "flow_rate": {
+      "value": null,
+      "unit": "",
+      "min_value": null,
+      "max_value": null
+    },
+    "temperature": {
+      "value": null,
+      "unit": ""
+    },
+    "pressure": {
+      "value": null,
+      "unit": "",
+      "type": null
+    },
+    "humidity": {
+      "value": null,
+      "unit": "",
+      "type": null
+    },
+    "oxygen_content_percent": null,
+    "particulate_load": {
+      "value": null,
+      "unit": null
+    },
+    "operating_schedule": null
+  },
+  "current_abatement_systems": {
+    "technologies_in_place": [],
+    "removal_efficiencies": null,
+    "problems_reported": null,
+    "maintenance_costs": null
+  },
+  "industry_and_process": {
+    "industry_sector": "coating",
+    "specific_processes": "Beschichtungskomponente; flüchtige Verbindungen aus Produkt Voltabas 0302 bzw. Voltatex",
+    "production_volumes": null,
+    "raw_materials": "Voltabas 0302; Voltatex"
+  },
+  "requirements_and_constraints": {
+    "target_removal_efficiency_percent": null,
+    "outlet_concentration_limit": {
+      "value": null,
+      "unit": null
+    },
+    "regulatory_requirements": "REACH; CLP-Verordnung (EG) Nr. 1272/2008",
+    "space_constraints": "",
+    "energy_consumption_limits": null,
+    "budget_constraints": {
+      "capex": null,
+      "opex": null
+    },
+    "atex_classification": null,
+    "safety_requirements": "Persönliche Schutzausrüstung: Schutzbrille; Handschuhe NBR (EN374); Hygienemaßnahmen gemäß SDB"
+  },
+  "site_conditions": {
+    "utilities_available": {
+      "electricity": null,
+      "water": null,
+      "compressed_air": null,
+      "steam": null
+    },
+    "installation_location": "",
+    "ambient_conditions": {
+      "temperature_range": null,
+      "humidity": null,
+      "corrosive_environment": null
+    },
+    "access_constraints": null
+  },
+  "customer_knowledge_and_expectations": {
+    "technologies_mentioned": [],
+    "technologies_currently_considering": [],
+    "previous_experience": null,
+    "technology_preferences": null,
+    "technical_sophistication": "unknown"
+  },
+  "customer_specific_questions": [],
+  "timeline_and_project_phase": {
+    "timeline": null,
+    "project_phase": null
+  },
+  "extraction_notes": [
+    {
+      "field": "pollutant_characterization.pollutant_list[0].category",
+      "status": "extraction_uncertain",
+      "note": "SDB Bestandteil ist Polymer/Monomer-Ether; als SVOC kategorisiert basierend auf Gemischcharakter, nicht explizit im Dokument als VOC/SVOC benannt."
+    },
+    {
+      "field": "pollutant_characterization.pollutant_list[18].cas_number",
+      "status": "missing_in_source",
+      "note": "Zeile 'Propylencarbonat und 2,2,4,6,6-Pentamethylheptan (Überlagerung)' hat zwei CAS im Mess-Tabelle 4 Header-Zelle; einzelne CAS pro Eintrag nicht eindeutig."
+    },
+    {
+      "field": "pollutant_characterization.pollutant_list[19].name",
+      "status": "extraction_uncertain",
+      "note": "Mehrere Zeilen mit '?? Keine sichere qual. Analyse (kleiner 60%)' vorhanden; als generischer Eintrag erfasst."
+    },
+    {
+      "field": "pollutant_characterization.pollutant_list[*].concentration",
+      "status": "not_provided_in_documents",
+      "note": "Konzentrationen in Abluft (mg/Nm3, ppm) nicht angegeben; nur Masse-% der flüchtigen Bestandteile im Produkt gemessen."
+    },
+    {
+      "field": "pollutant_characterization.total_load.tvoc",
+      "status": "not_provided_in_documents",
+      "note": "Kein TVOC-Wert angegeben."
+    },
+    {
+      "field": "process_parameters.flow_rate.value",
+      "status": "not_provided_in_documents",
+      "note": "Keine Volumenstromangaben vorhanden."
+    },
+    {
+      "field": "process_parameters.temperature.value",
+      "status": "not_provided_in_documents",
+      "note": "Keine Ablufttemperatur angegeben."
+    },
+    {
+      "field": "process_parameters.pressure.value",
+      "status": "not_provided_in_documents",
+      "note": "Kein Druck angegeben."
+    },
+    {
+      "field": "process_parameters.humidity.value",
+      "status": "not_provided_in_documents",
+      "note": "Keine Feuchteangaben."
+    },
+    {
+      "field": "process_parameters.oxygen_content_percent",
+      "status": "not_provided_in_documents",
+      "note": "Kein Sauerstoffgehalt angegeben."
+    },
+    {
+      "field": "current_abatement_systems.technologies_in_place",
+      "status": "not_provided_in_documents",
+      "note": "Keine Angabe zu vorhandenen Abluftreinigungsverfahren."
+    },
+    {
+      "field": "requirements_and_constraints.outlet_concentration_limit.value",
+      "status": "not_provided_in_documents",
+      "note": "Keine Emissionsgrenzwerte genannt."
+    },
+    {
+      "field": "industry_and_process.industry_sector",
+      "status": "extraction_uncertain",
+      "note": "SDB nennt 'Beschichtungskomponente'; Branchenzuordnung als 'coating' abgeleitet."
+    },
+    {
+      "field": "pollutant_characterization.pollutant_list[9].cas_number",
+      "status": "extraction_uncertain",
+      "note": "In Tabelle 4 Messwerte steht CAS 100-61-4 'Ethylbenzen', in Tabelle 5 Klassifizierung 100-41-4. Unterschiedliche CAS-Nummern in verschiedenen Tabellen."
+    }
+  ],
+  "data_quality_issues": [
+    {
+      "issue": "1 invalid CAS numbers detected (failed checksum)",
+      "severity": "MEDIUM",
+      "impact_description": "CAS numbers failed checksum validation. This could indicate OCR errors, typos in source document, or substance misidentification.",
+      "examples": [
+        "Triethylphosphat (Katalysator): 78-40-4 → suggested: 78-40-0"
+      ],
+      "recommendation": "Verify CAS numbers against source document. Consider using suggestion if OCR error is likely."
+    }
+  ]
+}

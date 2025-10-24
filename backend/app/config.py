@@ -63,7 +63,7 @@ class Settings(BaseSettings):
     writer_temperature: float = 0.4
 
     # Prompt versioning configuration
-    extractor_prompt_version: str = "v1.0.0"
+    extractor_prompt_version: str = "v3.0.0"  # Updated 2025-10-24: Content-first architecture
     planner_prompt_version: str = "v1.0.0"
     subagent_prompt_version: str = "v1.0.0"
     risk_assessor_prompt_version: str = "v1.0.0"

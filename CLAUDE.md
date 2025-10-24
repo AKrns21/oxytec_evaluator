@@ -278,10 +278,42 @@ Background task execution uses FastAPI's `BackgroundTasks` to avoid blocking the
 
 ### Modifying Agent Prompts
 
-Agent prompts are inline in node files (not separate template files). To modify behavior:
-- Find the node file (e.g., `app/agents/nodes/planner.py`)
-- Locate the prompt string (usually in a multi-line f-string)
-- Edit prompt directly - changes take effect on next reload
+Agent prompts use a **versioned file system** for proper change tracking and rollback capability.
+
+**Location:** `backend/app/agents/prompts/versions/`
+
+**Structure:**
+- `extractor_v1_0_0.py`, `extractor_v2_0_0.py` - Versioned prompt files
+- Each file contains: `VERSION`, `CHANGELOG`, `PROMPT_TEMPLATE`
+- Semantic versioning: MAJOR.MINOR.PATCH
+
+**To create a new prompt version:**
+
+1. Copy the latest version:
+   ```bash
+   cp backend/app/agents/prompts/versions/extractor_v2_0_0.py backend/app/agents/prompts/versions/extractor_v3_0_0.py
+   ```
+
+2. Update **both** VERSION and CHANGELOG in the file (REQUIRED):
+   ```python
+   VERSION = "v3.0.0"
+
+   CHANGELOG = """
+   v3.0.0 (2025-10-24) - Brief description
+   - Change 1: What changed
+   - Change 2: Why it changed
+   - Breaking changes: Yes/No
+   """
+   ```
+   **The inline CHANGELOG shows in the UI when users click "changelog"**
+
+3. Modify PROMPT_TEMPLATE
+
+4. Update centralized changelog: `docs/development/PROMPT_CHANGELOG.md`
+
+5. Commit to git: `git commit -m "feat(prompts): Add EXTRACTOR v3.0.0 - content-first architecture"`
+
+**See:** `backend/app/agents/prompts/versions/README.md` for complete versioning guide
 
 ### Adding Tools
 

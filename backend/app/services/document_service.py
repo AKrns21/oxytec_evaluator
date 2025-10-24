@@ -2,11 +2,15 @@
 
 import os
 import base64
+import hashlib
 from pathlib import Path
 from typing import Optional
 import fitz  # PyMuPDF
 import docx
 import pandas as pd
+from sqlalchemy import select
+from app.db.session import AsyncSessionLocal
+from app.models.database import Document
 from app.utils.logger import get_logger
 from app.utils.error_handler import handle_service_errors
 
@@ -19,7 +23,10 @@ class DocumentService:
     @handle_service_errors("document_extraction")
     async def extract_text(self, file_path: str, mime_type: Optional[str] = None) -> str:
         """
-        Extract text from a document.
+        Extract text from a document with caching support.
+
+        Checks database cache first. If cached extraction exists and file hasn't changed,
+        returns cached content. Otherwise, performs extraction and caches result.
 
         Supports: PDF, DOCX, TXT, CSV, XLSX, PNG, JPG/JPEG (via vision)
 
@@ -33,24 +40,39 @@ class DocumentService:
 
         path = Path(file_path)
 
+        # Check cache first
+        cached_text = await self._get_cached_extraction(str(path))
+        if cached_text:
+            logger.info("extraction_cache_hit", file_path=str(path))
+            return cached_text
+
+        # Cache miss - perform extraction
+        logger.info("extraction_cache_miss", file_path=str(path))
+
         if not path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
 
         extension = path.suffix.lower()
 
+        # Extract text based on file type
         if extension == ".pdf":
-            return await self._extract_pdf(file_path)
+            extracted_text = await self._extract_pdf(file_path)
         elif extension in [".docx", ".doc"]:
-            return await self._extract_docx(file_path)
+            extracted_text = await self._extract_docx(file_path)
         elif extension == ".txt":
-            return await self._extract_txt(file_path)
+            extracted_text = await self._extract_txt(file_path)
         elif extension in [".csv", ".xlsx", ".xls"]:
-            return await self._extract_spreadsheet(file_path)
+            extracted_text = await self._extract_spreadsheet(file_path)
         elif extension in [".png", ".jpg", ".jpeg"]:
-            return await self._extract_image(file_path)
+            extracted_text = await self._extract_image(file_path)
         else:
             logger.warning("unsupported_file_type", extension=extension)
-            return f"[Unsupported file type: {extension}]"
+            extracted_text = f"[Unsupported file type: {extension}]"
+
+        # Cache the extracted text
+        await self._cache_extraction(str(path), extracted_text)
+
+        return extracted_text
 
     @handle_service_errors("pdf_extraction")
     async def _extract_pdf(self, file_path: str) -> str:
@@ -657,3 +679,117 @@ Return ONLY valid JSON. No markdown, no commentary."""
                 error=str(e)
             )
             return f"[Vision extraction failed for {page_identifier}: {str(e)}]"
+
+    async def _get_cached_extraction(self, file_path: str) -> Optional[str]:
+        """
+        Get cached extraction from database if available and file hasn't changed.
+
+        Uses file hash to detect if file has been modified since last extraction.
+
+        Args:
+            file_path: Path to the file
+
+        Returns:
+            Cached extracted text if available, None otherwise
+        """
+        try:
+            # Calculate file hash
+            file_hash = self._calculate_file_hash(file_path)
+
+            async with AsyncSessionLocal() as db:
+                # Look up document by file_path
+                stmt = select(Document).where(Document.file_path == file_path)
+                result = await db.execute(stmt)
+                doc = result.scalar_one_or_none()
+
+                if not doc or not doc.extracted_content:
+                    return None
+
+                # Check if file hash matches (file hasn't changed)
+                cached_hash = doc.extracted_content.get("file_hash")
+                if cached_hash != file_hash:
+                    logger.info(
+                        "extraction_cache_stale",
+                        file_path=file_path,
+                        reason="file_hash_mismatch"
+                    )
+                    return None
+
+                # Return cached text
+                return doc.extracted_content.get("text")
+
+        except Exception as e:
+            logger.warning(
+                "extraction_cache_read_failed",
+                file_path=file_path,
+                error=str(e)
+            )
+            return None
+
+    async def _cache_extraction(self, file_path: str, extracted_text: str) -> None:
+        """
+        Cache extraction result in database with file hash.
+
+        Args:
+            file_path: Path to the file
+            extracted_text: Extracted text content
+        """
+        try:
+            # Calculate file hash
+            file_hash = self._calculate_file_hash(file_path)
+
+            async with AsyncSessionLocal() as db:
+                # Look up or create document record
+                stmt = select(Document).where(Document.file_path == file_path)
+                result = await db.execute(stmt)
+                doc = result.scalar_one_or_none()
+
+                cache_data = {
+                    "text": extracted_text,
+                    "file_hash": file_hash,
+                    "cached_at": str(Path(file_path).stat().st_mtime)
+                }
+
+                if doc:
+                    # Update existing document
+                    doc.extracted_content = cache_data
+                    logger.info(
+                        "extraction_cache_updated",
+                        file_path=file_path,
+                        text_length=len(extracted_text)
+                    )
+                else:
+                    # Note: Cannot create new Document without session_id
+                    # Caching only works for documents already in database
+                    logger.info(
+                        "extraction_cache_skip",
+                        file_path=file_path,
+                        reason="document_not_in_database"
+                    )
+                    return
+
+                await db.commit()
+
+        except Exception as e:
+            logger.warning(
+                "extraction_cache_write_failed",
+                file_path=file_path,
+                error=str(e)
+            )
+
+    def _calculate_file_hash(self, file_path: str) -> str:
+        """
+        Calculate SHA256 hash of file for cache validation.
+
+        Args:
+            file_path: Path to the file
+
+        Returns:
+            SHA256 hex digest
+        """
+        sha256_hash = hashlib.sha256()
+        with open(file_path, "rb") as f:
+            # Read file in chunks to handle large files
+            for byte_block in iter(lambda: f.read(4096), b""):
+                sha256_hash.update(byte_block)
+        return sha256_hash.hexdigest()

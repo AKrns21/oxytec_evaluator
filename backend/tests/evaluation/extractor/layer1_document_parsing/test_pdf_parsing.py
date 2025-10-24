@@ -153,3 +153,43 @@ class TestPDFParsing:
         # Should extract content from multiple pages
         page_count = extracted_text.count("Page") or extracted_text.count("---")
         assert page_count >= 2, f"Expected multi-page extraction, found {page_count} page markers"
+
+    @pytest.mark.asyncio
+    async def test_bericht_pdf_comprehensive_extraction(
+        self, extract_text_only, test_documents_dir
+    ):
+        """Test comprehensive extraction from 13-page Bericht.pdf (EXTRACTOR v2.0.0 validation)."""
+        doc_path = test_documents_dir / "pdf" / "Bericht.pdf"
+
+        if not doc_path.exists():
+            pytest.skip(f"Test document not found: {doc_path}")
+
+        extracted_text = await extract_text_only(doc_path)
+
+        # Should contain all 13 pages
+        page_markers = extracted_text.count("--- Page")
+        assert page_markers >= 13, f"Expected 13 pages in Bericht.pdf, found {page_markers} page markers"
+
+        # Should have substantial content (reasonable minimum for 13 pages)
+        assert len(extracted_text) > 10000, (
+            f"Bericht.pdf extracted text seems too short: {len(extracted_text)} characters. "
+            "Expected >10,000 for 13 pages of technical content."
+        )
+
+        # Should not have encoding issues
+        assert "Â" not in extracted_text, "Encoding issue detected: Â character found (likely UTF-8 corruption)"
+        assert "Ã" not in extracted_text[:1000], "Encoding issue detected: Ã character in first 1000 chars"
+
+        # Should preserve German special characters correctly
+        # Check for common German umlauts (if present in document)
+        text_lower = extracted_text.lower()
+        if "für" in text_lower or "über" in text_lower or "prüfung" in text_lower:
+            # If German text is present, umlauts should be preserved
+            assert "ü" in extracted_text or "ä" in extracted_text or "ö" in extracted_text, (
+                "German umlauts not preserved in Bericht.pdf extraction"
+            )
+
+        # Basic content checks (assuming Bericht.pdf is a technical report)
+        # Add specific checks based on known content in Bericht.pdf
+        # Example: Check for technical terminology presence
+        # assert "VOC" in extracted_text or "Abluft" in extracted_text, "Expected technical content in Bericht.pdf"

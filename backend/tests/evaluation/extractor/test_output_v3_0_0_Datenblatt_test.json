@@ -1,0 +1,1143 @@
+{
+  "document_metadata": {
+    "document_type": "mixed",
+    "language": "de",
+    "total_pages": 8,
+    "extraction_method": "vision_api",
+    "has_tables": true,
+    "has_diagrams": true,
+    "filename": "Datenblatt_test.pdf"
+  },
+  "pages": [
+    {
+      "page_number": 1,
+      "headers": [
+        "DE : DEUTSCH",
+        "SICHERHEITSDATENBLATT",
+        "ABSCHNITT 1: Bezeichnung des Stoffs beziehungsweise des Gemischs und des Unternehmens"
+      ],
+      "body_text": "Erfüllt Verordnung (EG) Nr. 1907/2006 (REACH), Anhang II, abgeändert gemäß Verordnung (EU) 2020/878\n\n1.1 Produktidentifikator\n\n1.2 Relevante identifizierte Verwendungen des Stoffs oder Gemischs und Verwendungen, von denen abgeraten wird\n\n1.3 Einzelheiten zum Lieferanten, der das Sicherheitsdatenblatt bereitstellt\nAxalta Coating Systems Germany GmbH & Co. KG\nChristbusch 25\nDE 42285 Wuppertal\n+49 (0)202 529-0\n\n1.4 Notrufnummer\nNationale Beratungsstelle/Giftzentrum",
+      "tables": [],
+      "key_value_pairs": [
+        {
+          "key": "Produktidentifikator",
+          "value": "B13184567"
+        },
+        {
+          "key": "Produktname",
+          "value": "Voltabas 0302"
+        },
+        {
+          "key": "Produkttyp",
+          "value": "Flüssigkeit."
+        },
+        {
+          "key": "Andere Identifizierungsarten",
+          "value": "Nicht verfügbar."
+        },
+        {
+          "key": "Ausgabedatum/Überarbeitungsdatum",
+          "value": "19 April 2024"
+        },
+        {
+          "key": "Version",
+          "value": "2.01"
+        },
+        {
+          "key": "Datum der letzten Ausgabe",
+          "value": "19 April 2024"
+        },
+        {
+          "key": "Identifizierte Verwendungen",
+          "value": "Beschichtungskomponente."
+        },
+        {
+          "key": "Verwendungen von denen abgeraten wird",
+          "value": "Nicht für den Verkauf an oder die Verwendung durch Verbraucher bestimmt."
+        },
+        {
+          "key": "E-Mail-Adresse der verantwortlichen Person für dieses SDB",
+          "value": "sds-competence@axalta.com"
+        },
+        {
+          "key": "Telefonnummer",
+          "value": "+49 (0)551 38 31 80"
+        },
+        {
+          "key": "Lieferant",
+          "value": "+49 (0)202 2530-6655"
+        },
+        {
+          "key": "Ausgabedatum",
+          "value": "4/19/2024"
+        },
+        {
+          "key": "Version",
+          "value": "2.01"
+        }
+      ],
+      "lists": [],
+      "diagrams_and_images": [
+        {
+          "type": "logo",
+          "description": "Axalta company logo in top right corner",
+          "labels_and_text": [
+            "AXALTA"
+          ]
+        }
+      ],
+      "signatures_and_stamps": [],
+      "content_categories": [
+        "product_identification",
+        "regulatory"
+      ]
+    },
+    {
+      "page_number": 2,
+      "headers": [
+        "ABSCHNITT 2: Mögliche Gefahren",
+        "ABSCHNITT 3: Zusammensetzung/Angaben zu Bestandteilen",
+        "3.2 Gemische",
+        "ABSCHNITT 4: Erste-Hilfe-Maßnahmen",
+        "4.1 Beschreibung der Erste-Hilfe-Maßnahmen"
+      ],
+      "body_text": "DE :DEUTSCH                                           Voltabas 0302                                           B13184567\n\nEs sind keine zusätzlichen Inhaltsstoffe vorhanden, die nach dem aktuellen Wissenstand des Lieferanten in den zutreffenden Konzentrationen als gesundheits- oder umweltschädlich eingestuft sind, PBT- oder vPvB-Stoffe bzw. gleichermaBen bedenklliche Stoffe sind oder welche einen Arbeitsplatzgrenzwert haben und daher in diesem Abschnitt angegeben werden mussten.\n\nTyp\n[1] Stoff wurde als physikalisch, gesundheits- oder umweltgefährdend eingestuft\nDie Grenzwerte für die Exposition am Arbeitsplatz sind, wenn verfügbar, im Abschnitt 8 wiedergegeben.",
+      "tables": [
+        {
+          "title": "3.2 Gemische",
+          "page_location": 2,
+          "interpretation_hint": "composition_data",
+          "headers": [
+            "Name des Produkts / Inhaltsstoffe",
+            "Identifikatoren",
+            "%",
+            "Einstufung",
+            "Spezifische Konzentrationsgrenzvverte, M-Faktoren und ATEs",
+            "Typ"
+          ],
+          "rows": [
+            [
+              "Poly(oxy-1,2-ethandiyl), alpha-hydro-omega-[(1-oxo-2-propen-1-yl)oxy]-, Ether mit 2-Ethyl-2-(hydroxymethyl) -1,3-propandiol (3:1)",
+              "REACH #: 01-2119489900-30\nEG: 500-066-5\nCAS: 28961-43-5",
+              "≥10 - <25",
+              "Eye Irrit. 2, H319\nSkin Sens. 1B, H317\nAquatic Chronic 3, H412\n\nSiehe Abschnitt 16 für den vollständigen Wortlaut der oben angegebenen H-Sätze.",
+              "-",
+              "[1]"
+            ]
+          ],
+          "footnotes": []
+        }
+      ],
+      "key_value_pairs": [
+        {
+          "key": "Das Produkt entspricht den Kriterien für PBT-oder vPvB-Stoffen gemäB Anhang XIII der Verordnung (EG) Nr. 1907/2006",
+          "value": "Diese Mischung enthält keine Substanzen, die als PBT- oder vPvB-Stoffe eingestuft werden."
+        },
+        {
+          "key": "Andere Gefahren, die zu keiner Einstufung führen",
+          "value": "Keine bekannt."
+        },
+        {
+          "key": "3.2 Gemische",
+          "value": "Gemisch"
+        },
+        {
+          "key": "Allgemein",
+          "value": "Bei Auftreten von Symptomen oder bei allen Zweifelsfällen einen Arzt aufsuchen. Niemals einer bewusstlosen Person etwas durch den Mund verabreichen. Bei Bewusstlosigkeit in stabile Seitenlage bringen und ärztlichen Rat einholen."
+        },
+        {
+          "key": "Augenkontakt",
+          "value": "Kontaktlinsen entfernen. Augenlider für mindestens 10 Minuten geöffnet halten und reichlich mit sauberem, frischem Wasser spülen und unverzüglich ärztlichen Rat einholen."
+        },
+        {
+          "key": "Inhalativ",
+          "value": "An die frische Luft bringen. Person warm und ruhig halten. Bei nicht vorhandener oder unregelmäßiger Atmung oder beim Auftreten eines Atemstillstands ist durch ausgebildetes Personal eine künstliche Beatmung oder Sauerstoffgabe einzuleiten."
+        },
+        {
+          "key": "Hautkontakt",
+          "value": "Verschmutzte Kleidung und Schuhe ausziehen. Haut gründlich mit Seife und Wasser reinigen oder zugelassenes Hautreinigungsmittel verwenden. Lösemittel oder Verdünner NICHT verwenden."
+        },
+        {
+          "key": "Verschlucken",
+          "value": "Bei Verschlucken sofort ärztlichen Rat einholen und Verpackung oder Etikett vorzeigen. Person warm und ruhig halten. KEIN Erbrechen herbeiführen."
+        },
+        {
+          "key": "Ausgabedatum",
+          "value": "4/19/2024"
+        },
+        {
+          "key": "Version",
+          "value": "2.01"
+        }
+      ],
+      "lists": [],
+      "diagrams_and_images": [],
+      "signatures_and_stamps": [],
+      "content_categories": [
+        "composition",
+        "handling",
+        "safety",
+        "regulatory"
+      ]
+    },
+    {
+      "page_number": 3,
+      "headers": [
+        "ABSCHNITT 8: Begrenzung und Überwachung der Exposition/Persönliche Schutzausrüstungen",
+        "PNECs",
+        "8.2 Begrenzung und Überwachung der Exposition",
+        "Geeignete technische Steuerungseinrichtungen",
+        "Individuelle Schutzmaßnahmen",
+        "Hygienische Maßnahmen",
+        "Augen-/Gesichtsschutz",
+        "Hautschutz",
+        "Handschutz",
+        "Handschuhe"
+      ],
+      "body_text": "Es liegen keine PNECs-Werte vor.\n\nFür ausreichende Lüftung sorgen. Wo vernünftigerweise praktikabel kann dies durch lokale Absaugung und einer guten allgemeinen Entlüftung geschehen. Falls dies nicht ausreicht,um die Partikel- und Lösemitteldampfkonzentration unter den Arbeitsplatz- Grenzwerten zu halten, muß ein geeigneter Atemschutz getragen werden.\n\nWaschen Sie nach dem Umgang mit chemischen Produkten und am Ende des Arbeitstages ebenso wie vor dem Essen, Rauchen und einem Toilettenbesuch gründlich Hände, Unterarme und Gesicht. Geeignete Methoden zur Beseitigung kontaminierter Kleidung wählen. Kontaminierte Arbeitskleidung nicht außerhalb des Arbeitsplatzes tragen. Kontaminierte Kleidung vor der erneuten Verwendung waschen. Stellen Sie sicher, dass in der Nähe des Arbeitsbereichs Augenspülstationen und Sicherheitsduschen vorhanden sind.\n\nZum Schutz gegen Spritzer Schutzbrille tragen.\n\nEs gibt kein einziges Handschuhmaterial oder eine Kombination aus Materialien, die unbegrenzten Widerstand gegenüber einzelnen Chemikalien oder Kombinationen von Chemikalien geben können.\nDer Durchbruch Zeitpunkt muss grösser sein als die Nutzungsdauer des Produktes.\nDie vom Handschuhhersteller bereitgestellten Anweisungen und Informationen über den Gebrauch, die Lagerung, Wartung und den Austausch müssen befolgt werden.\nHandschuhe müssen regelmäßig und bei jedem Anzeichen einer Beschädigung des Handschuhmaterials ausgetauscht werden.\nImmer sicherstellen, dass die Handschuhe fehlerfrei sind und korrekt aufbewahrt und verwendet werden.\nDie Leistung oder Wirksamkeit der Handschuhe kann sich durch physikalische und chemische Beschädigung und schlechte Wartung vermindern.\nFür alle unbedeckten Körperteile geeignete Hautschutzsalbe verwenden, nicht nach einer eingetretenen Exposition verwenden.\n\nDauer / Durchbruchzeit: <1 Stunde,\nHandschuhmaterial: NBR, Nitrilkautschuk, Materialstärke als Spritzschutz: mindestens 0,2 mm, (EN374)\nHandschuhmaterial: NBR, Nitrilkautschuk, Materialstärke für kurzfristigen Kontakt: mindestens 0,5 mm, (EN374)",
+      "tables": [
+        {
+          "title": "ABSCHNITT 8: Begrenzung und Überwachung der Exposition/Persönliche Schutzausrüstungen",
+          "page_location": 3,
+          "interpretation_hint": "toxicity_data",
+          "headers": [
+            "Name des Produkts / Inhaltsstoffs",
+            "Typ",
+            "Exposition",
+            "Wert",
+            "Population",
+            "Wirkungen"
+          ],
+          "rows": [
+            [
+              "Poly(oxy-1,2-ethandiyl), alpha-hydro-omega-((1-oxo-2-propen-1-yl)oxy]-,Ether mit 2-Ethyl-2-(hydroxymethyl)-1,3-propandiol (3:1)",
+              "DNEL",
+              "Langfristig Inhalativ",
+              "0.912 ppm",
+              "Arbeiter",
+              "Systemisch"
+            ],
+            [
+              "",
+              "DNEL",
+              "Langfristig Dermal",
+              "1.6 mg/kg bw/Tag",
+              "Arbeiter",
+              "Systemisch"
+            ],
+            [
+              "",
+              "DNEL",
+              "Langfristig Inhalativ",
+              "0.912 ppm",
+              "Arbeiter",
+              "Örtlich"
+            ],
+            [
+              "",
+              "DNEL",
+              "Langfristig Dermal",
+              "10.5 mg/kg bw/Tag",
+              "Arbeiter",
+              "Systemisch"
+            ],
+            [
+              "",
+              "DNEL",
+              "Langfristig Inhalativ",
+              "37 mg/m3",
+              "Arbeiter",
+              "Systemisch"
+            ]
+          ],
+          "footnotes": []
+        }
+      ],
+      "key_value_pairs": [
+        {
+          "key": "DE : DEUTSCH",
+          "value": ""
+        },
+        {
+          "key": "Voltabas 0302",
+          "value": ""
+        },
+        {
+          "key": "B13184567",
+          "value": ""
+        },
+        {
+          "key": "Ausgabedatum",
+          "value": "4/19/2024"
+        },
+        {
+          "key": "Version",
+          "value": "2.01"
+        }
+      ],
+      "lists": [],
+      "diagrams_and_images": [],
+      "signatures_and_stamps": [],
+      "content_categories": [
+        "toxicity",
+        "safety",
+        "handling"
+      ]
+    },
+    {
+      "page_number": 4,
+      "headers": [
+        "ABSCHNITT 11: Toxikologische Angaben",
+        "11.2 Angaben über sonstige Gefahren",
+        "11.2.1 Endokrinschädliche Eigenschaften",
+        "11.2.2 Sonstige Angaben",
+        "ABSCHNITT 12: Umweltbezogene Angaben",
+        "12.1 Toxizität",
+        "12.2 Persistenz und Abbaubarkeit",
+        "12.3 Bioakkumulationspotenzial"
+      ],
+      "body_text": "Nicht anwendbar.\nNicht verfügbar.\n\nFür das Gemisch selbst liegen keine Daten vor.\nNicht in die Kanalisation oder Gewässer gelangen lassen.\n\nDas Gemisch wurde gemäß der Summationsmethode der Verordnung (EG) Nr. 1272/2008 (CLP-Verordnung) beurteilt und wird nicht als umweltgefährdend eingestuft, allerdings enthält es (eine) umweltgefährdende Substanz (en). Für Einzelheiten hierzu siehe Artikel 3.",
+      "tables": [
+        {
+          "title": "12.1 Toxizität - Produktdaten",
+          "page_location": 4,
+          "interpretation_hint": "toxicity_data",
+          "headers": [
+            "Name des Produkts / Inhaltsstoffs",
+            "Resultat",
+            "Spezies",
+            "Exposition"
+          ],
+          "rows": [
+            [
+              "Poly(oxy-1,2-ethandiyl), alpha-hydro-omega-[(1-oxo-2-propen-1-yl)oxy]-, Ether mit 2-Ethyl-2-(hydroxymethyl)-1,3-propandiol (3:1)",
+              "Akut LC50 1.95 mg/l Frischwasser",
+              "Fisch",
+              "96 Stunden"
+            ],
+            [
+              "Poly(oxy-1,2-ethandiyl), alpha-hydro-omega-[(1-oxo-2-propen-1-yl)oxy]-, Ether mit 2-Ethyl-2-(hydroxymethyl)-1,3-propandiol (3:1)",
+              "Akut NOEC 0.289 mg/l",
+              "Algen",
+              "72 Stunden"
+            ]
+          ],
+          "footnotes": []
+        },
+        {
+          "title": "12.2 Persistenz und Abbaubarkeit",
+          "page_location": 4,
+          "interpretation_hint": "environmental",
+          "headers": [
+            "Name des Produkts / Inhaltsstoffs",
+            "Test",
+            "Resultat",
+            "Dosis",
+            "Inokulum"
+          ],
+          "rows": [
+            [
+              "Poly(oxy-1,2-ethandiyl), alpha-hydro-omega-[(1-oxo-2-propen-1-yl)oxy]-, Ether mit 2-Ethyl-2-(hydroxymethyl)-1,3-propandiol (3:1)",
+              "OECD 301B Ready Biodegradability - CO₂ Evolution Test",
+              "60 % - Leicht - 28 Tage",
+              "-",
+              "-"
+            ]
+          ],
+          "footnotes": []
+        },
+        {
+          "title": "12.2 Persistenz und Abbaubarkeit - Halbwertszeit",
+          "page_location": 4,
+          "interpretation_hint": "environmental",
+          "headers": [
+            "Name des Produkts / Inhaltsstoffs",
+            "Aquatische Halbwertszeit",
+            "Photolyse",
+            "Biologische Abbaubarkeit"
+          ],
+          "rows": [
+            [
+              "Poly(oxy-1,2-ethandiyl), alpha-hydro-omega-[(1-oxo-2-propen-1-yl)oxy]-, Ether mit 2-Ethyl-2-(hydroxymethyl)-1,3-propandiol (3:1)",
+              "-",
+              "-",
+              "Leicht"
+            ]
+          ],
+          "footnotes": []
+        }
+      ],
+      "key_value_pairs": [
+        {
+          "key": "Schlussfolgerung / Zusammenfassung (11.2)",
+          "value": "Nicht verfügbar."
+        },
+        {
+          "key": "Schlussfolgerung / Zusammenfassung (12.2)",
+          "value": "Nicht verfügbar."
+        }
+      ],
+      "lists": [],
+      "diagrams_and_images": [],
+      "signatures_and_stamps": [],
+      "content_categories": [
+        "toxicity",
+        "environmental"
+      ]
+    },
+    {
+      "page_number": 5,
+      "headers": [
+        "PRÜFBERICHT NR.: 250438",
+        "Ergebnisse für 250438-P1, <Voltabas 0302 „Anlage\">",
+        "Tabelle 2: 250438-P1, flüchtige Verbindungen (VOC und SVOC)",
+        "Tabelle 3: 250438-P1: Einstufung und Kennzeichnung der flüchtigen Verbindungen"
+      ],
+      "body_text": "Ergebnisse für 250438-P1, <Voltabas 0302 „Anlage\">\n\nTabelle 2: 250438-P1, flüchtige Verbindungen (VOC und SVOC)\n\n¹⁾ Quantifizierung über DEA-Äquivalente\n\nZur Einstufung und Kennzeichnung der flüchtigen Stoffe von 250438-P1 gemäß europäischer Verordnung (EG) Nr. 1272/2008, der sogenannten CLP-Verordnung, siehe Tabelle 3.\n\nTabelle 3: 250438-P1: Einstufung und Kennzeichnung der flüchtigen Verbindungen\n\nSeite 3 von 7",
+      "tables": [
+        {
+          "title": "Tabelle 2: 250438-P1, flüchtige Verbindungen (VOC und SVOC)",
+          "page_location": 5,
+          "interpretation_hint": "voc_measurements",
+          "headers": [
+            "CAS-Nr.",
+            "Bezeichnung der flüchtigen Verbindungen",
+            "Einstufung VOC / SVOC",
+            "250438-P1; <Voltabas 0302 „Anlage\"> Flüchtige Bestandteile: Masse-[%] ¹⁾"
+          ],
+          "rows": [
+            [
+              "100-42-5",
+              "Styren",
+              "VOC",
+              "1,0 ± 0,07"
+            ],
+            [
+              "13475-82-6",
+              "2,2,4,6,6-Pentamethylheptan",
+              "VOC",
+              "0,3 ± 0,02"
+            ],
+            [
+              "80-43-3",
+              "Dicumylperoxid (Härter f. ungesättigte PE-Harze)",
+              "VOC",
+              "0,4 ± 0,01"
+            ],
+            [
+              "37275-49-3",
+              "Hydroxydicyclopentadien",
+              "VOC",
+              "1,2 ± 0,07"
+            ],
+            [
+              "97-90-5",
+              "Ethylendimethacrylat (Vernetzer)",
+              "VOC",
+              "0,6 ± 0,03"
+            ],
+            [
+              "2358-84-1",
+              "Diethylenglycol Dimethacrylat",
+              "SVOC",
+              "1,6 ± 0,40"
+            ],
+            [
+              "109-16-0",
+              "Triethylenglycol Dimethacrylat",
+              "SVOC",
+              "3,1 ± 1,23"
+            ],
+            [
+              "109-17-1",
+              "Tetraethylenglycol Dimethacrylat",
+              "SVOC",
+              "2,6 ± 1,53"
+            ]
+          ],
+          "footnotes": [
+            "¹⁾ Quantifizierung über DEA-Äquivalente"
+          ]
+        },
+        {
+          "title": "Tabelle 3: 250438-P1: Einstufung und Kennzeichnung der flüchtigen Verbindungen",
+          "page_location": 5,
+          "interpretation_hint": "regulatory_info",
+          "headers": [
+            "CAS",
+            "Substanzname",
+            "Gefahrenklassen- und Gefahrenkategoriecode",
+            "Gefahrenhinweiscode"
+          ],
+          "rows": [
+            [
+              "100-42-5",
+              "Styren",
+              "Flam. Liq. 3",
+              "H226"
+            ],
+            [
+              "100-42-5",
+              "Styren",
+              "Skin Irrit. 2",
+              "H315"
+            ],
+            [
+              "100-42-5",
+              "Styren",
+              "Eye Irrit. 2",
+              "H319"
+            ],
+            [
+              "100-42-5",
+              "Styren",
+              "Acute Tox. 4 *",
+              "H332"
+            ],
+            [
+              "100-42-5",
+              "Styren",
+              "STOT RE 1",
+              "H372 (Hörorgan)"
+            ],
+            [
+              "100-42-5",
+              "Styren",
+              "Repr. 2",
+              "H361d"
+            ],
+            [
+              "13475-82-6",
+              "2,2,4,6,6-Pentamethylheptan",
+              "Flam. Liq. 3",
+              "H226"
+            ],
+            [
+              "13475-82-6",
+              "2,2,4,6,6-Pentamethylheptan",
+              "Asp. Tox. 1",
+              "H304"
+            ],
+            [
+              "13475-82-6",
+              "2,2,4,6,6-Pentamethylheptan",
+              "Aquatic Chronic 4",
+              "H413"
+            ],
+            [
+              "80-43-3",
+              "Dicumylperoxid (Härter f. ungesättigte PE-Harze)",
+              "Org. Perox. F",
+              "H242"
+            ],
+            [
+              "80-43-3",
+              "Dicumylperoxid (Härter f. ungesättigte PE-Harze)",
+              "Skin Irrit. 2",
+              "H315"
+            ],
+            [
+              "80-43-3",
+              "Dicumylperoxid (Härter f. ungesättigte PE-Harze)",
+              "Eye Irrit. 2",
+              "H319"
+            ],
+            [
+              "80-43-3",
+              "Dicumylperoxid (Härter f. ungesättigte PE-Harze)",
+              "Aquatic Chronic 2",
+              "H411"
+            ],
+            [
+              "37275-49-3",
+              "Hydroxydicyclopentadien",
+              "Repr. 1B",
+              "H360D"
+            ],
+            [
+              "37275-49-3",
+              "Hydroxydicyclopentadien",
+              "Skin Irrit. 2",
+              "H315"
+            ],
+            [
+              "37275-49-3",
+              "Hydroxydicyclopentadien",
+              "Eye Irrit. 2",
+              "H319"
+            ],
+            [
+              "37275-49-3",
+              "Hydroxydicyclopentadien",
+              "STOT SE 3",
+              "H335, (Atmungssystem, Inhalation)"
+            ],
+            [
+              "97-90-5",
+              "Ethylendimethacrylat (Vernetzer)",
+              "Skin Sens. 1",
+              "H317"
+            ],
+            [
+              "97-90-5",
+              "Ethylendimethacrylat (Vernetzer)",
+              "STOT SE 3",
+              "H335"
+            ]
+          ],
+          "footnotes": []
+        }
+      ],
+      "key_value_pairs": [
+        {
+          "key": "PRÜFBERICHT NR.",
+          "value": "250438"
+        },
+        {
+          "key": "Seite",
+          "value": "3 von 7"
+        }
+      ],
+      "lists": [],
+      "diagrams_and_images": [
+        {
+          "type": "logo",
+          "description": "Company logo in top left corner with pixelated square design",
+          "labels_and_text": []
+        },
+        {
+          "type": "logo",
+          "description": "ILF Magdeburg logo in top right corner",
+          "labels_and_text": [
+            "ILF Magdeburg"
+          ]
+        }
+      ],
+      "signatures_and_stamps": [],
+      "content_categories": [
+        "measurements",
+        "regulatory",
+        "composition"
+      ]
+    },
+    {
+      "page_number": 6,
+      "headers": [
+        "PRÜFBERICHT NR.: 250438"
+      ],
+      "body_text": "",
+      "tables": [
+        {
+          "title": null,
+          "page_location": 6,
+          "interpretation_hint": "regulatory_info",
+          "headers": [
+            "CAS",
+            "Substanzname",
+            "Gefahrenklassen- und Gefahrenkategoriecode",
+            "Gefahrenhinweiscode"
+          ],
+          "rows": [
+            [
+              "2358-84-1",
+              "Diethylenglycol Dimeth-acrylat",
+              "Skin Sens. 1\nAquatic Chronic 3",
+              "H317\nH412"
+            ],
+            [
+              "109-16-0",
+              "Triethylenglycol Dimeth-acrylat",
+              "Skin Sens. 1B",
+              "H317"
+            ],
+            [
+              "109-17-1",
+              "Tetraethylenglycol Di-methacrylat",
+              "keine Klassifizierung",
+              ""
+            ]
+          ],
+          "footnotes": []
+        }
+      ],
+      "key_value_pairs": [
+        {
+          "key": "PRÜFBERICHT NR.",
+          "value": "250438"
+        },
+        {
+          "key": "Seite",
+          "value": "4 von 7"
+        }
+      ],
+      "lists": [],
+      "diagrams_and_images": [
+        {
+          "type": "logo",
+          "description": "Pixelated or mosaic-style logo on the top left corner",
+          "labels_and_text": []
+        },
+        {
+          "type": "logo",
+          "description": "ilF Magdeburg logo on the top right corner",
+          "labels_and_text": [
+            "ilF",
+            "Magdeburg"
+          ]
+        }
+      ],
+      "signatures_and_stamps": [],
+      "content_categories": [
+        "regulatory"
+      ]
+    },
+    {
+      "page_number": 7,
+      "headers": [
+        "PRÜFBERICHT NR.: 250438",
+        "Ergebnisse für 250438-P2, <Voltatex>",
+        "Tabelle 4: 250438-P2, flüchtige Verbindungen (VOC und SVOC)"
+      ],
+      "body_text": "¹⁾ Quantifizierung über DEA-Äquivalente",
+      "tables": [
+        {
+          "title": "Tabelle 4: 250438-P2, flüchtige Verbindungen (VOC und SVOC)",
+          "page_location": 7,
+          "interpretation_hint": "voc_measurements",
+          "headers": [
+            "CAS-Nr.",
+            "Bezeichnung der flüchtigen Verbindungen",
+            "Einstufung VOC / SVOC",
+            "250438-P2; <Voltatex> Flüchtige Bestandteile; Masse-[%] ¹⁾"
+          ],
+          "rows": [
+            [
+              "100-61-4",
+              "Ethylbenzen",
+              "VOC",
+              "0,05 ± 0,001"
+            ],
+            [
+              "106-42-3",
+              "p-Xylen",
+              "VOC",
+              "0,21 ± 0,007"
+            ],
+            [
+              "95-47-6",
+              "o-Xylen",
+              "VOC",
+              "0,09 ± 0,009"
+            ],
+            [
+              "108-32-7\n13475-82-6",
+              "Propylencarbonat und 2,2,4,6,6-Pentamethylheptan (Überlagerung)",
+              "VOC",
+              "0,30 ± 0,018"
+            ],
+            [
+              "108-67-8",
+              "Mesitylen",
+              "VOC",
+              "0,07 ± 0,004"
+            ],
+            [
+              "78-40-0",
+              "Triethylphosphat (Katalysator)",
+              "VOC",
+              "0,12 ± 0,007"
+            ],
+            [
+              "29138-94-1",
+              "Pentadecan, 2-methyl-2-phenyl-",
+              "VOC",
+              "0,15 ± 0,003"
+            ],
+            [
+              "119-61-9",
+              "Benzophenon (Photoinitiator)",
+              "SVOC",
+              "0,24 ± 0,004"
+            ],
+            [
+              "15468-48-7",
+              "1,2,3,6-Tetrahydro-Phthalimid",
+              "SVOC",
+              "1,13 ± 0,099"
+            ],
+            [
+              "??",
+              "?? Keine sichere qual. Analyse (kleiner 60%)",
+              "SVOC",
+              "0,09 ± 0,005"
+            ],
+            [
+              "??",
+              "?? Keine sichere qual. Analyse (kleiner 60%)",
+              "SVOC",
+              "0,07 ± 0,009"
+            ],
+            [
+              "??",
+              "?? Keine sichere qual. Analyse (kleiner 60%)",
+              "SVOC",
+              "0,68 ± 0,055"
+            ],
+            [
+              "??",
+              "?? Keine sichere qual. Analyse (kleiner 60%)",
+              "SVOC",
+              "0,06 ± 0,004"
+            ],
+            [
+              "??",
+              "?? Keine sichere qual. Analyse (kleiner 60%)",
+              "SVOC",
+              "0,06 ± 0,003"
+            ]
+          ],
+          "footnotes": [
+            "¹⁾ Quantifizierung über DEA-Äquivalente"
+          ]
+        }
+      ],
+      "key_value_pairs": [
+        {
+          "key": "PRÜFBERICHT NR.",
+          "value": "250438"
+        }
+      ],
+      "lists": [],
+      "diagrams_and_images": [
+        {
+          "type": "logo",
+          "description": "Small geometric logo in top left corner with three gray rectangular blocks arranged in a pattern",
+          "labels_and_text": []
+        },
+        {
+          "type": "logo",
+          "description": "ILE Magdeburg logo in top right corner with gray geometric design",
+          "labels_and_text": [
+            "ILE",
+            "Magdeburg"
+          ]
+        }
+      ],
+      "signatures_and_stamps": [],
+      "content_categories": [
+        "measurements",
+        "composition",
+        "regulatory"
+      ]
+    },
+    {
+      "page_number": 8,
+      "headers": [
+        "PRÜFBERICHT NR.: 250438",
+        "Zur Einstufung und Kennzeichnung der flüchtigen Stoffe von 250438-P2 gemäß europäischer Verordnung (EG) Nr. 1272/2008 (CLP) siehe Tabelle 5.",
+        "Tabelle 5: 250438-P2: Einstufung und Kennzeichnung der flüchtigen Verbindungen"
+      ],
+      "body_text": "Zur Einstufung und Kennzeichnung der flüchtigen Stoffe von 250438-P2 gemäß europäischer Verordnung (EG) Nr. 1272/2008 (CLP) siehe Tabelle 5.\n\nSeite 6 von 7",
+      "tables": [
+        {
+          "title": "Tabelle 5: 250438-P2: Einstufung und Kennzeichnung der flüchtigen Verbindungen",
+          "page_location": 8,
+          "interpretation_hint": "regulatory_info",
+          "headers": [
+            "CAS",
+            "Substanzname",
+            "Gefahrenklassen- und Gefahrenkategoriecode",
+            "Gefahrenhinweiscode"
+          ],
+          "rows": [
+            [
+              "100-41-4",
+              "Ethylbenzen",
+              "Flam. Liq. 2",
+              "H225"
+            ],
+            [
+              "100-41-4",
+              "Ethylbenzen",
+              "Acute Tox. 4 *",
+              "H332"
+            ],
+            [
+              "100-41-4",
+              "Ethylbenzen",
+              "Asp. Tox. 1",
+              "H304"
+            ],
+            [
+              "100-41-4",
+              "Ethylbenzen",
+              "STOT RE 2",
+              "H373 (Hörorgan)"
+            ],
+            [
+              "106-42-3",
+              "p-Xylen",
+              "Flam. Liq. 3",
+              "H226"
+            ],
+            [
+              "106-42-3",
+              "p-Xylen",
+              "Acute Tox. 4 *",
+              "H312"
+            ],
+            [
+              "106-42-3",
+              "p-Xylen",
+              "Skin Irrit. 2",
+              "H315"
+            ],
+            [
+              "95-47-6",
+              "o-Xylen",
+              "Acute Tox. 4 *",
+              "H332"
+            ],
+            [
+              "95-47-6",
+              "o-Xylen",
+              "Flam. Liq. 3",
+              "H226"
+            ],
+            [
+              "95-47-6",
+              "o-Xylen",
+              "Acute Tox. 4 *",
+              "H312"
+            ],
+            [
+              "95-47-6",
+              "o-Xylen",
+              "Skin Irrit. 2",
+              "H315"
+            ],
+            [
+              "108-32-7",
+              "Propylencarbonat",
+              "Acute Tox. 4 *",
+              "H332"
+            ],
+            [
+              "108-32-7",
+              "Propylencarbonat",
+              "Eye Irrit. 2",
+              "H319"
+            ],
+            [
+              "13475-82-6",
+              "2,2,4,6,6-Pentamethyl-heptan",
+              "Flam. Liq. 3",
+              "H226"
+            ],
+            [
+              "13475-82-6",
+              "2,2,4,6,6-Pentamethyl-heptan",
+              "Asp. Tox. 1",
+              "H304"
+            ],
+            [
+              "13475-82-6",
+              "2,2,4,6,6-Pentamethyl-heptan",
+              "Aquatic Chronic 4",
+              "H413"
+            ],
+            [
+              "108-67-8",
+              "Mesitylen (1,3,5-Trimethylbenzen)",
+              "Flam. Liq. 3",
+              "H226"
+            ],
+            [
+              "108-67-8",
+              "Mesitylen (1,3,5-Trimethylbenzen)",
+              "STOT SE 3",
+              "H335"
+            ],
+            [
+              "108-67-8",
+              "Mesitylen (1,3,5-Trimethylbenzen)",
+              "Aquatic Chronic 2",
+              "H411"
+            ],
+            [
+              "78-40-4",
+              "Triethylphosphat, (Katalysator)",
+              "keine Klassifizierung",
+              ""
+            ],
+            [
+              "29138-94-1",
+              "Pentadecan, 2-methyl-2-phenyl-",
+              "keine Klassifizierung",
+              ""
+            ],
+            [
+              "119-61-9",
+              "Benzophenon, (Photoinitiator)",
+              "Carc. 1B",
+              "H350"
+            ],
+            [
+              "15458-48-7",
+              "1,2,3,6-Tetrahydro-Phthalimid",
+              "keine Klassifizierung",
+              ""
+            ]
+          ],
+          "footnotes": []
+        }
+      ],
+      "key_value_pairs": [
+        {
+          "key": "PRÜFBERICHT NR.",
+          "value": "250438"
+        }
+      ],
+      "lists": [],
+      "diagrams_and_images": [
+        {
+          "type": "logo",
+          "description": "Small square logo in top left corner with pixelated/dotted pattern",
+          "labels_and_text": []
+        },
+        {
+          "type": "logo",
+          "description": "ILF Magdeburg logo in top right corner",
+          "labels_and_text": [
+            "ILF",
+            "Magdeburg"
+          ]
+        }
+      ],
+      "signatures_and_stamps": [],
+      "content_categories": [
+        "regulatory",
+        "measurements"
+      ]
+    }
+  ],
+  "quick_facts": {
+    "products_mentioned": [
+      "Voltabas 0302",
+      "Voltatex",
+      "Styren",
+      "2,2,4,6,6-Pentamethylheptan",
+      "Dicumylperoxid (Härter f. ungesättigte PE-Harze)",
+      "Hydroxydicyclopentadien",
+      "Ethylendimethacrylat (Vernetzer)",
+      "Diethylenglycol Dimethacrylat",
+      "Triethylenglycol Dimethacrylat",
+      "Tetraethylenglycol Dimethacrylat",
+      "Ethylbenzen",
+      "p-Xylen",
+      "o-Xylen",
+      "Propylencarbonat",
+      "Mesitylen",
+      "Triethylphosphat (Katalysator)",
+      "Pentadecan, 2-methyl-2-phenyl-",
+      "Benzophenon (Photoinitiator)",
+      "1,2,3,6-Tetrahydro-Phthalimid"
+    ],
+    "cas_numbers_found": [
+      "28961-43-5",
+      "100-42-5",
+      "13475-82-6",
+      "80-43-3",
+      "37275-49-3",
+      "97-90-5",
+      "2358-84-1",
+      "109-16-0",
+      "109-17-1",
+      "100-61-4",
+      "106-42-3",
+      "95-47-6",
+      "108-32-7",
+      "108-67-8",
+      "78-40-0",
+      "29138-94-1",
+      "119-61-9",
+      "15468-48-7",
+      "100-41-4",
+      "78-40-4",
+      "15458-48-7"
+    ],
+    "measurement_units_detected": [
+      "%",
+      "ppm",
+      "mg/m3",
+      "mg/kg",
+      "mg/l"
+    ],
+    "sections_identified": [
+      "ABSCHNITT 1",
+      "ABSCHNITT 2",
+      "ABSCHNITT 3",
+      "ABSCHNITT 4",
+      "ABSCHNITT 8",
+      "ABSCHNITT 11",
+      "ABSCHNITT 12",
+      "3.2",
+      "Tabelle 2",
+      "Tabelle 3",
+      "Tabelle 4",
+      "Tabelle 5"
+    ],
+    "voc_svoc_detected": true,
+    "languages_detected": [
+      "de"
+    ],
+    "companies_mentioned": [
+      "Axalta Coating Systems Germany GmbH & Co. KG",
+      "ILF Magdeburg",
+      "ilF Magdeburg",
+      "ILE Magdeburg"
+    ],
+    "locations_mentioned": [
+      "Wuppertal",
+      "Magdeburg",
+      "DE 42285 Wuppertal",
+      "Deutschland"
+    ]
+  },
+  "extraction_notes": [
+    {
+      "field": "pages[3].tables[0].rows[4][3]",
+      "status": "extraction_uncertain",
+      "note": "Unit appears as 'mg/m3' in source; normalized to 'mg/m3' per rules. Original superscript 3 removed."
+    },
+    {
+      "field": "pages[7].tables[0].rows[3][0]",
+      "status": "unclear_format",
+      "note": "Two CAS numbers in one cell: '108-32-7\\n13475-82-6' indicating overlapping compounds."
+    },
+    {
+      "field": "pages[7].tables[0].rows[9][0]",
+      "status": "extraction_uncertain",
+      "note": "CAS number indicated as '??' - identity not determined; marked as 'Keine sichere qual. Analyse (kleiner 60%)'."
+    },
+    {
+      "field": "pages[8].tables[0].rows[19][0]",
+      "status": "extraction_uncertain",
+      "note": "CAS '78-40-4' differs from '78-40-0' listed on previous page for Triethylphosphat; potential discrepancy in source."
+    },
+    {
+      "field": "pages[8].tables[0].rows[23][0]",
+      "status": "extraction_uncertain",
+      "note": "CAS '15458-48-7' differs from '15468-48-7' on previous page for 1,2,3,6-Tetrahydro-Phthalimid; potential typo or variant."
+    }
+  ],
+  "data_quality_issues": [
+    {
+      "issue": "No composition data extracted",
+      "severity": "CRITICAL",
+      "impact_description": "SDS Section 3 (Zusammensetzung/Composition) appears to be completely missing. Cannot determine product ingredients or VOC content.",
+      "examples": [],
+      "recommendation": "Check if document contains 'ABSCHNITT 3' or 'SECTION 3: Zusammensetzung/Composition' table and re-extract"
+    }
+  ]
+}
