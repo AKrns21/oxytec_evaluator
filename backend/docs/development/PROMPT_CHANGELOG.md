@@ -142,6 +142,47 @@ Initial version before refactoring project
 
 ## PLANNER Agent
 
+### PLANNER v2.1.1 (2025-10-24)
+
+**Type:** MINOR (Feature Addition)
+**Status:** 🟢 Active
+**Token Impact:** +200 tokens (+4%) - PubChem tool documentation
+**Breaking Changes:** NO - Backward compatible with v2.1.0
+
+**Changes:**
+- **ADDED:** `pubchem_lookup` as optional tool for chemical data retrieval
+- **ADDED:** Intelligent tool selection logic (PubChem when CAS numbers present, web_search as fallback)
+- **ADDED:** Comprehensive PubChem tool usage guidance (30 functions documented)
+- **ADDED:** Tool selection decision rules for 6 common subagent types
+- **MODIFIED:** VOC Composition Analyzer: tools from `["web_search"]` → `["pubchem_lookup"]`
+- **MODIFIED:** Safety/ATEX Evaluator: tools from `["web_search"]` → `["pubchem_lookup"]`
+- **MODIFIED:** Regulatory Compliance: tools from `["web_search"]` → `["pubchem_lookup", "web_search"]`
+
+**Tool Selection Strategy:**
+- **pubchem_lookup**: Primary for CAS validation, physical properties, LEL/UEL, toxicity, H-codes, GHS classifications
+- **oxytec_knowledge_search**: Required for technology comparisons (NTP/UV/scrubbers)
+- **product_database**: For Oxytec product catalog searches
+- **web_search**: Secondary/fallback for non-chemical data (regulations, BAT references)
+
+**Rationale:**
+Replace unreliable web scraping for chemical data with direct PubChem API access. PubChem MCP server provides 30+ functions for authoritative chemical data (no API key required). This improves accuracy and reduces hallucination risk for CAS validation, physical properties, and safety data.
+
+**Migration Notes:**
+- **Fully backward compatible** - v2.1.1 can consume same v3.0.0 EXTRACTOR output as v2.1.0
+- No changes to input/output format
+- Subagents created by v2.1.1 will have different tools arrays (includes `pubchem_lookup`)
+- SUBAGENT v2.0.0 required to actually execute PubChem tools (v1.0.0 will ignore unknown tools)
+
+**Testing:**
+- ⏳ Integration test: EXTRACTOR v3.0.0 → PLANNER v2.1.1 → Check tool selection
+- ⏳ Validation: VOC/Safety/Regulatory subagents receive `pubchem_lookup` tool
+- ⏳ E2E test: Full pipeline with Datenblatt_test.pdf + SUBAGENT v2.0.0
+
+**File:** `backend/app/agents/prompts/versions/planner_v2_1_1.py`
+**Config:** `backend/app/config.py:67` - `planner_prompt_version = "v2.1.1"`
+
+---
+
 ### PLANNER v2.1.0 (2025-10-24)
 
 **Type:** MINOR (Breaking Change for EXTRACTOR integration)
