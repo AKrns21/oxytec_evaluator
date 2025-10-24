@@ -256,6 +256,46 @@ Baseline version extracted from monolithic prompt during initial versioning
 
 ## SUBAGENT Agent
 
+### SUBAGENT v2.0.0 (2025-10-24)
+
+**Type:** MINOR (Feature Addition)
+**Status:** 🟢 Active
+**Token Impact:** +500 tokens (+15%) - PubChem tool documentation
+**Breaking Changes:** NO - Backward compatible with v1.0.0 tasks
+
+**Changes:**
+- **ADDED:** `pubchem_lookup` tool usage guidance (30+ functions documented)
+- **ADDED:** Tool selection priority: pubchem_lookup > oxytec_knowledge_search > product_database > web_search
+- **ADDED:** PubChem API call examples for common use cases:
+  - CAS validation via get_compound_properties
+  - Physical properties (boiling point, vapor pressure, density)
+  - LEL/UEL values via get_ghs_classification
+  - Toxicity data (LD50, LC50, IARC carcinogenicity) via get_compound_toxicity
+  - Safety data (GHS pictograms, H-codes, signal words)
+  - Synonyms/trade name matching via get_compound_synonyms
+- **MODIFIED:** web_search guidance - now fallback for non-chemical data only (regulations, standards)
+- **MODIFIED:** TECHNICAL RIGOR section - mandate PubChem for chemical properties
+- **REMOVED:** References to web scraping chemical databases (PubChem, NIST, ChemSpider)
+
+**Rationale:**
+Replace unreliable web scraping for chemical data with direct PubChem MCP server integration. PubChem provides authoritative NIH database access with no API key required. This improves accuracy, reduces hallucination risk, and provides structured data for CAS validation, physical properties, toxicity, and safety information.
+
+**Migration Notes:**
+- **Fully backward compatible** - v2.0.0 can execute v1.0.0 tasks (ignores unknown tools)
+- Subagents receiving `pubchem_lookup` tool from PLANNER v2.1.1 will use it automatically
+- Execution logic remains unchanged - only tool guidance updated
+- No changes to output format or parsing requirements
+
+**Testing:**
+- ⏳ Integration test: PLANNER v2.1.1 → SUBAGENT v2.0.0 with CAS validation
+- ⏳ Validation: PubChem calls return valid data for common VOCs
+- ⏳ E2E test: Full pipeline with Datenblatt_test.pdf
+
+**File:** `backend/app/agents/prompts/versions/subagent_v2_0_0.py`
+**Config:** `backend/app/config.py:68` - `subagent_prompt_version = "v2.0.0"`
+
+---
+
 ### SUBAGENT v1.0.0 (2025-10-23)
 
 **Type:** BASELINE

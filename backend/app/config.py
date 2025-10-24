@@ -65,7 +65,7 @@ class Settings(BaseSettings):
     # Prompt versioning configuration
     extractor_prompt_version: str = "v3.0.0"  # Updated 2025-10-24: Content-first architecture
     planner_prompt_version: str = "v2.1.1"  # Updated 2025-10-24: PubChem MCP integration
-    subagent_prompt_version: str = "v1.0.0"
+    subagent_prompt_version: str = "v2.0.0"  # Updated 2025-10-24: PubChem MCP integration
     risk_assessor_prompt_version: str = "v1.0.0"
     writer_prompt_version: str = "v1.0.0"
 
