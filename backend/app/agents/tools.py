@@ -148,6 +148,63 @@ Use this for:
 }
 
 
+PUBCHEM_LOOKUP_TOOL = {
+    "name": "pubchem_lookup",
+    "description": """Look up authoritative chemical data from PubChem (NIH database). No API key required.
+
+Use this tool for:
+- CAS number validation and verification
+- Physical properties (boiling point, melting point, vapor pressure, density, molecular weight)
+- LEL/UEL explosive limits for ATEX/safety assessment
+- Toxicity data (LD50, LC50, carcinogenicity via IARC, reproductive toxicity)
+- GHS safety classification (pictograms, H-codes, signal words, P-codes)
+- Regulatory status (REACH, FDA listings)
+- Chemical synonyms and trade name matching
+
+Available functions:
+- get_compound_properties: Physical/chemical properties, identifiers
+- get_ghs_classification: GHS hazard data, LEL/UEL, pictograms, H-codes
+- get_compound_toxicity: LD50, LC50, carcinogenicity, reproductive toxicity
+- get_compound_synonyms: Common names, trade names, IUPAC names
+- search_by_formula: Find compounds by molecular formula
+
+Priority: Use pubchem_lookup FIRST for any chemical data before web_search.
+""",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "function": {
+                "type": "string",
+                "enum": [
+                    "get_compound_properties",
+                    "get_ghs_classification",
+                    "get_compound_toxicity",
+                    "get_compound_synonyms",
+                    "search_by_formula"
+                ],
+                "description": "PubChem function to call"
+            },
+            "identifier": {
+                "type": "string",
+                "description": "CAS number, compound name, or CID (e.g., '100-42-5' for styrene)"
+            },
+            "namespace": {
+                "type": "string",
+                "enum": ["cid", "name", "cas"],
+                "description": "Identifier type (default: 'name')",
+                "default": "name"
+            },
+            "properties": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Optional: Specific properties to retrieve (for get_compound_properties)"
+            }
+        },
+        "required": ["function", "identifier"]
+    }
+}
+
+
 def get_tools_for_subagent(tool_names: List[str]) -> List[Dict[str, Any]]:
     """
     Get tool definitions for a subagent.
@@ -163,6 +220,7 @@ def get_tools_for_subagent(tool_names: List[str]) -> List[Dict[str, Any]]:
         "product_database": PRODUCT_DATABASE_TOOL,
         "oxytec_knowledge_search": OXYTEC_KNOWLEDGE_TOOL,
         "web_search": WEB_SEARCH_TOOL,
+        "pubchem_lookup": PUBCHEM_LOOKUP_TOOL,
     }
 
     tools = []
@@ -210,6 +268,8 @@ class ToolExecutor:
                 return await self._search_oxytec_knowledge(tool_input)
             elif tool_name == "search_web":
                 return await self._search_web(tool_input)
+            elif tool_name == "pubchem_lookup":
+                return await self._pubchem_lookup(tool_input)
             else:
                 logger.error("unknown_tool", tool_name=tool_name)
                 return {"error": f"Unknown tool: {tool_name}"}
@@ -305,3 +365,120 @@ class ToolExecutor:
             "message": "Web search not yet implemented. Please use the product database tool or manual research.",
             "suggestion": f"Search manually: https://www.google.com/search?q={query}+site:{site_filter or 'oxytec.com'}"
         }
+
+    async def _pubchem_lookup(self, tool_input: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute PubChem MCP server lookup.
+
+        Note: This is a placeholder implementation. Actual integration requires MCP server connection.
+        For testing/development, returns mock data structure.
+
+        In production, this would use the MCP protocol to communicate with the PubChem MCP server:
+        https://github.com/modelcontextprotocol/servers/tree/main/src/pubchem
+        """
+
+        function = tool_input.get("function")
+        identifier = tool_input.get("identifier")
+        namespace = tool_input.get("namespace", "name")
+        properties = tool_input.get("properties", [])
+
+        logger.info("pubchem_lookup_executed",
+                   function=function,
+                   identifier=identifier,
+                   namespace=namespace)
+
+        # Placeholder implementation - returns mock data
+        # TODO: Replace with actual MCP server integration
+
+        if function == "get_compound_properties":
+            return {
+                "function": function,
+                "identifier": identifier,
+                "namespace": namespace,
+                "message": "PubChem MCP integration not yet implemented. Mock data returned.",
+                "data": {
+                    "CID": "1234",
+                    "MolecularFormula": "C8H8",
+                    "MolecularWeight": "104.15 g/mol",
+                    "IUPACName": "Example compound",
+                    "BoilingPoint": "145°C",
+                    "MeltingPoint": "-31°C",
+                    "Density": "0.906 g/cm³",
+                    "VaporPressure": "6.4 mmHg at 25°C"
+                },
+                "suggestion": f"Manual lookup: https://pubchem.ncbi.nlm.nih.gov/compound/{identifier}"
+            }
+
+        elif function == "get_ghs_classification":
+            return {
+                "function": function,
+                "identifier": identifier,
+                "namespace": namespace,
+                "message": "PubChem MCP integration not yet implemented. Mock data returned.",
+                "data": {
+                    "GHSHazardStatements": ["H226: Flammable liquid and vapor", "H304: May be fatal if swallowed"],
+                    "GHSPictograms": ["Flame", "Health Hazard"],
+                    "SignalWord": "Danger",
+                    "LEL": "1.1% (Lower Explosive Limit)",
+                    "UEL": "6.1% (Upper Explosive Limit)"
+                },
+                "suggestion": f"Manual lookup: https://pubchem.ncbi.nlm.nih.gov/compound/{identifier}"
+            }
+
+        elif function == "get_compound_toxicity":
+            return {
+                "function": function,
+                "identifier": identifier,
+                "namespace": namespace,
+                "message": "PubChem MCP integration not yet implemented. Mock data returned.",
+                "data": {
+                    "LD50_Oral_Rat": "5000 mg/kg",
+                    "LC50_Inhalation_Rat": "24000 ppm (4 hours)",
+                    "IARC_Classification": "Group 2B - Possibly carcinogenic to humans",
+                    "ReproductiveToxicity": "Not classified"
+                },
+                "suggestion": f"Manual lookup: https://pubchem.ncbi.nlm.nih.gov/compound/{identifier}"
+            }
+
+        elif function == "get_compound_synonyms":
+            return {
+                "function": function,
+                "identifier": identifier,
+                "namespace": namespace,
+                "message": "PubChem MCP integration not yet implemented. Mock data returned.",
+                "data": {
+                    "Synonyms": [
+                        "Example Chemical",
+                        "EC 202-123-4",
+                        "Trade Name A",
+                        "Trade Name B"
+                    ],
+                    "CASNumber": "100-42-5"
+                },
+                "suggestion": f"Manual lookup: https://pubchem.ncbi.nlm.nih.gov/compound/{identifier}"
+            }
+
+        elif function == "search_by_formula":
+            return {
+                "function": function,
+                "identifier": identifier,
+                "message": "PubChem MCP integration not yet implemented. Mock data returned.",
+                "data": {
+                    "Matches": [
+                        {"CID": "1234", "Name": "Example Compound 1"},
+                        {"CID": "5678", "Name": "Example Compound 2"}
+                    ]
+                },
+                "suggestion": f"Manual lookup: https://pubchem.ncbi.nlm.nih.gov/"
+            }
+
+        else:
+            return {
+                "error": f"Unknown PubChem function: {function}",
+                "available_functions": [
+                    "get_compound_properties",
+                    "get_ghs_classification",
+                    "get_compound_toxicity",
+                    "get_compound_synonyms",
+                    "search_by_formula"
+                ]
+            }
