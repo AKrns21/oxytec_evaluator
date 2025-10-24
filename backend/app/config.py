@@ -50,6 +50,14 @@ class Settings(BaseSettings):
     embedding_model: str = "text-embedding-3-small"
     embedding_dimensions: int = 1536
 
+    # Google Gemini API (for vision extraction)
+    google_api_key: Optional[str] = None
+    gemini_vision_model: str = "gemini-2.5-pro"
+
+    # Vision extraction configuration
+    vision_use_dual_model: bool = True  # Run both OpenAI and Gemini in parallel for blending
+    vision_openai_model: str = "gpt-5"  # OpenAI vision model
+
     # Agent-specific model configuration
     extractor_model: str = "gpt-5"
     extractor_temperature: float = 0.2
@@ -63,7 +71,7 @@ class Settings(BaseSettings):
     writer_temperature: float = 0.4
 
     # Prompt versioning configuration
-    extractor_prompt_version: str = "v3.0.0"  # Updated 2025-10-24: Content-first architecture
+    extractor_prompt_version: str = "v3.1.0"  # Updated 2025-10-24: Headers with paragraphs (not separated)
     planner_prompt_version: str = "v2.1.1"  # Updated 2025-10-24: PubChem MCP integration
     subagent_prompt_version: str = "v2.0.0"  # Updated 2025-10-24: PubChem MCP integration
     risk_assessor_prompt_version: str = "v1.0.0"

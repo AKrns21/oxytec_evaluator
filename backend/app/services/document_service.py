@@ -100,6 +100,7 @@ class DocumentService:
 
         # Extract using vision for image-based PDFs (in parallel)
         import asyncio
+        from app.config import settings
 
         # Convert all pages to images first
         page_images = []
@@ -109,18 +110,62 @@ class DocumentService:
             img_bytes = pix.tobytes("png")
             page_images.append((page_num + 1, img_bytes))
 
-        # Extract text from all pages in parallel
-        vision_tasks = [
-            self._extract_text_from_image_with_vision(
-                img_bytes,
-                f"page_{page_num}"
+        # Check if dual-model mode is enabled
+        if settings.vision_use_dual_model:
+            logger.info("vision_dual_model_enabled", pages=len(page_images))
+
+            # Run both OpenAI and Gemini in parallel for all pages
+            openai_tasks = [
+                self._extract_text_from_image_with_openai(
+                    img_bytes,
+                    f"page_{page_num}"
+                )
+                for page_num, img_bytes in page_images
+            ]
+
+            gemini_tasks = [
+                self._extract_text_from_image_with_vision(
+                    img_bytes,
+                    f"page_{page_num}"
+                )
+                for page_num, img_bytes in page_images
+            ]
+
+            # Execute both model batches in parallel
+            openai_results, gemini_results = await asyncio.gather(
+                asyncio.gather(*openai_tasks, return_exceptions=True),
+                asyncio.gather(*gemini_tasks, return_exceptions=True)
             )
-            for page_num, img_bytes in page_images
-        ]
 
-        vision_results = await asyncio.gather(*vision_tasks, return_exceptions=True)
+            # Blend results page by page
+            vision_results = []
+            for idx, (page_num, _) in enumerate(page_images):
+                openai_result = openai_results[idx] if not isinstance(openai_results[idx], Exception) else f"[OpenAI error: {str(openai_results[idx])}]"
+                gemini_result = gemini_results[idx] if not isinstance(gemini_results[idx], Exception) else f"[Gemini error: {str(gemini_results[idx])}]"
 
-        # Collect results
+                # Blend and choose best result
+                blended_result, chosen_model = self._blend_vision_results(
+                    openai_result,
+                    gemini_result,
+                    page_num
+                )
+                vision_results.append(blended_result)
+        else:
+            # Single model mode (Gemini only)
+            logger.info("vision_single_model_gemini", pages=len(page_images))
+
+            # Extract text from all pages in parallel using Gemini only
+            vision_tasks = [
+                self._extract_text_from_image_with_vision(
+                    img_bytes,
+                    f"page_{page_num}"
+                )
+                for page_num, img_bytes in page_images
+            ]
+
+            vision_results = await asyncio.gather(*vision_tasks, return_exceptions=True)
+
+        # Collect results - IMPORTANT: Include ALL pages to preserve page numbering
         vision_text_parts = []
         for idx, (page_num, _) in enumerate(page_images):
             result = vision_results[idx]
@@ -129,6 +174,10 @@ class DocumentService:
                 vision_text_parts.append(f"--- Page {page_num} ---\n[Vision extraction failed: {str(result)}]")
             elif result.strip():
                 vision_text_parts.append(f"--- Page {page_num} ---\n{result}")
+            else:
+                # Include empty pages to preserve page numbering
+                logger.warning("vision_page_empty", page=page_num)
+                vision_text_parts.append(f"--- Page {page_num} ---\n[Vision API returned empty response - page may be blank or extraction failed]")
 
         doc.close()
 
@@ -240,8 +289,7 @@ Return a JSON object with this structure:
     "page_number": "string or null if visible"
   },
   "content": {
-    "headers": ["array of all headers/titles found"],
-    "body_text": "string (all paragraphs and text blocks, preserve line breaks with \\n)",
+    "body_text": "string (ALL text in document order. CRITICAL: Write headers WITH their paragraphs together, not separately! Format: HEADER\\n\\nparagraph content\\n\\nNEXT HEADER\\n\\nparagraph. Preserve document structure!)",
     "tables": [
       {
         "title": "string or null",
@@ -512,32 +560,35 @@ Return ONLY valid JSON. No markdown, no commentary."""
             Extracted text content
         """
         try:
-            from anthropic import AsyncAnthropic
+            import google.generativeai as genai
             from app.config import settings
 
-            # Encode image to base64
-            image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+            # Configure Gemini API
+            genai.configure(api_key=settings.google_api_key)
 
-            # Use Claude with vision
-            client = AsyncAnthropic(api_key=settings.anthropic_api_key)
+            # Use Gemini 2.5 Pro with vision - with retry logic for empty responses
+            model = genai.GenerativeModel(settings.gemini_vision_model)
 
-            response = await client.messages.create(
-                model=settings.anthropic_model,
-                max_tokens=4096,
-                messages=[{
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "image",
-                            "source": {
-                                "type": "base64",
-                                "media_type": "image/png",
-                                "data": image_base64
-                            }
-                        },
-                        {
-                            "type": "text",
-                            "text": """You are a document digitization specialist. Your task is to convert this document page image into a comprehensive, structured JSON format that captures ALL content.
+            max_retries = 2
+            retry_delay = 2  # seconds
+
+            for attempt in range(max_retries + 1):
+                if attempt > 0:
+                    logger.warning(
+                        "vision_retry_attempt",
+                        page=page_identifier,
+                        attempt=attempt,
+                        max_retries=max_retries
+                    )
+                    await asyncio.sleep(retry_delay)
+
+                # Prepare image part for Gemini
+                image_part = {
+                    "mime_type": "image/png",
+                    "data": image_bytes
+                }
+
+                prompt = """You are a document digitization specialist. Your task is to convert this document page image into a comprehensive, structured JSON format that captures ALL content.
 
 CRITICAL: Extract EVERYTHING visible - miss nothing. This is the only chance to capture this data.
 
@@ -553,8 +604,7 @@ Return a JSON object with this structure:
     "page_number": "string or null if visible"
   },
   "content": {
-    "headers": ["array of all headers/titles found"],
-    "body_text": "string (all paragraphs and text blocks, preserve line breaks with \\n)",
+    "body_text": "string (ALL text in document order. CRITICAL: Write headers WITH their paragraphs together, not separately! Format: HEADER\\n\\nparagraph content\\n\\nNEXT HEADER\\n\\nparagraph. Preserve document structure!)",
     "tables": [
       {
         "title": "string or null",
@@ -630,42 +680,56 @@ EXTRACTION RULES:
    - Email headers, sender/recipient info
 
 Return ONLY valid JSON. No markdown, no commentary."""
-                        }
-                    ]
-                }]
-            )
 
-            # Safely extract text from response with proper error handling
-            if not response.content:
+                # Generate content with Gemini (async)
+                response = await model.generate_content_async(
+                    [image_part, prompt],
+                    generation_config={
+                        "temperature": 0.2,
+                        "max_output_tokens": 4096,
+                    }
+                )
+
+                # Check if response is valid (Gemini format)
+                if response.text and response.text.strip():
+                    # Success! Break retry loop
+                    logger.info(
+                        "vision_extraction_success",
+                        page=page_identifier,
+                        length=len(response.text),
+                        attempt=attempt
+                    )
+                    break
+
+                # If we get here, response was empty or invalid
+                if attempt < max_retries:
+                    logger.warning(
+                        "vision_response_empty_retrying",
+                        page=page_identifier,
+                        attempt=attempt
+                    )
+                    continue
+                else:
+                    # Final attempt failed
+                    logger.warning(
+                        "vision_response_empty_final",
+                        page=page_identifier,
+                        attempts=max_retries + 1
+                    )
+                    return f"[No content in vision response for {page_identifier} after {max_retries + 1} attempts]"
+
+            # Safely extract text from response with proper error handling (Gemini format)
+            if not response.text or not response.text.strip():
                 logger.warning(
                     "vision_response_empty",
                     page=page_identifier
                 )
                 return f"[No content in vision response for {page_identifier}]"
 
-            if len(response.content) == 0:
-                logger.warning(
-                    "vision_response_no_blocks",
-                    page=page_identifier
-                )
-                return f"[Empty content blocks in vision response for {page_identifier}]"
-
-            # Get the first content block
-            content_block = response.content[0]
-
-            # Check if it has a text attribute
-            if not hasattr(content_block, 'text'):
-                logger.error(
-                    "vision_response_no_text",
-                    page=page_identifier,
-                    content_type=type(content_block).__name__
-                )
-                return f"[Vision response has no text attribute for {page_identifier}]"
-
-            extracted_text = content_block.text
+            extracted_text = response.text
 
             logger.info(
-                "vision_extraction_success",
+                "vision_extraction_complete",
                 page=page_identifier,
                 length=len(extracted_text)
             )
@@ -679,6 +743,295 @@ Return ONLY valid JSON. No markdown, no commentary."""
                 error=str(e)
             )
             return f"[Vision extraction failed for {page_identifier}: {str(e)}]"
+
+    async def _extract_text_from_image_with_openai(
+        self,
+        image_bytes: bytes,
+        page_identifier: str
+    ) -> str:
+        """
+        Extract text from an image using OpenAI GPT-5 vision API.
+
+        Args:
+            image_bytes: Image data as bytes (PNG format)
+            page_identifier: Identifier for logging (e.g., "page_1")
+
+        Returns:
+            Extracted text content
+        """
+        try:
+            import openai
+            import asyncio
+            from app.config import settings
+
+            # Configure OpenAI API
+            client = openai.AsyncOpenAI(api_key=settings.openai_api_key)
+
+            # Use OpenAI GPT-5 with vision - with retry logic for empty responses
+            max_retries = 2
+            retry_delay = 2  # seconds
+
+            for attempt in range(max_retries + 1):
+                if attempt > 0:
+                    logger.warning(
+                        "vision_retry_attempt_openai",
+                        page=page_identifier,
+                        attempt=attempt,
+                        max_retries=max_retries
+                    )
+                    await asyncio.sleep(retry_delay)
+
+                # Encode image as base64
+                image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+
+                prompt = """You are a document digitization specialist. Your task is to convert this document page image into a comprehensive, structured JSON format that captures ALL content.
+
+CRITICAL: Extract EVERYTHING visible - miss nothing. This is the only chance to capture this data.
+
+Return a JSON object with this structure:
+
+{
+  "document_type": "string (email, technical_drawing, table, form, safety_data_sheet, measurement_report, process_flow_diagram, questionnaire, mixed)",
+  "metadata": {
+    "has_tables": boolean,
+    "has_diagrams": boolean,
+    "has_handwriting": boolean,
+    "language": "string (de, en, mixed)",
+    "page_number": "string or null if visible"
+  },
+  "content": {
+    "body_text": "string (ALL text in document order. CRITICAL: Write headers WITH their paragraphs together, not separately! Format: HEADER\\n\\nparagraph content\\n\\nNEXT HEADER\\n\\nparagraph. Preserve document structure!)",
+    "tables": [
+      {
+        "title": "string or null",
+        "headers": ["column1", "column2", ...],
+        "rows": [
+          ["cell1", "cell2", ...],
+          ["cell1", "cell2", ...]
+        ]
+      }
+    ],
+    "lists": [
+      {
+        "type": "bulleted or numbered",
+        "items": ["item1", "item2", ...]
+      }
+    ],
+    "key_value_pairs": [
+      {"key": "string", "value": "string"}
+    ],
+    "diagrams_and_images": [
+      {
+        "type": "flow_diagram, chart, logo, signature, stamp, photo, technical_drawing",
+        "description": "detailed description of what is shown",
+        "labels_and_text": ["any text visible in/on the diagram"]
+      }
+    ],
+    "signatures_and_stamps": [
+      {
+        "type": "signature or stamp",
+        "text": "any readable text",
+        "location": "top_right, bottom_left, etc."
+      }
+    ]
+  },
+  "quality_notes": "string (mention any unclear text, cut-off content, poor quality areas)"
+}
+
+EXTRACTION RULES:
+
+1. **Tables**:
+   - Extract EVERY row and column
+   - Preserve exact values, units, symbols (%, ≤, ≥, -, ~)
+   - If cells span multiple rows/columns, note this
+   - Include table headers AND all data rows
+
+2. **Text**:
+   - Extract ALL paragraphs verbatim
+   - Preserve line breaks between sections
+   - Include page numbers, headers, footers
+   - Capture email signatures, contact info
+
+3. **Key-Value Pairs**:
+   - Extract form fields: "Field Name: Value"
+   - Extract measurement data: "Temperature: 45°C"
+   - Extract parameters: "Flow Rate: 5000 m³/h"
+
+4. **Preserve Formatting**:
+   - Keep units exactly: m³/h, °C, mg/Nm³, %
+   - Keep special characters: ≤, ≥, ±, ~, -, /, ×
+   - Keep German umlauts: ä, ö, ü, ß
+
+5. **Diagrams/Images**:
+   - Describe what is shown (process flow, equipment layout, etc.)
+   - Extract ALL labels, annotations, arrows, text from diagrams
+   - Note connections between elements
+
+6. **Don't Miss**:
+   - Small print, footnotes, references
+   - Handwritten notes or annotations
+   - Stamps, signatures, logos with text
+   - Section numbers, page numbers
+   - CAS numbers, chemical formulas
+   - Email headers, sender/recipient info
+
+Return ONLY valid JSON. No markdown, no commentary."""
+
+                # Generate content with OpenAI (async)
+                # Note: GPT-5 doesn't support temperature parameter
+                response = await client.chat.completions.create(
+                    model=settings.vision_openai_model,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:image/png;base64,{image_base64}"
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "text": prompt
+                                }
+                            ]
+                        }
+                    ],
+                    max_completion_tokens=16000  # Increased from 4096 - GPT-5 reasoning uses tokens, needs larger budget
+                )
+
+                # Debug: Log FULL response structure to understand the issue
+                logger.info(
+                    "openai_response_debug",
+                    page=page_identifier,
+                    has_choices=bool(response.choices),
+                    num_choices=len(response.choices) if response.choices else 0,
+                    finish_reason=response.choices[0].finish_reason if response.choices else None,
+                    has_content=bool(response.choices[0].message.content) if response.choices else False,
+                    content_length=len(response.choices[0].message.content) if (response.choices and response.choices[0].message.content) else 0,
+                    has_refusal=bool(getattr(response.choices[0].message, 'refusal', None)) if response.choices else False,
+                    refusal_text=getattr(response.choices[0].message, 'refusal', None) if response.choices else None,
+                    usage_dict=response.usage.model_dump() if hasattr(response, 'usage') and response.usage else None
+                )
+
+                # Check if response is valid (OpenAI format)
+                if response.choices and response.choices[0].message.content:
+                    extracted_text = response.choices[0].message.content.strip()
+                    if extracted_text:
+                        # Success! Break retry loop
+                        logger.info(
+                            "vision_extraction_success_openai",
+                            page=page_identifier,
+                            length=len(extracted_text),
+                            attempt=attempt
+                        )
+                        break
+
+                # If we get here, response was empty or invalid
+                if attempt < max_retries:
+                    logger.warning(
+                        "vision_response_empty_retrying_openai",
+                        page=page_identifier,
+                        attempt=attempt
+                    )
+                    continue
+                else:
+                    # Final attempt failed
+                    logger.warning(
+                        "vision_response_empty_final_openai",
+                        page=page_identifier,
+                        attempts=max_retries + 1
+                    )
+                    return f"[No content in vision response for {page_identifier} after {max_retries + 1} attempts]"
+
+            # Safely extract text from response
+            if not extracted_text:
+                logger.warning(
+                    "vision_response_empty_openai",
+                    page=page_identifier
+                )
+                return f"[No content in vision response for {page_identifier}]"
+
+            logger.info(
+                "vision_extraction_complete_openai",
+                page=page_identifier,
+                length=len(extracted_text)
+            )
+
+            return extracted_text
+
+        except Exception as e:
+            logger.error(
+                "vision_extraction_failed_openai",
+                page=page_identifier,
+                error=str(e)
+            )
+            return f"[Vision extraction failed for {page_identifier}: {str(e)}]"
+
+    def _blend_vision_results(
+        self,
+        openai_result: str,
+        gemini_result: str,
+        page_num: int
+    ) -> tuple[str, str]:
+        """
+        Intelligently blend results from OpenAI and Gemini vision extraction.
+
+        Strategy:
+        - Choose the result with more content (character count)
+        - Exclude error messages from consideration
+        - Log which model was selected
+
+        Args:
+            openai_result: Result from OpenAI vision
+            gemini_result: Result from Gemini vision
+            page_num: Page number for logging
+
+        Returns:
+            Tuple of (selected_result, selected_model)
+        """
+        # Check if either result is an error message
+        openai_is_error = openai_result.startswith("[") and openai_result.endswith("]")
+        gemini_is_error = gemini_result.startswith("[") and gemini_result.endswith("]")
+
+        # If one is error and other is not, choose the non-error
+        if openai_is_error and not gemini_is_error:
+            logger.info("blend_chose_gemini", page=page_num, reason="openai_error")
+            return gemini_result, "gemini"
+        elif gemini_is_error and not openai_is_error:
+            logger.info("blend_chose_openai", page=page_num, reason="gemini_error")
+            return openai_result, "openai"
+        elif openai_is_error and gemini_is_error:
+            # Both failed, choose the longer error message (might have more info)
+            logger.warning("blend_both_failed", page=page_num)
+            if len(openai_result) >= len(gemini_result):
+                return openai_result, "openai"
+            else:
+                return gemini_result, "gemini"
+
+        # Both succeeded, choose based on content length
+        openai_len = len(openai_result)
+        gemini_len = len(gemini_result)
+
+        if openai_len >= gemini_len:
+            logger.info(
+                "blend_chose_openai",
+                page=page_num,
+                openai_len=openai_len,
+                gemini_len=gemini_len,
+                diff=openai_len - gemini_len
+            )
+            return openai_result, "openai"
+        else:
+            logger.info(
+                "blend_chose_gemini",
+                page=page_num,
+                openai_len=openai_len,
+                gemini_len=gemini_len,
+                diff=gemini_len - openai_len
+            )
+            return gemini_result, "gemini"
 
     async def _get_cached_extraction(self, file_path: str) -> Optional[str]:
         """
