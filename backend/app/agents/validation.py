@@ -37,7 +37,7 @@ class SubagentDefinition(BaseModel):
     @classmethod
     def validate_tools(cls, v: list[str]) -> list[str]:
         """Validate tool names."""
-        valid_tools = {"oxytec_knowledge_search", "product_database", "web_search"}
+        valid_tools = {"oxytec_knowledge_search", "product_database", "web_search", "pubchem_lookup"}
         invalid = [t for t in v if t not in valid_tools]
         if invalid:
             raise ValueError(f"Invalid tool names: {invalid}. Valid tools: {valid_tools}")

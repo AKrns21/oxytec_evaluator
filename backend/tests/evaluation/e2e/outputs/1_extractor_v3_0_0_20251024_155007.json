@@ -1,0 +1,38 @@
+{
+  "document_metadata": {
+    "document_type": "mixed",
+    "language": "mixed",
+    "total_pages": 0,
+    "extraction_method": "mixed",
+    "has_tables": false,
+    "has_diagrams": false,
+    "filename": ""
+  },
+  "pages": [],
+  "quick_facts": {
+    "products_mentioned": [],
+    "cas_numbers_found": [],
+    "measurement_units_detected": [],
+    "sections_identified": [],
+    "voc_svoc_detected": false,
+    "languages_detected": [],
+    "companies_mentioned": [],
+    "locations_mentioned": []
+  },
+  "extraction_notes": [
+    {
+      "field": "pages",
+      "status": "not_provided_in_documents",
+      "note": "No document content was provided in the input. Please supply the document text or structured JSON to perform extraction."
+    }
+  ],
+  "data_quality_issues": [
+    {
+      "issue": "No composition data extracted",
+      "severity": "CRITICAL",
+      "impact_description": "SDS Section 3 (Zusammensetzung/Composition) appears to be completely missing. Cannot determine product ingredients or VOC content.",
+      "examples": [],
+      "recommendation": "Check if document contains 'ABSCHNITT 3' or 'SECTION 3: Zusammensetzung/Composition' table and re-extract"
+    }
+  ]
+}
